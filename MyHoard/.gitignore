@@ -1,1 +1,3 @@
-target/.project/.classpath
+target
+.classpath
+.project

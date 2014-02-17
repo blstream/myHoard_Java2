@@ -5,11 +5,9 @@
 <hibernate-configuration>
 	<session-factory>
 		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-	<!-- Do uzupełnienia samodzielnie -->
-		<property name="hibernate.connection.url"></property>
-		<property name="hibernate.connection.username"></property>
-		<property name="hibernate.connection.password"></property>
-	<!-- -->
+		<property name="hibernate.connection.url">jdbc:mysql://{DEST}:3306/myhoardjava2</property>
+		<property name="hibernate.connection.username">{LOGIN}</property>
+		<property name="hibernate.connection.password">{PASSWORD}</property>
 		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
 		<property name="show_sql">true</property>
 		<property name="current_session_context_class">thread</property>

@@ -5,6 +5,9 @@
 
   <display-name>Spring Web MVC Application</display-name>
 
+  <welcome-file-list>
+    <welcome-file>version.html</welcome-file>
+  </welcome-file-list>
 
 
   <servlet>

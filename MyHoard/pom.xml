@@ -91,7 +91,7 @@
 				       <filtering>true</filtering>
 				       <directory>src/main/webapp</directory>
 				       <includes>
-				         <include>versionpage.html</include>
+				         <include>version.html</include>
 				       </includes>
 				     </resource>
 				   </webResources>

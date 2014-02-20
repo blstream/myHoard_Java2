@@ -2,11 +2,11 @@ CREATE TABLE IF NOT EXISTS Collections (
 	id INT AUTO_INCREMENT,
 	owner VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL,
 	name VARCHAR(40) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL,
-	description VARCHAR(120) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL,
-	tags VARCHAR(150) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL,
+	description VARCHAR(120) CHARACTER SET utf8 COLLATE utf8_polish_ci DEFAULT '' NOT NULL,
+	tags VARCHAR(150) CHARACTER SET utf8 COLLATE utf8_polish_ci DEFAULT '' NOT NULL,
 	items_number INT DEFAULT 0 NOT NULL,
-	created_date DATETIME NOT NULL,
-	modified_date DATETIME NOT NULL,
+	created_date TIMESTAMP NOT NULL,
+	modified_date TIMESTAMP NOT NULL,
 
 	PRIMARY KEY(id)
 ) CHARACTER SET utf8 COLLATE utf8_polish_ci;

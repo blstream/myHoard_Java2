@@ -1,4 +1,4 @@
-package com.java2.model;
+package com.blstream.myhoard.db.model;
 
 import java.sql.Timestamp;
 
@@ -11,6 +11,17 @@ public class CollectionDS {
 
 	public CollectionDS() {}
 
+	public CollectionDS(int id, String owner, String name, String description, String tags, int itemsNumber, Timestamp createdDate, Timestamp modifiedDate) {
+	    this.id = id;
+	    this.owner = owner;
+	    this.name = name;
+	    this.description = description;
+	    this.tags = tags;
+	    this.itemsNumber = itemsNumber;
+	    this.createdDate = createdDate;
+	    this.modifiedDate = modifiedDate;
+	}
+	
 	public int getId() {
 		return id;
 	}

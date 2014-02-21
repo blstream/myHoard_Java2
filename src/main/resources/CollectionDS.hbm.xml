@@ -3,7 +3,7 @@
  "-//Hibernate/Hibernate Mapping DTD//EN"
  "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"> 
 
-<hibernate-mapping package="com.java2.model">
+<hibernate-mapping package="com.blstream.myhoard.db.model">
 	<class name="CollectionDS" table="Collections">
 		<id name="id" type="int" column="id">
 			<generator class="native" />

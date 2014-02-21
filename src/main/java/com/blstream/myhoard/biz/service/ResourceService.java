@@ -1,8 +1,8 @@
-package com.java2.model;
+package com.blstream.myhoard.biz.service;
 
 import java.util.List;
 
-public interface ResourceDAO<T> {
+public interface ResourceService<T> {
 
 	public List<T> getList();
 
@@ -13,5 +13,4 @@ public interface ResourceDAO<T> {
 	public void update(T obj);
 
 	public void remove(int id);
-
 }

@@ -1,4 +1,4 @@
-package com.java2.model;
+package com.blstream.myhoard.db.dao;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;

@@ -1,14 +1,19 @@
 package com.blstream.myhoard.biz.model;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 import com.blstream.myhoard.db.model.*;
 
 public class CollectionDTO {
 
-	private String id, owner, name, description, tags;
+	private String id;
+	private String owner;
+	private String name;
+	private String description;
+	private String tags;
 	private int itemsNumber;
-	private Timestamp createdDate, modifiedDate;
+	private Date createdDate;
+	private Date modifiedDate;
 
 	public CollectionDTO() {}
 
@@ -60,19 +65,19 @@ public class CollectionDTO {
 		this.itemsNumber = itemsNumber;
 	}
 
-	public Timestamp getCreatedDate() {
+	public Date getCreatedDate() {
 		return createdDate;
 	}
 
-	public void setCreatedDate(Timestamp createdDate) {
+	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
 	}
 
-	public Timestamp getModifiedDate() {
+	public Date getModifiedDate() {
 		return modifiedDate;
 	}
 
-	public void setModifiedDate(Timestamp modifiedDate) {
+	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
 	}
 

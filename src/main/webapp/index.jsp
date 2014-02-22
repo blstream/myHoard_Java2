@@ -4,7 +4,7 @@
 <%
 //	org.hibernate.SessionFactory sessionFactory = new org.hibernate.cfg.Configuration()
 //		.configure("hibernate.cfg.xml").buildSessionFactory();
-	com.blstream.myhoard.db.dao.CollectionDAO dao = new com.blstream.myhoard.db.dao.CollectionDAO();
+/*	com.blstream.myhoard.db.dao.CollectionDAO dao = new com.blstream.myhoard.db.dao.CollectionDAO();
 	com.blstream.myhoard.db.model.CollectionDS c = new com.blstream.myhoard.db.model.CollectionDS();
 
 	c.setOwner("NN");
@@ -23,6 +23,6 @@
 	java.util.List<com.blstream.myhoard.db.model.CollectionDS> list = dao.getList();
 	for (int i = 0; i < list.size(); i++)
 		out.println(list.get(i));
-%>
+*/%>
 </body>
 </html>

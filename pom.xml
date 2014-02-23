@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.java2</groupId>
-	<artifactId>MyHoard</artifactId>
+	<groupId>com.blstream.MyHoard</groupId>
+	<artifactId>MyHoardJava2</artifactId>
 	<packaging>war</packaging>
 	<version>1.0.0</version>
 	<name>MyHoard Maven Webapp</name>
@@ -11,9 +11,11 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>4.0.1.RELEASE</spring.version>
 		<jackson.version>1.9.10</jackson.version>
+		<jdk.version>1.7</jdk.version>
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -60,43 +62,46 @@
 			<version>4.3.1.Final</version>
 		</dependency>
 	</dependencies>
+
 	<build>
 		<finalName>MyHoard</finalName>
  		<plugins>
-		  <plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-eclipse-plugin</artifactId>
-			<version>2.9</version>
-			<configuration>
-				<downloadSources>true</downloadSources>
-				<downloadJavadocs>false</downloadJavadocs>
-				<wtpversion>2.0</wtpversion>
-			</configuration>
-		  </plugin>
-		  <plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-compiler-plugin</artifactId>
-			<version>2.3.2</version>
-			<configuration>
-				<source>${jdk.version}</source>
-				<target>${jdk.version}</target>
-			</configuration>
-		  </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>false</downloadJavadocs>
+					<wtpversion>2.0</wtpversion>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+				</configuration>
+			</plugin>
+
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
-				   <webResources>
-				     <resource>
-				       <filtering>true</filtering>
-				       <directory>src/main/webapp</directory>
-				       <includes>
-				         <include>version.html</include>
-				       </includes>
-				     </resource>
-				   </webResources>
-				 </configuration>
+					<webResources>
+						<resource>
+							<filtering>true</filtering>
+							<directory>src/main/webapp</directory>
+							<includes>
+								<include>version.html</include>
+							</includes>
+						</resource>
+					</webResources>
+				</configuration>
 			</plugin>  
-		</plugins>  
+			</plugins>  
 	</build>
 </project>

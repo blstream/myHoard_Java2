@@ -15,6 +15,9 @@
 	
 	<bean id="CollectionDAO" class="com.blstream.myhoard.db.dao.CollectionDAO">
 	</bean>
+
+	<bean id="CollectionDTOValidator" class="com.blstream.myhoard.biz.model.CollectionDTOValidator">
+	</bean>
 	
 	<context:component-scan base-package="com.blstream.myhoard.controller" />
 

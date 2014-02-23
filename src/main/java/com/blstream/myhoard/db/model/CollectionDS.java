@@ -1,5 +1,6 @@
 package com.blstream.myhoard.db.model;
 
+import com.blstream.myhoard.biz.model.CollectionDTO;
 import java.util.Date;
 
 public class CollectionDS {
@@ -13,7 +14,11 @@ public class CollectionDS {
 	private Date createdDate;
 	private Date modifiedDate;
 
-	public CollectionDS() {}
+	public CollectionDS() {
+		itemsNumber = 0;
+		createdDate = java.util.Calendar.getInstance().getTime();
+		modifiedDate = (Date)createdDate.clone();
+	}
 
 	public CollectionDS(int id, String owner, String name, String description, String tags, int itemsNumber, Date createdDate, Date modifiedDate) {
 	    this.id = id;
@@ -90,9 +95,24 @@ public class CollectionDS {
 		this.modifiedDate = modifiedDate;
 	}
 
+	public CollectionDTO toCollectionDTO() {
+		return new CollectionDTO(Integer.toString(id), owner, name, description, tags, itemsNumber, createdDate, modifiedDate);
+	}
+
+	public void updateObject(CollectionDS object) {
+		if (this == object)
+			return;
+		if (name == null || object.name != null && !name.equals(object.name))
+			name = object.name;
+		if (description == null || object.description != null && !description.equals(object.description))
+			description = object.description;
+		if (tags == null || object.tags != null && !tags.equals(object.tags))
+			tags = object.tags;
+	}
+
 	@Override
 	public String toString() {
-		return  "id            : " + id +
+		return  "id          : " + id +
 				"\nowner       : " + owner +
 				"\nname        : " + name +
 				"\ndescription : " + description +

@@ -32,9 +32,18 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
 
 	@Override
 	public void update(CollectionDS obj) {
+		CollectionDS object = get(obj.getId());
+		object.updateObject(obj);
+
 		Session session = HibernateUtil.beginTransaction();
-		session.update(obj);
+		object.setModifiedDate(java.util.Calendar.getInstance().getTime());
+		session.update(object);
 		HibernateUtil.commitTransaction();
+
+		obj.updateObject(object);
+		obj.setOwner(object.getOwner());
+		obj.setCreatedDate(object.getCreatedDate());
+		obj.setModifiedDate(object.getModifiedDate());
 	}
 
 	@Override
@@ -42,6 +51,6 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
 		Session session = HibernateUtil.beginTransaction();
 		session.createQuery("delete CollectionDS where id = " + id).executeUpdate();
 		HibernateUtil.commitTransaction();
-	} 
+	}
 
 }

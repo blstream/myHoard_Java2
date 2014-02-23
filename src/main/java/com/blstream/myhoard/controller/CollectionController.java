@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.blstream.myhoard.biz.service.CollectionService;
 import com.blstream.myhoard.biz.model.*;
+import org.hibernate.StaleStateException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @Controller 
@@ -30,36 +31,39 @@ public class CollectionController {
 		return collectionService.getList();
 	}
 
-	@RequestMapping(value="{id}", method = RequestMethod.GET)
-	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody CollectionDTO getCollection(@PathVariable String id) {
-		int idInteger = Integer.parseInt(id);
-		return collectionService.get(idInteger);
-	}
-
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED) 	
-	public void addCollection(@RequestBody CollectionDTO obj) {
+	public @ResponseBody CollectionDTO addCollection(@RequestBody CollectionDTO obj) {
 		collectionService.create(obj);
+		return obj;
 	}
 
-	@RequestMapping(value = "{id}", method = RequestMethod.PUT)
+	@RequestMapping(value="/{id}", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
-	public void updateCollection(@PathVariable String id, @RequestBody CollectionDTO obj) {
-//		Integer idInteger = Integer.parseInt(id);
-		collectionService.update(obj);
+	public @ResponseBody CollectionDTO getCollection(@PathVariable String id) {
+		// TODO dla dowolnego ID (którego nie ma w bazie) listuje wszystkie kolekcje
+		return collectionService.get(Integer.parseInt(id));
 	}
 
-	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	@ResponseStatus(HttpStatus.OK)
+	public @ResponseBody CollectionDTO updateCollection(@PathVariable String id, @RequestBody CollectionDTO obj) {
+		// TODO czasem nie wyłapuje metody - trzeba by weryfikować, czy istnieje obiekt o podanym ID
+		obj.setId(id);
+		collectionService.update(obj);
+		return obj;
+	}
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void removeCollection(@PathVariable String id) {
-		Integer idInteger = Integer.parseInt(id);
-		collectionService.remove(idInteger);
+		collectionService.remove(Integer.parseInt(id));
 	}
 
-	@ExceptionHandler(value = {NumberFormatException.class, IndexOutOfBoundsException.class})
-	@ResponseStatus(HttpStatus.NOT_FOUND)
-	public String notFoundError() {
+//	@ExceptionHandler(value = {NumberFormatException.class, IndexOutOfBoundsException.class, StaleStateException.class})
+	@ExceptionHandler(value = Exception.class)	// łapie wszystkie wyjątki
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public String exceptionHandler() {
 		// TODO
 		return "";
 	}

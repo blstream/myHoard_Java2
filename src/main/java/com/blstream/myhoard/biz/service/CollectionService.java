@@ -6,33 +6,47 @@ import com.blstream.myhoard.biz.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.blstream.myhoard.db.dao.*;
+import com.blstream.myhoard.db.model.CollectionDS;
 
 public class CollectionService implements ResourceService<CollectionDTO> {
 
 	@Autowired
 	CollectionDAO collectionDAO;
 
+	@Override
     public List<CollectionDTO> getList() {
-        //return collectionDAO.getList();
-	    return null;
+        List<CollectionDS> data = collectionDAO.getList();
+		List<CollectionDTO> result = new ArrayList<>();
+		for (CollectionDS i : data)
+			result.add(i.toCollectionDTO());
+	    return result;
 	}
 
+	@Override
 	public CollectionDTO get(int id) {
-        return null;
+        return collectionDAO.get(id).toCollectionDTO();
 	}
 
-	public void create(CollectionDTO collection) {
-	    //collectionDAO.create(collection.convertToCollectionDS());
+	@Override
+	public void create(CollectionDTO obj) {
+		CollectionDS collection = obj.toCollectionDS();
+	    collectionDAO.create(collection);
+		obj.setId(Integer.toString(collection.getId()));
 	}
 
+	@Override
 	public void update(CollectionDTO obj) {
-		// TODO Auto-generated method stub
-		
+		CollectionDS object = obj.toCollectionDS();
+		collectionDAO.update(object);
+		obj.updateObject(object.toCollectionDTO());
+		obj.setOwner(object.getOwner());
+		obj.setCreatedDate(object.getCreatedDate());
+		obj.setModifiedDate(object.getModifiedDate());
 	}
 
+	@Override
 	public void remove(int id) {
-		// TODO Auto-generated method stub
-		
+		collectionDAO.remove(id);
 	}
 
 }

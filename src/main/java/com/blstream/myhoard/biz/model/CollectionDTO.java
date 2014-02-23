@@ -15,7 +15,23 @@ public class CollectionDTO {
 	private Date createdDate;
 	private Date modifiedDate;
 
-	public CollectionDTO() {}
+	public CollectionDTO() {
+		id = "0";	// by Integer.parseInt() nie rzucał wyjątku
+		itemsNumber = 0;
+		createdDate = java.util.Calendar.getInstance().getTime();
+		modifiedDate = (Date)createdDate.clone();
+	}
+
+	public CollectionDTO(String id, String owner, String name, String description, String tags, int itemsNumber, Date createdDate, Date modifiedDate) {
+	    this.id = id;
+	    this.owner = owner;
+	    this.name = name;
+	    this.description = description;
+	    this.tags = tags;
+	    this.itemsNumber = itemsNumber;
+	    this.createdDate = createdDate;
+	    this.modifiedDate = modifiedDate;
+	}
 
 	public String getId() {
 		return id;
@@ -81,29 +97,24 @@ public class CollectionDTO {
 		this.modifiedDate = modifiedDate;
 	}
 
-	public CollectionDS convertToCollectionDS() {
-	    CollectionDS collectionD = new CollectionDS(Integer.parseInt(getId()),
-	            getOwner(),
-	            getName(),
-	            getDescription(),
-	            getTags(),
-	            getItemsNumber(),
-	            getCreatedDate(),
-	            getModifiedDate());
-	    return collectionD;
+	public CollectionDS toCollectionDS() {
+	    return new CollectionDS(Integer.parseInt(id), owner, name, description, tags, itemsNumber, createdDate, modifiedDate);
+	}
+
+	public void updateObject(CollectionDTO object) {
+		if (this == object)
+			return;
+		if (name == null || object.name != null && !name.equals(object.name))
+			name = object.name;
+		if (description == null || object.description != null && !description.equals(object.description))
+			description = object.description;
+		if (tags == null || object.tags != null && !tags.equals(object.tags))
+			tags = object.tags;
 	}
 	
 	@Override
 	public String toString() {
-		StringBuilder string = new StringBuilder();
-		string.append("id            : " + id)
-		.append("\nowner       : " + owner)
-        .append("\nname        : " + name)
-        .append("\ndescription : " + description)
-		.append("\ntags        : " + tags)
-		.append("\nitemsNumber : " + itemsNumber)
-		.append("\ncreatedDate : " + createdDate)
-		.append("\nmodifiedDate: " + modifiedDate);
-		return  string.toString();
+		return String.format("id: %d, owner: %s, name: %s, description: %s, tags: %s, itemsNumber: %d, createdDate: %s, modifiedDate: %s\n",
+			id, owner, name, description, tags, itemsNumber, createdDate, modifiedDate);
 	}	
 }

@@ -10,27 +10,27 @@ public class CollectionDTO {
 	private String owner;
 	private String name;
 	private String description;
-	private String tags;
-	private int itemsNumber;
-	private Date createdDate;
-	private Date modifiedDate;
+	private String [] tags;
+	private int items_number;
+	private Date created_date;
+	private Date modified_date;
 
 	public CollectionDTO() {
 		id = "0";	// by Integer.parseInt() nie rzucał wyjątku
-		itemsNumber = 0;
-		createdDate = java.util.Calendar.getInstance().getTime();
-		modifiedDate = (Date)createdDate.clone();
+		items_number = 0;
+		modified_date = java.util.Calendar.getInstance().getTime();
+		created_date = (Date)modified_date.clone();
 	}
 
-	public CollectionDTO(String id, String owner, String name, String description, String tags, int itemsNumber, Date createdDate, Date modifiedDate) {
+	public CollectionDTO(String id, String owner, String name, String description, String [] tags, int items_number, Date created_date, Date modified_date) {
 	    this.id = id;
 	    this.owner = owner;
 	    this.name = name;
 	    this.description = description;
 	    this.tags = tags;
-	    this.itemsNumber = itemsNumber;
-	    this.createdDate = createdDate;
-	    this.modifiedDate = modifiedDate;
+	    this.items_number = items_number;
+	    this.modified_date = created_date;
+	    this.created_date = modified_date;
 	}
 
 	public String getId() {
@@ -65,40 +65,48 @@ public class CollectionDTO {
 		this.description = description;
 	}
 
-	public String getTags() {
+	public String [] getTags() {
 		return tags;
 	}
 
-	public void setTags(String tags) {
+	public void setTags(String [] tags) {
 		this.tags = tags;
 	}
 
 	public int getItemsNumber() {
-		return itemsNumber;
+		return items_number;
 	}
 
 	public void setItemsNumber(int itemsNumber) {
-		this.itemsNumber = itemsNumber;
+		this.items_number = itemsNumber;
 	}
 
 	public Date getCreatedDate() {
-		return createdDate;
+		return modified_date;
 	}
 
 	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
+		this.modified_date = createdDate;
 	}
 
 	public Date getModifiedDate() {
-		return modifiedDate;
+		return created_date;
 	}
 
 	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
+		this.created_date = modifiedDate;
 	}
 
 	public CollectionDS toCollectionDS() {
-	    return new CollectionDS(Integer.parseInt(id), owner, name, description, tags, itemsNumber, createdDate, modifiedDate);
+	    StringBuffer result = new StringBuffer();
+	    for (int i = 0; i < tags.length; i++) {
+	        result.append( tags[i] );
+	       if (i != (tags.length-1)) {
+	           result.append ( "," );
+	       }
+	    }
+	    String tagsResult = result.toString();	    
+	    return new CollectionDS(Integer.parseInt(id), owner, name, description, tagsResult, items_number, modified_date, created_date);
 	}
 
 	public void updateObject(CollectionDTO object) {
@@ -115,6 +123,6 @@ public class CollectionDTO {
 	@Override
 	public String toString() {
 		return String.format("id: %d, owner: %s, name: %s, description: %s, tags: %s, itemsNumber: %d, createdDate: %s, modifiedDate: %s\n",
-			id, owner, name, description, tags, itemsNumber, createdDate, modifiedDate);
+			id, owner, name, description, tags, items_number, modified_date, created_date);
 	}	
 }

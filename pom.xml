@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.blstream.MyHoard</groupId>
+	<groupId>com.blstream.myhoard</groupId>
 	<artifactId>MyHoardJava2</artifactId>
 	<packaging>war</packaging>
 	<version>1.0.0</version>
@@ -64,7 +64,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>ROOT</finalName>
+		<finalName>MyHoard</finalName>
  		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -101,7 +101,7 @@
 						</resource>
 					</webResources>
 				</configuration>
-			</plugin>  
-			</plugins>  
+			</plugin>
+		</plugins>
 	</build>
 </project>

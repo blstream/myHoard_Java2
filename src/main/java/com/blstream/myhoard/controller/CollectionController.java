@@ -13,12 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.blstream.myhoard.biz.service.CollectionService;
 import com.blstream.myhoard.biz.exception.CollectionException;
 import com.blstream.myhoard.biz.model.*;
+import com.blstream.myhoard.validation.*;
 
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @Controller 
 @RequestMapping("/collections") 

@@ -10,25 +10,25 @@ public class CollectionDS {
 	private String name;
 	private String description;
 	private String tags;
-	private int itemsNumber;
-	private Date createdDate;
-	private Date modifiedDate;
+	private int items_number;
+	private Date created_date;
+	private Date modified_date;
 
 	public CollectionDS() {
-		itemsNumber = 0;
-		createdDate = java.util.Calendar.getInstance().getTime();
-		modifiedDate = (Date)createdDate.clone();
+		items_number = 0;
+		modified_date = java.util.Calendar.getInstance().getTime();
+		created_date = (Date)modified_date.clone();
 	}
 
-	public CollectionDS(int id, String owner, String name, String description, String tags, int itemsNumber, Date createdDate, Date modifiedDate) {
+	public CollectionDS(int id, String owner, String name, String description, String tags, int items_number, Date created_date, Date modified_date) {
 	    this.id = id;
 	    this.owner = owner;
 	    this.name = name;
 	    this.description = description;
 	    this.tags = tags;
-	    this.itemsNumber = itemsNumber;
-	    this.createdDate = createdDate;
-	    this.modifiedDate = modifiedDate;
+	    this.items_number = items_number;
+	    this.created_date = created_date;
+	    this.modified_date = modified_date;
 	}
 	
 	public int getId() {
@@ -72,31 +72,31 @@ public class CollectionDS {
 	}
 
 	public int getItemsNumber() {
-		return itemsNumber;
+		return items_number;
 	}
 
 	public void setItemsNumber(int itemsNumber) {
-		this.itemsNumber = itemsNumber;
+		this.items_number = itemsNumber;
 	}
 
 	public Date getCreatedDate() {
-		return createdDate;
+		return modified_date;
 	}
 
 	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
+		this.modified_date = createdDate;
 	}
 
 	public Date getModifiedDate() {
-		return modifiedDate;
+		return created_date;
 	}
 
 	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
+		this.created_date = modifiedDate;
 	}
 
 	public CollectionDTO toCollectionDTO() {
-		return new CollectionDTO(Integer.toString(id), owner, name, description, tags, itemsNumber, createdDate, modifiedDate);
+		return new CollectionDTO(Integer.toString(id), owner, name, description, tags.split(","), items_number, modified_date, created_date);
 	}
 
 	public void updateObject(CollectionDS object) {
@@ -117,8 +117,8 @@ public class CollectionDS {
 				"\nname        : " + name +
 				"\ndescription : " + description +
 				"\ntags        : " + tags +
-				"\nitemsNumber : " + itemsNumber +
-				"\ncreatedDate : " + createdDate +
-				"\nmodifiedDate: " + modifiedDate;
+				"\nitemsNumber : " + items_number +
+				"\ncreatedDate : " + modified_date +
+				"\nmodifiedDate: " + created_date;
 	}
 }

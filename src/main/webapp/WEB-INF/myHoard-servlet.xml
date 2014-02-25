@@ -28,5 +28,7 @@
 
 	<bean id="CollectionDAO" class="com.blstream.myhoard.db.dao.CollectionDAO" />
 
+        <bean id="CollectionDTOValidator" class="com.blstream.myhoard.validation.CollectionDTOValidator" />
+
 	<mvc:annotation-driven />
 </beans>

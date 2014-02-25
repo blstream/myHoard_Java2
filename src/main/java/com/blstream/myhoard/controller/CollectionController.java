@@ -28,8 +28,8 @@ public class CollectionController {
 	@Autowired
 	private CollectionService collectionService;
 	
-    @Autowired
-    CollectionDTOValidator collectionDTOValidator;
+        @Autowired
+        CollectionDTOValidator collectionDTOValidator;
     
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)

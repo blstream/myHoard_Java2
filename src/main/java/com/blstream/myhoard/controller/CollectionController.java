@@ -4,11 +4,15 @@ import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.CollectionDTO;
 import com.blstream.myhoard.biz.service.CollectionService;
+import com.blstream.myhoard.validation.*;
+
 import java.util.List;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +27,10 @@ public class CollectionController {
 
 	@Autowired
 	private CollectionService collectionService;
-
+	
+    @Autowired
+    CollectionDTOValidator collectionDTOValidator;
+    
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	public @ResponseBody List<CollectionDTO> getCollections() {
@@ -32,7 +39,11 @@ public class CollectionController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public @ResponseBody CollectionDTO addCollection(@RequestBody CollectionDTO collection) {
+	public @ResponseBody CollectionDTO addCollection(@RequestBody CollectionDTO collection, BindingResult result) {
+        collectionDTOValidator.validate(collection, result);
+        if (result.hasErrors()) {
+            throw new MyHoardException(400);    
+        }	    
 		try {
 			collectionService.create(collection);
 			return collection;
@@ -53,7 +64,11 @@ public class CollectionController {
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
 	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody CollectionDTO updateCollection(@PathVariable String id, @RequestBody CollectionDTO collection) {
+	public @ResponseBody CollectionDTO updateCollection(@PathVariable String id, @RequestBody CollectionDTO collection, BindingResult result) {
+	    collectionDTOValidator.validate(collection, result);
+        if (result.hasErrors()) {
+            throw new MyHoardException(400);	
+        }
 		try {
 			collection.setId(id);
 			collectionService.update(collection);

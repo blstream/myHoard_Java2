@@ -18,5 +18,8 @@
 
 	<bean id="CollectionBean" class="com.blstream.myhoard.biz.service.CollectionService" />
 
+	<bean id="CollectionDTOValidator" class="com.blstream.myhoard.validation.CollectionDTOValidator">
+	</bean>
+
 	<mvc:annotation-driven />
 </beans>

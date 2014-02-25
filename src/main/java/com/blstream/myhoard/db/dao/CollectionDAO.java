@@ -1,21 +1,29 @@
 package com.blstream.myhoard.db.dao;
 
-import com.blstream.myhoard.biz.exception.MyHoardException;
 import java.util.List;
 import org.hibernate.Session;
-
 import com.blstream.myhoard.db.model.*;
+import javax.annotation.PostConstruct;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 public class CollectionDAO implements ResourceDAO<CollectionDS> {
 
-	private final SessionFactory sessionFactory;
+	private SessionFactory sessionFactory;
 
-	public CollectionDAO() {
+	@Autowired
+	private DriverManagerDataSource ds;
+
+	@PostConstruct
+	private void initialize() {
 		try {
 			sessionFactory = new org.hibernate.cfg.Configuration()
 					.configure()
+					.setProperty("hibernate.connection.url", ds.getUrl())
+					.setProperty("hibernate.connection.username", ds.getUsername())
+					.setProperty("hibernate.connection.password", ds.getPassword())
 					.buildSessionFactory();
 		} catch (HibernateException ex) {
 			// Log the exception.

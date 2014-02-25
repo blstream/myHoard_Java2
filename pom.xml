@@ -4,9 +4,10 @@
 	<groupId>com.blstream.myhoard</groupId>
 	<artifactId>MyHoardJava2</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.0</version>
-	<name>MyHoard Maven Webapp</name>
+	<version>1.0-SNAPSHOT</version>
+	<name>MyHoardJava2 Maven Webapp</name>
 	<url>http://maven.apache.org</url>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>4.0.1.RELEASE</spring.version>
@@ -30,6 +31,12 @@
 			<version>5.1.28</version>
 		</dependency>
 
+<!--		<dependency>
+			<groupId>org.apache.tomcat.maven</groupId>
+			<artifactId>tomcat7-maven-plugin</artifactId>
+			<version>2.2</version>
+		</dependency>-->
+
 		<!-- Spring 3 dependencies -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -48,6 +55,12 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
  
 		<!-- Jackson JSON Mapper -->
 		<dependency>
@@ -56,16 +69,16 @@
 			<version>${jackson.version}</version>
 		</dependency>
 
+		<!-- Hibernate dependencies -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<version>4.3.1.Final</version>
 		</dependency>
 	</dependencies>
-
 	<build>
 		<finalName>MyHoard</finalName>
- 		<plugins>
+		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-eclipse-plugin</artifactId>
@@ -87,21 +100,11 @@
 				</configuration>
 			</plugin>
 
-			<plugin>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<webResources>
-						<resource>
-							<filtering>true</filtering>
-							<directory>src/main/webapp</directory>
-							<includes>
-								<include>version.html</include>
-							</includes>
-						</resource>
-					</webResources>
-				</configuration>
-			</plugin>
+<!--			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.2</version>
+			</plugin>-->
 		</plugins>
 	</build>
 </project>

@@ -3,6 +3,9 @@ package com.blstream.myhoard.biz.model;
 import java.util.Date;
 
 import com.blstream.myhoard.db.model.*;
+import java.util.HashSet;
+import java.util.Set;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 public class CollectionDTO {
 
@@ -10,7 +13,7 @@ public class CollectionDTO {
 	private String owner;
 	private String name;
 	private String description;
-	private String [] tags;
+	private Set<String> tags;
 	private int items_number;
 	private Date created_date;
 	private Date modified_date;
@@ -18,19 +21,20 @@ public class CollectionDTO {
 	public CollectionDTO() {
 		id = "0";	// by Integer.parseInt() nie rzucał wyjątku
 		items_number = 0;
-		modified_date = java.util.Calendar.getInstance().getTime();
-		created_date = (Date)modified_date.clone();
+		created_date = java.util.Calendar.getInstance().getTime();
+		modified_date = (Date)created_date.clone();
+		tags = new HashSet<>();
 	}
 
-	public CollectionDTO(String id, String owner, String name, String description, String [] tags, int items_number, Date created_date, Date modified_date) {
-	    this.id = id;
-	    this.owner = owner;
-	    this.name = name;
-	    this.description = description;
-	    this.tags = tags;
-	    this.items_number = items_number;
-	    this.modified_date = created_date;
-	    this.created_date = modified_date;
+	public CollectionDTO(String id, String owner, String name, String description, Set<String> tags, int itemsNumber, Date createdDate, Date modifiedDate) {
+		this.id = id;
+		this.owner = owner;
+		this.name = name;
+		this.description = description;
+		this.tags = tags;
+		this.items_number = itemsNumber;
+		this.created_date = createdDate;
+		this.modified_date = modifiedDate;
 	}
 
 	public String getId() {
@@ -65,48 +69,42 @@ public class CollectionDTO {
 		this.description = description;
 	}
 
-	public String [] getTags() {
+	public Set<String> getTags() {
 		return tags;
 	}
 
-	public void setTags(String [] tags) {
+	public void setTags(Set<String> tags) {
 		this.tags = tags;
 	}
 
-	public int getItemsNumber() {
+	public int getItems_number() {
 		return items_number;
 	}
 
-	public void setItemsNumber(int itemsNumber) {
-		this.items_number = itemsNumber;
+	public void setItems_number(int items_number) {
+		this.items_number = items_number;
 	}
 
-	public Date getCreatedDate() {
-		return modified_date;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.modified_date = createdDate;
-	}
-
-	public Date getModifiedDate() {
+	@JsonSerialize(using = CustomDateSerializer.class)
+	public Date getCreated_date() {
 		return created_date;
 	}
 
-	public void setModifiedDate(Date modifiedDate) {
-		this.created_date = modifiedDate;
+	public void setCreated_date(Date created_date) {
+		this.created_date = created_date;
+	}
+
+	@JsonSerialize(using = CustomDateSerializer.class)
+	public Date getModified_date() {
+		return modified_date;
+	}
+
+	public void setModified_date(Date modified_date) {
+		this.modified_date = modified_date;
 	}
 
 	public CollectionDS toCollectionDS() {
-	    StringBuffer result = new StringBuffer();
-	    for (int i = 0; i < tags.length; i++) {
-	        result.append( tags[i] );
-	       if (i != (tags.length-1)) {
-	           result.append ( "," );
-	       }
-	    }
-	    String tagsResult = result.toString();	    
-	    return new CollectionDS(Integer.parseInt(id), owner, name, description, tagsResult, items_number, modified_date, created_date);
+		return new CollectionDS(Integer.parseInt(id), owner, name, description, tags, items_number, created_date, modified_date);
 	}
 
 	public void updateObject(CollectionDTO object) {
@@ -123,6 +121,6 @@ public class CollectionDTO {
 	@Override
 	public String toString() {
 		return String.format("id: %d, owner: %s, name: %s, description: %s, tags: %s, itemsNumber: %d, createdDate: %s, modifiedDate: %s\n",
-			id, owner, name, description, tags, items_number, modified_date, created_date);
-	}	
+			id, owner, name, description, tags, getItems_number(), getCreated_date(), getModified_date());
+	}
 }

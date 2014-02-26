@@ -11,25 +11,26 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 public class CollectionDAO implements ResourceDAO<CollectionDS> {
 
-	private SessionFactory sessionFactory;
+	private static SessionFactory sessionFactory;
 
 	@Autowired
 	private DriverManagerDataSource ds;
 
 	@PostConstruct
 	private void initialize() {
-		try {
-			sessionFactory = new org.hibernate.cfg.Configuration()
-					.configure()
-					.setProperty("hibernate.connection.url", ds.getUrl())
-					.setProperty("hibernate.connection.username", ds.getUsername())
-					.setProperty("hibernate.connection.password", ds.getPassword())
-					.buildSessionFactory();
-		} catch (HibernateException ex) {
-			// Log the exception.
-			System.err.println("Initial SessionFactory creation failed." + ex);
-			throw new ExceptionInInitializerError(ex);
-		}
+		if (sessionFactory == null)
+			try {
+				sessionFactory = new org.hibernate.cfg.Configuration()
+						.configure()
+						.setProperty("hibernate.connection.url", ds.getUrl())
+						.setProperty("hibernate.connection.username", ds.getUsername())
+						.setProperty("hibernate.connection.password", ds.getPassword())
+						.buildSessionFactory();
+			} catch (HibernateException ex) {
+				// Log the exception.
+				System.err.println("Initial SessionFactory creation failed." + ex);
+				throw new ExceptionInInitializerError(ex);
+			}
 	}
 
 	@Override

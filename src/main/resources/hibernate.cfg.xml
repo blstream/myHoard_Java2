@@ -9,5 +9,6 @@
 		<property name="show_sql">true</property>
 		<property name="current_session_context_class">thread</property>
 		<mapping resource="CollectionDS.hbm.xml" />
+		<mapping resource="MediaDS.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>

@@ -8,22 +8,20 @@ import org.springframework.util.StringUtils;
 
 public class CollectionDS {
 
-	private int id;
+	private int id, itemsNumber;
 	private String owner;
 	private String name;
 	private String description;
 	private String tags;
-	private int itemsNumber;
 	private Date createdDate;
 	private Date modifiedDate;
 
 	public CollectionDS() {
-		itemsNumber = 0;
 		createdDate = java.util.Calendar.getInstance().getTime();
 		modifiedDate = (Date)createdDate.clone();
 	}
 
-	public CollectionDS(int id, String owner, String name, String description, Object tags, int itemsNumber, Date createdDate, Date modifiedDate) {
+	public CollectionDS(int id, String owner, String name, String description, Object tags, Date createdDate, Date modifiedDate) {
 		this.id = id;
 		this.owner = owner;
 		this.name = name;
@@ -36,7 +34,6 @@ public class CollectionDS {
 			this.tags = StringUtils.arrayToCommaDelimitedString(((HashSet<String>)tags).toArray());
 		else
 			throw new RuntimeException("tags error");
-		this.itemsNumber = itemsNumber;
 		this.createdDate = createdDate;
 		this.modifiedDate = modifiedDate;
 	}
@@ -47,6 +44,14 @@ public class CollectionDS {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public int getItemsNumber() {
+		return itemsNumber;
+	}
+
+	public void setItemsNumber(int itemsNumber) {
+		this.itemsNumber = itemsNumber;
 	}
 
 	public String getOwner() {
@@ -79,14 +84,6 @@ public class CollectionDS {
 
 	public void setTags(String tags) {
 		this.tags = tags;
-	}
-
-	public int getItemsNumber() {
-		return itemsNumber;
-	}
-
-	public void setItemsNumber(int itemsNumber) {
-		this.itemsNumber = itemsNumber;
 	}
 
 	public Date getCreatedDate() {
@@ -134,7 +131,6 @@ public class CollectionDS {
 				"\nname        : " + name +
 				"\ndescription : " + description +
 				"\ntags        : " + tags +
-				"\nitemsNumber : " + itemsNumber +
 				"\ncreatedDate : " + createdDate +
 				"\nmodifiedDate: " + modifiedDate;
 	}

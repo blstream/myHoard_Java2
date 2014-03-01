@@ -12,19 +12,23 @@
 
 
 	<a href="index.jsp?collections">Wylistuj kolekcje</a><br/>
+        <a href="index.jsp?medias">Wylistuj media</a><br/>
 
 <%
-	if (request.getParameter("collections") != null) {
+	if (request.getParameter("medias") != null) {
 	    
 	    MediaDAO mdao = new MediaDAO();
-	    if(mdao.equals(null))
+            for (MediaDS i :mdao.getList())
+                out.println("media " + i.getId() + " "+ i.getCreatedDate());
+	    /*if(mdao.equals(null))
 	        out.println("puste Media DAO");
 	    List<MediaDS> mediaDS = mdao.getList();
 		if (mediaDS==null)
 		    out.println("pusta lista");
 		else
-		    out.println(mediaDS.get(0).getCollection().toString());
-	    
+		    out.println(mediaDS.size());*/
+	  }
+          if (request.getParameter("collections") != null) {
 		CollectionDAO dao = new CollectionDAO();
 		out.println("\t<table border=\"1\">\n\t\t<tr><td>id</td><td>owner</td><td>name</td><td>description</td><td>tags</td><td>items_number</td><td>created_date</td><td>modified_date</td>");
 		for (CollectionDS i :dao.getList())

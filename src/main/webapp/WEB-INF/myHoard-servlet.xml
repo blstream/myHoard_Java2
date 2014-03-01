@@ -15,6 +15,10 @@
 	<context:annotation-config />
 
 	<context:component-scan base-package="com.blstream.myhoard.controller" />
+        
+	<bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" />
+ 
+	<bean id="MediaDAO" class="com.blstream.myhoard.db.dao.MediaDAO"/>       
 
 	<context:property-placeholder location="file:${catalina.home}/myhoard-conf/application.properties" />
  

@@ -1,8 +1,6 @@
 package com.blstream.myhoard.db.dao;
 
 import java.util.List;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public interface ResourceDAO<T> {
 
@@ -15,8 +13,5 @@ public interface ResourceDAO<T> {
 	public void update(T obj);
 
 	public void remove(int id);
-
-	@Autowired
-	public void setSessionFactory(SessionFactory sessionFactory);
 
 }

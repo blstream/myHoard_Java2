@@ -8,11 +8,12 @@ import org.springframework.util.StringUtils;
 
 public class CollectionDS {
 
-	private int id, itemsNumber;
+	private int id;
 	private String owner;
 	private String name;
 	private String description;
 	private String tags;
+	private int itemsNumber;
 	private Date createdDate;
 	private Date modifiedDate;
 
@@ -21,7 +22,7 @@ public class CollectionDS {
 		modifiedDate = (Date)createdDate.clone();
 	}
 
-	public CollectionDS(int id, String owner, String name, String description, Object tags, Date createdDate, Date modifiedDate) {
+	public CollectionDS(int id, String owner, String name, String description, Object tags, int itemsNumber, Date createdDate, Date modifiedDate) {
 		this.id = id;
 		this.owner = owner;
 		this.name = name;
@@ -34,6 +35,7 @@ public class CollectionDS {
 			this.tags = StringUtils.arrayToCommaDelimitedString(((HashSet<String>)tags).toArray());
 		else
 			throw new RuntimeException("tags error");
+		this.itemsNumber = itemsNumber;
 		this.createdDate = createdDate;
 		this.modifiedDate = modifiedDate;
 	}
@@ -44,14 +46,6 @@ public class CollectionDS {
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public int getItemsNumber() {
-		return itemsNumber;
-	}
-
-	public void setItemsNumber(int itemsNumber) {
-		this.itemsNumber = itemsNumber;
 	}
 
 	public String getOwner() {
@@ -82,6 +76,14 @@ public class CollectionDS {
 		return tags;
 	}
 
+	public int getItemsNumber() {
+		return itemsNumber;
+	}
+
+	public void setItemsNumber(int itemsNumber) {
+		this.itemsNumber = itemsNumber;
+	}
+
 	public void setTags(String tags) {
 		this.tags = tags;
 	}
@@ -107,8 +109,7 @@ public class CollectionDS {
 				owner,
 				name,
 				description,
-				tags != null ? new HashSet<>(Arrays.asList(tags.split(","))) : new HashSet<String>(),
-				itemsNumber,
+				tags != null ? new HashSet<>(Arrays.asList(tags.split(","))) : new HashSet<String>(), getItemsNumber(),
 				createdDate,
 				modifiedDate);
 	}
@@ -131,6 +132,7 @@ public class CollectionDS {
 				"\nname        : " + name +
 				"\ndescription : " + description +
 				"\ntags        : " + tags +
+				"\nitemsNumber : " + getItemsNumber() +
 				"\ncreatedDate : " + createdDate +
 				"\nmodifiedDate: " + modifiedDate;
 	}

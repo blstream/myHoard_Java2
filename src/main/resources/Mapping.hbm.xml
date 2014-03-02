@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+ "-//Hibernate/Hibernate Mapping DTD//EN"
+ "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"> 
+
+<hibernate-mapping package="com.blstream.myhoard.db.model">
+	<class name="CollectionDS" table="Collection">
+		<id name="id" type="int" column="id">
+			<generator class="native" />
+		</id>
+		<property name="owner" column="owner" type="string" />
+		<property name="name" type="string" />
+		<property name="description" type="string" />
+		<property name="tags" type="string" />
+		<property name="itemsNumber" insert="false" update="false" formula="(select count(m.collection) from Collection c left outer join Media m group by Collection.id)" />
+		<property name="createdDate" column="created_date" type="timestamp" />
+		<property name="modifiedDate" column="modified_date" type="timestamp" />
+	</class>
+
+	<class name="ItemDS" table="Item">
+		<id name="id" type="int" column="id">
+			<generator class="native" />
+		</id>
+		<property name="name" column = "name" type="string" />
+		<property name="description" type="string" />
+		<property name="latitude" type="float" />
+		<property name="longitude" type="float" />
+		<property name="quantity" type="int" />
+		<property name="createdDate" column="created_date" type="timestamp" />
+		<property name="modifiedDate" column="modified_date" type="timestamp" />
+		<property name="collection" type="int" />
+		<property name="owner" column="owner" type="string" />
+		<!--<many-to-one class="com.blstream.myhoard.db.model.CollectionDS" column="collection"--> 
+	</class>
+</hibernate-mapping>

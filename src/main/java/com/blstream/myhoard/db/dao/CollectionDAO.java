@@ -14,7 +14,6 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
 	public List<CollectionDS> getList() {
 		Session session = sessionFactory.getCurrentSession();
 		session.beginTransaction();
-//		List<CollectionDS> result = session.createQuery("select count() as itemsNumber from CollectionDS").list();
 		List<CollectionDS> result = session.createQuery("from CollectionDS").list();
 		session.getTransaction().commit();
 		return result;

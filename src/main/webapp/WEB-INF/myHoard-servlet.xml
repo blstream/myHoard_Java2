@@ -31,9 +31,10 @@
 			<props>
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
 				<prop key="hibernate.current_session_context_class">thread</prop>
+				<prop key="hibernate.show_sql">true</prop>
 			</props>
 		</property>
-		<property name="mappingResources" value="CollectionDS.hbm.xml" />
+		<property name="mappingResources" value="Mapping.hbm.xml" />
 	</bean>
 
 	<bean id="txManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
@@ -47,6 +48,10 @@
 	</bean>
 
 	<bean id="CollectionDTOValidator" class="com.blstream.myhoard.validation.CollectionDTOValidator" />
+
+	<bean id="ItemDAO" class="com.blstream.myhoard.db.dao.ItemDAO">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
 
 	<mvc:annotation-driven />
 </beans>

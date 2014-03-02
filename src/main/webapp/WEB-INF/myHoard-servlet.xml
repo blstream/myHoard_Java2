@@ -53,5 +53,9 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
+	<bean id="MediaDAO" class="com.blstream.myhoard.db.dao.MediaDAO">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
 	<mvc:annotation-driven />
 </beans>

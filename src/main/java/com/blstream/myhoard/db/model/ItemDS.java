@@ -15,7 +15,7 @@ public class ItemDS {
 	private List<Integer> media;
 	private Date createdDate;
 	private Date modifiedDate;
-	private int collectionId;
+	private int collection;
 	private String owner;
 
 	public ItemDS() {}
@@ -100,12 +100,12 @@ public class ItemDS {
 		this.modifiedDate = modifiedDate;
 	}
 
-	public int getCollectionId() {
-		return collectionId;
+	public int getCollection() {
+		return collection;
 	}
 
-	public void setCollectionId(int collectionId) {
-		this.collectionId = collectionId;
+	public void setCollection(int collection) {
+		this.collection = collection;
 	}
 
 	public String getOwner() {

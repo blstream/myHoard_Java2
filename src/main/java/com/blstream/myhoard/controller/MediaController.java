@@ -25,13 +25,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.*;
 /**
  *
  * @author gohilukk
  */
 @Controller
 @RequestMapping(value = "/media")
-public class MediaController {
+public class MediaController extends HttpServlet {
 
     @Autowired
     private MediaService mediaService;
@@ -58,7 +59,7 @@ public class MediaController {
     @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody
     MediaDTO addMedia(MultipartFile file) throws IOException {
-        if (file.getSize() == 0) {
+        if (file.getSize() == 0 || !file.getContentType().contains("image")) {
             throw new MyHoardException(400);
         }
         MediaDTO media = new MediaDTO();
@@ -87,7 +88,7 @@ public class MediaController {
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
     MediaDTO updateMedia(@PathVariable String id, MultipartFile file) {
-        if (file.getSize() == 0) {
+        if (file.getSize() == 0 || !file.getContentType().contains("image")) {
             throw new MyHoardException(400);
         }
         try {
@@ -107,6 +108,22 @@ public class MediaController {
     byte[] getThumbnail(@PathVariable String id) {
         try {
             return mediaService.get(Integer.parseInt(id)).getThumbnail();
+        } catch (Exception ex) {
+            throw new MyHoardException(300);
+        }
+    }
+
+    @RequestMapping(value = "/{id}/thumbnailShow", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody
+    void getThumbnailShow(@PathVariable String id, HttpServletResponse response) {
+        try {
+            byte[] imageBytes = mediaService.get(Integer.parseInt(id)).getThumbnail();
+
+            response.setContentType("image/jpeg");
+            response.setContentLength(imageBytes.length);
+
+            response.getOutputStream().write(imageBytes);
         } catch (Exception ex) {
             throw new MyHoardException(300);
         }

@@ -39,6 +39,7 @@
 				<value>CollectionDS.hbm.xml</value>
 				<value>ItemDS.hbm.xml</value>
 				<value>MediaDS.hbm.xml</value>
+				<value>TagDS.hbm.xml</value>
 			</list>
 		</property>
 	</bean>

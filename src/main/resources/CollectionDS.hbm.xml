@@ -10,6 +10,10 @@
 		</id>
 		<property name="name" type="string" />
 		<property name="description" type="string" />
+                <set name="tags" table="CollectionTag" cascade="all">
+                    <key column="collection" />
+                    <many-to-many column="tag"  class="TagDS" />
+                </set>
 		<!--<property name="tags" type="string" />-->
 <!--		<property name="itemsNumber" column="items_number" type="int" />-->
 		<property name="createdDate" column="created_date" type="timestamp" />

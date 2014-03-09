@@ -1,10 +1,10 @@
 package com.blstream.myhoard.db.model;
 
 import com.blstream.myhoard.biz.model.CollectionDTO;
-import java.util.Arrays;
+import com.blstream.myhoard.biz.model.TagDTO;
 import java.util.Date;
 import java.util.HashSet;
-import org.springframework.util.StringUtils;
+import java.util.Set;
 
 public class CollectionDS {
 
@@ -12,7 +12,7 @@ public class CollectionDS {
     private String owner;
     private String name;
     private String description;
-    private String tags;
+    private Set<TagDS> tags = new HashSet<>(0);
     private int itemsNumber;
     private Date createdDate;
     private Date modifiedDate;
@@ -22,6 +22,17 @@ public class CollectionDS {
         modifiedDate = (Date) createdDate.clone();
     }
 
+    public CollectionDS(int id, String owner, String name, String description,Set<TagDS> tags, long itemsNumber, Date createdDate, Date modifiedDate) {
+        this.id = id;
+        this.owner = owner;
+        this.name = name;
+        this.description = description;
+        this.tags = tags;
+        this.itemsNumber = (int) itemsNumber;
+        this.createdDate = createdDate;
+        this.modifiedDate = modifiedDate;
+    }
+    
     public CollectionDS(int id, String owner, String name, String description, long itemsNumber, Date createdDate, Date modifiedDate) {
         this.id = id;
         this.owner = owner;
@@ -64,7 +75,7 @@ public class CollectionDS {
         this.description = description;
     }
 
-    public String getTags() {
+    public Set<TagDS> getTags() {
         return tags;
     }
 
@@ -76,7 +87,7 @@ public class CollectionDS {
         this.itemsNumber = itemsNumber;
     }
 
-    public void setTags(String tags) {
+    public void setTags(Set<TagDS> tags) {
         this.tags = tags;
     }
 
@@ -97,11 +108,16 @@ public class CollectionDS {
     }
 
     public CollectionDTO toCollectionDTO() {
+        Set<TagDTO> set = new HashSet<>(tags.size());
+        for (TagDS i : tags)
+               set.add(i.toTagTO());
+            
         return new CollectionDTO(Integer.toString(id),
                 owner,
                 name,
                 description,
-                tags != null ? new HashSet<>(Arrays.asList(tags.split(","))) : new HashSet<String>(), getItemsNumber(),
+                set,
+                getItemsNumber(),
                 createdDate,
                 modifiedDate);
     }

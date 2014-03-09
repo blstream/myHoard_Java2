@@ -1,10 +1,13 @@
 package com.blstream.myhoard.biz.model;
 
+import com.blstream.myhoard.biz.exception.MyHoardException;
 import java.util.Date;
 
 import com.blstream.myhoard.db.model.*;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 public class CollectionDTO {
@@ -13,7 +16,7 @@ public class CollectionDTO {
     private String owner;
     private String name;
     private String description;
-    private Set<String> tags;
+    private Set<TagDTO> tags;
     private int items_number;
     private Date created_date;
     private Date modified_date;
@@ -26,7 +29,7 @@ public class CollectionDTO {
         tags = new HashSet<>();
     }
 
-    public CollectionDTO(String id, String owner, String name, String description, Set<String> tags, int itemsNumber, Date createdDate, Date modifiedDate) {
+    public CollectionDTO(String id, String owner, String name, String description, Set<TagDTO> tags, int itemsNumber, Date createdDate, Date modifiedDate) {
         this.id = id;
         this.owner = owner;
         this.name = name;
@@ -68,12 +71,13 @@ public class CollectionDTO {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    public Set<String> getTags() {
+    @JsonSerialize(using = CustomTagSerializer.class)
+    public Set<TagDTO> getTags() {
         return tags;
     }
 
-    public void setTags(Set<String> tags) {
+    @JsonDeserialize(using = CustomTagDeserializer.class)
+    public void setTags(Set<TagDTO> tags) {
         this.tags = tags;
     }
 
@@ -104,7 +108,14 @@ public class CollectionDTO {
     }
 
     public CollectionDS toCollectionDS() {
-        return new CollectionDS(Integer.parseInt(id), owner, name, description, items_number, created_date, modified_date);
+        Set<TagDS> set = new HashSet<>(tags.size());
+        for (TagDTO i : tags)
+            try {
+                set.add(i.toTagDS());
+            } catch (SQLException ex) {
+                throw new MyHoardException(ex.getErrorCode(), ex.getSQLState());
+            }
+        return new CollectionDS(Integer.parseInt(id), owner, name, description, set, items_number, created_date, modified_date);
     }
 
     public void updateObject(CollectionDTO object) {

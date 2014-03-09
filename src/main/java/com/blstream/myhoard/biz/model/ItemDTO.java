@@ -1,36 +1,37 @@
-package com.blstream.myhoard.db.model;
+package com.blstream.myhoard.biz.model;
 
 import com.blstream.myhoard.biz.exception.MyHoardException;
-import com.blstream.myhoard.biz.model.ItemDTO;
-import com.blstream.myhoard.biz.model.Location;
-import com.blstream.myhoard.biz.model.MediaDTO;
+import com.blstream.myhoard.db.model.CollectionDS;
+import com.blstream.myhoard.db.model.ItemDS;
+import com.blstream.myhoard.db.model.MediaDS;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-public class ItemDS {
+public class ItemDTO {
 
-    private int id;
+    private String id = "0";
     private String name;
     private String description;
-    private float latitude;
-    private float longitude;
+    private Location location;
     private int quantity;
-    private Set<MediaDS> media = new HashSet<>(0);
+    private Set<MediaDTO> media = new HashSet<>(0);
     private Date createdDate;
     private Date modifiedDate;
-    private CollectionDS collection;
+    private String collection;
     private String owner;
 
-    public ItemDS() {}
+    public ItemDTO() {}
 
-    public ItemDS(int id, String name, String description, float latitude, float longitude, int quantity, Set<MediaDS> media, Date createdDate, Date modifiedDate, CollectionDS collection, String owner) {
+    public ItemDTO(String id, String name, String description, Location location, int quantity, Set<MediaDTO> media, Date createdDate, Date modifiedDate, String collection, String owner) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.location = location;
         this.quantity = quantity;
         this.media = media;
         this.createdDate = createdDate;
@@ -39,11 +40,11 @@ public class ItemDS {
         this.owner = owner;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -63,20 +64,12 @@ public class ItemDS {
         this.description = description;
     }
 
-    public float getLatitude() {
-        return latitude;
+    public Location getLocation() {
+        return location;
     }
 
-    public void setLatitude(float latitude) {
-        this.latitude = latitude;
-    }
-
-    public float getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(float longitude) {
-        this.longitude = longitude;
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     public int getQuantity() {
@@ -87,38 +80,46 @@ public class ItemDS {
         this.quantity = quantity;
     }
 
-    public Set<MediaDS> getMedia() {
+    @JsonSerialize(using = CustomMediaSerializer.class)
+    public Set<MediaDTO> getMedia() {
         return media;
     }
 
-    public void setMedia(Set<MediaDS> media) {
+    @JsonDeserialize(using = CustomMediaDeserializer.class)
+    public void setMedia(Set<MediaDTO> media) {
         if (media == null)
             this.media = new HashSet<>(0);
         else
             this.media = media;
     }
 
+    @JsonSerialize(using = CustomDateSerializer.class)
+    @JsonProperty(value = "created_date")
     public Date getCreatedDate() {
         return createdDate;
     }
 
+    @JsonProperty(value = "created_date")
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
 
+    @JsonSerialize(using = CustomDateSerializer.class)
+    @JsonProperty(value = "modified_date")
     public Date getModifiedDate() {
         return modifiedDate;
     }
 
+    @JsonProperty(value = "modified_date")
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
 
-    public CollectionDS getCollection() {
+    public String getCollection() {
         return collection;
     }
 
-    public void setCollection(CollectionDS collection) {
+    public void setCollection(String collection) {
         this.collection = collection;
     }
 
@@ -130,23 +131,26 @@ public class ItemDS {
         this.owner = owner;
     }
 
-    public ItemDTO toItemDTO() {
-        Set<MediaDTO> set = new HashSet<>(media.size());
-        for (MediaDS i : media)
+    public ItemDS toItemDS() {
+        Set<MediaDS> set = new HashSet<>(media.size());
+        CollectionDS c = new CollectionDS();
+        for (MediaDTO i : media)
             try {
-                set.add(i.toMediaDTO());
+                set.add(i.toMediaDS());
             } catch (SQLException ex) {
                 throw new MyHoardException(ex.getErrorCode(), ex.getSQLState());
             }
-        return new ItemDTO(Integer.toString(id),
+        c.setId(Integer.parseInt(collection));
+        return new ItemDS(Integer.parseInt(id),
                 name,
                 description,
-                new Location(latitude, longitude),
+                location.getLat(),
+                location.getLng(),
                 quantity,
                 set,
                 createdDate,
                 modifiedDate,
-                Integer.toString(collection.getId()),
+                c,
                 owner);
     }
 }

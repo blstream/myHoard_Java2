@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.blstream.myhoard.biz.service;
 
 import com.blstream.myhoard.biz.model.MediaDTO;
@@ -24,14 +23,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class MediaService implements ResourceService<MediaDTO> {
 
     @Autowired
-    private MediaDAO mediaDAO;    
-    
+    private MediaDAO mediaDAO;
+
     @Override
     public List<MediaDTO> getList() {
         try {
             List<MediaDTO> result = new ArrayList<>();
-            for (MediaDS i : mediaDAO.getList())
+            for (MediaDS i : mediaDAO.getList()) {
                 result.add(i.toMediaDTO());
+            }
             return result;
         } catch (SQLException ex) {
             Logger.getLogger(MediaService.class.getName()).log(Level.SEVERE, null, ex);
@@ -76,5 +76,5 @@ public class MediaService implements ResourceService<MediaDTO> {
         mediaDAO.get(id); // jezeli ne istnieje obiekt rzuci to wyjatkiem indexoutofbounds
         mediaDAO.remove(id);
     }
-    
+
 }

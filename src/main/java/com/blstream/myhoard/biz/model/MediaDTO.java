@@ -21,28 +21,28 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * @author gohilukk
  */
 public class MediaDTO {
- 
+
     private static final int IMG_WIDTH = 30;
-    private static final int IMG_HEIGHT = 30;        
-    
+    private static final int IMG_HEIGHT = 30;
+
     private String id;
     @JsonIgnore
-    private byte [] file;
+    private byte[] file;
     @JsonIgnore
-    private byte [] thumbnail;
+    private byte[] thumbnail;
     @JsonIgnore
     private String collection;
     @JsonIgnore
     private Date created_date;
 
-    public MediaDTO () throws IOException {
-	// by Integer.parseInt() nie rzucał wyjątku w metodia toMediaDS,
+    public MediaDTO() throws IOException {
+        // by Integer.parseInt() nie rzucał wyjątku w metodia toMediaDS,
         // id zostanie zmienione jak obiekt trafi do bazy danych
         id = "0";
         created_date = java.util.Calendar.getInstance().getTime();
     }
-    
-    public MediaDTO(String id, byte [] file, byte [] thumbnail, String collection, Date createdDate) {
+
+    public MediaDTO(String id, byte[] file, byte[] thumbnail, String collection, Date createdDate) {
         this.id = id;
         this.file = file;
         this.thumbnail = thumbnail;
@@ -58,19 +58,19 @@ public class MediaDTO {
         this.id = id;
     }
 
-    public byte [] getFile() {
+    public byte[] getFile() {
         return file;
     }
 
-    public void setFile(byte [] file) {
+    public void setFile(byte[] file) {
         this.file = file;
     }
 
-    public byte [] getThumbnail() {
+    public byte[] getThumbnail() {
         return thumbnail;
     }
 
-    public void setThumbnail(byte [] thumbnail) {
+    public void setThumbnail(byte[] thumbnail) {
         this.thumbnail = thumbnail;
     }
 
@@ -92,23 +92,22 @@ public class MediaDTO {
 
     public MediaDS toMediaDS() throws SQLException {
         return new MediaDS(Integer.parseInt(id),
-                            file == null ? null : new SerialBlob(file),
-                            thumbnail == null ? null : new SerialBlob(thumbnail),
-                            Integer.parseInt(collection),
-                            created_date);
+                file == null ? null : new SerialBlob(file),
+                thumbnail == null ? null : new SerialBlob(thumbnail),
+                created_date);
     }
 
     public void resizeFile() {
-        if (file!=null) {
+        if (file != null) {
             try {
                 InputStream in = new ByteArrayInputStream(this.file);
                 BufferedImage originalImage = ImageIO.read(in);
-                int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+                int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
                 BufferedImage resizedImage = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, type);
                 Graphics2D g = resizedImage.createGraphics();
                 g.drawImage(originalImage, 0, 0, IMG_WIDTH, IMG_HEIGHT, null);
                 g.dispose();
-                
+
                 ByteArrayOutputStream b = new ByteArrayOutputStream();
                 ImageIO.write(resizedImage, "jpg", b);
                 this.thumbnail = b.toByteArray();
@@ -117,6 +116,5 @@ public class MediaDTO {
             }
         }
     }
-    
-    
+
 }

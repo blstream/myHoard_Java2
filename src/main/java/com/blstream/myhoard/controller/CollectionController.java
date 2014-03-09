@@ -25,72 +25,77 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @RequestMapping(value = "/collections")
 public class CollectionController {
 
-	@Autowired
-	private CollectionService collectionService;
-	
-        @Autowired
-        CollectionDTOValidator collectionDTOValidator;
-    
-	@RequestMapping(method = RequestMethod.GET)
-	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody List<CollectionDTO> getCollections() {
-		return collectionService.getList();
-	}
+    @Autowired
+    private CollectionService collectionService;
 
-	@RequestMapping(method = RequestMethod.POST)
-	@ResponseStatus(HttpStatus.CREATED)
-	public @ResponseBody CollectionDTO addCollection(@RequestBody CollectionDTO collection, BindingResult result) {
+    @Autowired
+    CollectionDTOValidator collectionDTOValidator;
+
+    @RequestMapping(method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody
+    List<CollectionDTO> getCollections() {
+        return collectionService.getList();
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public @ResponseBody
+    CollectionDTO addCollection(@RequestBody CollectionDTO collection, BindingResult result) {
         collectionDTOValidator.validate(collection, result);
         if (result.hasErrors()) {
-            throw new MyHoardException(400);    
-        }	    
-		try {
-			collectionService.create(collection);
-			return collection;
-		} catch (Exception ex) {
-			throw new MyHoardException(400);
-		}
-	}
-
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody CollectionDTO getCollection(@PathVariable String id) {
-		try {
-			return collectionService.get(Integer.parseInt(id));
-		} catch (Exception ex) {
-			throw new MyHoardException(300);
-		}
-	}
-
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody CollectionDTO updateCollection(@PathVariable String id, @RequestBody CollectionDTO collection, BindingResult result) {
-	    collectionDTOValidator.validate(collection, result);
-        if (result.hasErrors()) {
-            throw new MyHoardException(400);	
+            throw new MyHoardException(400);
         }
-		try {
-			collection.setId(id);
-			collectionService.update(collection);
-			return collection;
-		} catch (Exception ex) {
-			throw new MyHoardException(111);
-		}
-	}
+        try {
+            collectionService.create(collection);
+            return collection;
+        } catch (Exception ex) {
+            throw new MyHoardException(400);
+        }
+    }
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void removeCollection(@PathVariable String id) {
-		try {
-			collectionService.remove(Integer.parseInt(id));
-		} catch (Exception ex) {
-			throw new MyHoardException(400);
-		}
-	}
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody
+    CollectionDTO getCollection(@PathVariable String id) {
+        try {
+            return collectionService.get(Integer.parseInt(id));
+        } catch (Exception ex) {
+            throw new MyHoardException(300);
+        }
+    }
 
-	@ExceptionHandler(MyHoardException.class)
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public @ResponseBody ErrorCode returnCode(MyHoardException exception) {
-		return new ErrorCode(exception.getError_code());
-	}
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody
+    CollectionDTO updateCollection(@PathVariable String id, @RequestBody CollectionDTO collection, BindingResult result) {
+        collectionDTOValidator.validate(collection, result);
+        if (result.hasErrors()) {
+            throw new MyHoardException(400);
+        }
+        try {
+            collection.setId(id);
+            collectionService.update(collection);
+            return collection;
+        } catch (Exception ex) {
+            throw new MyHoardException(111);
+        }
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeCollection(@PathVariable String id) {
+        try {
+            collectionService.remove(Integer.parseInt(id));
+        } catch (Exception ex) {
+            throw new MyHoardException(400);
+        }
+    }
+
+    @ExceptionHandler(MyHoardException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public @ResponseBody
+    ErrorCode returnCode(MyHoardException exception) {
+        return new ErrorCode(exception.getErrorCode());
+    }
 }

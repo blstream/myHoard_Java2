@@ -6,17 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public interface ResourceDAO<T> {
 
-	public List<T> getList();
+    public List<T> getList();
 
-	public T get(int id);
+    public T get(int id);
 
-	public void create(T obj);
+    public void create(T obj);
 
-	public void update(T obj);
+    public void update(T obj);
 
-	public void remove(int id);
+    public void remove(int id);
 
-	@Autowired
-	public void setSessionFactory(SessionFactory sessionFactory);
+    @Autowired
+    public void setSessionFactory(SessionFactory sessionFactory);
 
 }

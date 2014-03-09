@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.blstream.myhoard.biz.exception;
 
 /**
@@ -12,22 +11,37 @@ package com.blstream.myhoard.biz.exception;
  */
 public class MyHoardException extends RuntimeException {
 
-	private int error_code;
+    private int errorCode;
+    private String errorMsg;
 
-	public MyHoardException() {
-		super(null, null);
-	}
+    public MyHoardException() {
+        super(null, null);
+    }
 
-	public MyHoardException(int errorCode) {
-		super(null, null);
-		this.error_code = errorCode;
-	}
+    public MyHoardException(int errorCode) {
+        super(null, null);
+        this.errorCode = errorCode;
+    }
 
-	public int getError_code() {
-		return error_code;
-	}
+    public MyHoardException(int errorCode, String errorMsg) {
+        super(null, null);
+        this.errorCode = errorCode;
+        this.errorMsg = errorMsg;
+    }
 
-	public void setError_code(int error_code) {
-		this.error_code = error_code;
-	}
+    public int getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(int error_code) {
+        this.errorCode = error_code;
+    }
+
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
+    }
 }

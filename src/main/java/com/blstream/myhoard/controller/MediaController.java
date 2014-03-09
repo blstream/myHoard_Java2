@@ -116,6 +116,6 @@ public class MediaController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public @ResponseBody
     ErrorCode returnCode(MyHoardException exception) {
-        return new ErrorCode(exception.getError_code());
+        return new ErrorCode(exception.getErrorCode());
     }
 }

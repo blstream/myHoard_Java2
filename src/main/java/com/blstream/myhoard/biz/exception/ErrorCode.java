@@ -3,28 +3,44 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.blstream.myhoard.biz.exception;
 
-/**
- *
- * @author jklimaszewski
- */
+import org.codehaus.jackson.annotate.JsonProperty;
+
 public class ErrorCode {
 
-	private int error_code;
+    private int errorCode;
+    private String errorReason;
 
-	public ErrorCode() {}
+    public ErrorCode() {
+    }
 
-	public ErrorCode(int errorCode) {
-		this.error_code = errorCode;
-	}
+    public ErrorCode(int errorCode) {
+        this.errorCode = errorCode;
+    }
 
-	public int getError_code() {
-		return error_code;
-	}
+    public ErrorCode(int errorCode, String errorReason) {
+        this.errorCode = errorCode;
+        this.errorReason = errorReason;
+    }
 
-	public void setError_code(int error_code) {
-		this.error_code = error_code;
-	}
+    @JsonProperty(value = "error_code")
+    public int getErrorCode() {
+        return errorCode;
+    }
+
+    @JsonProperty(value = "error_code")
+    public void setErrorCode(int error_code) {
+        this.errorCode = error_code;
+    }
+
+    @JsonProperty(value = "error_reason")
+    public String getErrorReason() {
+        return errorReason;
+    }
+
+    @JsonProperty(value = "error_reason")
+    public void setErrorReason(String errorReason) {
+        this.errorReason = errorReason;
+    }
 }

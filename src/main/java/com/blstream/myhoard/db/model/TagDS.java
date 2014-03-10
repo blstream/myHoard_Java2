@@ -41,4 +41,8 @@ public class TagDS {
     public boolean equals(Object o) {
         return (o == this) || (o instanceof TagDS && tag != null && tag.equals(((TagDS)o).tag));
     }
+
+    public String toString() {
+        return tag;
+    }
 }

@@ -53,9 +53,16 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
     public void update(CollectionDS obj) {
         CollectionDS object = get(obj.getId());
         object.updateObject(obj);
-
+        List<String> tags = new ArrayList<>();
+        for (TagDS i : obj.getTags())
+            tags.add(i.getTag());
+        
         Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
+        Set<TagDS> result = new HashSet<>((List<TagDS>)session.createQuery("from TagDS where tag in (:tags)").setParameterList("tags", tags).list());
+        object.getTags().removeAll(result);
+        result.addAll(object.getTags());
+        object.setTags(result);
         object.setModifiedDate(Calendar.getInstance().getTime());
         session.update(object);
         session.getTransaction().commit();

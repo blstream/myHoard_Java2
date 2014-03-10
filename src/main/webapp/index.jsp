@@ -4,7 +4,7 @@
 <%@page import="org.hibernate.SessionFactory, org.hibernate.Session" %>
 <%@page import="com.blstream.myhoard.db.dao.*" %>
 <%@page import="com.blstream.myhoard.db.model.*" %>
-<%@page import="java.util.List" %>
+<%@page import="java.util.List, java.util.Arrays" %>
 <!DOCTYPE html>
 <html>
     <body>

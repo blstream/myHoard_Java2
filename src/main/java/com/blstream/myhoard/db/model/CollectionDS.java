@@ -22,7 +22,7 @@ public class CollectionDS {
         modifiedDate = (Date) createdDate.clone();
     }
 
-    public CollectionDS(int id, String owner, String name, String description,Set<TagDS> tags, long itemsNumber, Date createdDate, Date modifiedDate) {
+    public CollectionDS(int id, String owner, String name, String description, Set<TagDS> tags, long itemsNumber, Date createdDate, Date modifiedDate) {
         this.id = id;
         this.owner = owner;
         this.name = name;

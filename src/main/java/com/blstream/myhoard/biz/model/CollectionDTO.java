@@ -110,11 +110,7 @@ public class CollectionDTO {
     public CollectionDS toCollectionDS() {
         Set<TagDS> set = new HashSet<>(tags.size());
         for (TagDTO i : tags)
-            try {
-                set.add(i.toTagDS());
-            } catch (SQLException ex) {
-                throw new MyHoardException(ex.getErrorCode(), ex.getSQLState());
-            }
+            set.add(i.toTagDS());
         return new CollectionDS(Integer.parseInt(id), owner, name, description, set, items_number, created_date, modified_date);
     }
 

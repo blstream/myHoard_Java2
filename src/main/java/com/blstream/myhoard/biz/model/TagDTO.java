@@ -25,16 +25,16 @@ public class TagDTO {
 
     @JsonIgnore
     private String id;
-    
+
     private String tag;
 
-    public TagDTO() throws IOException {
+    public TagDTO() {
         // by Integer.parseInt() nie rzucał wyjątku w metodia toMediaDS,
         // id zostanie zmienione jak obiekt trafi do bazy danych
         id = "0";
     }
 
-    public TagDTO(String id, String Tag) {
+    public TagDTO(String id, String tag) {
         this.id = id;
         this.tag = tag;
     }
@@ -47,7 +47,6 @@ public class TagDTO {
         this.id = id;
     }
 
-    
     public String getTag() {
         return tag;
     }
@@ -56,9 +55,7 @@ public class TagDTO {
         this.tag = tag;
     }
 
-    public TagDS toTagDS() throws SQLException {
-        
-        return new TagDS(Integer.parseInt(id),
-                tag);
+    public TagDS toTagDS() {
+        return new TagDS(Integer.parseInt(id), tag);
     }
 }

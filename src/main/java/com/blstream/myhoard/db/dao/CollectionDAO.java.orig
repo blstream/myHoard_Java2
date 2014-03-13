@@ -9,8 +9,12 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 import org.hibernate.SessionFactory;
+<<<<<<< HEAD
 import org.springframework.transaction.annotation.Transactional;
+=======
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+>>>>>>> 6d66a8be6ee3d3eb18d6477a9417ecbb36ab65ab
 
 @Transactional
 public class CollectionDAO implements ResourceDAO<CollectionDS> {

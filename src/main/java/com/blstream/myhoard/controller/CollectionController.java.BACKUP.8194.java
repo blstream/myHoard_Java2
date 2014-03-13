@@ -26,8 +26,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @RequestMapping(value = "/collections")
 public class CollectionController {
 
+<<<<<<< HEAD
 //    @Autowired
     private ResourceService<CollectionDTO> collectionService;
+=======
+
+    @Autowired
+    private CollectionService collectionService;
+>>>>>>> 6d66a8be6ee3d3eb18d6477a9417ecbb36ab65ab
 
     @Autowired
     CollectionDTOValidator collectionDTOValidator;

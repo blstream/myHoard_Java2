@@ -70,7 +70,6 @@ public class CollectionController {
         }
     }
 
-
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody

@@ -1,4 +1,5 @@
 <%@page contentType="text/html; charset=UTF-8" %>
+
 <%@page import="org.springframework.context.ApplicationContext" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 <%@page import="org.hibernate.SessionFactory, org.hibernate.Session" %>

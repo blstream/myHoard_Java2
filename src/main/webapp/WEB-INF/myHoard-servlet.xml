@@ -15,16 +15,21 @@
 
 	<context:annotation-config />
 
+	<context:annotation-config />
+
 	<context:component-scan base-package="com.blstream.myhoard.controller" />
 
 	<context:property-placeholder location="file:${catalina.home}/myhoard-conf/application.properties" />
  
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+
 		<property name="url" value="${db.url}" />
 		<property name="username" value="${db.username}" />
 		<property name="password" value="${db.password}" />
 	</bean>
+
 
 	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
@@ -49,7 +54,6 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
-	<bean id="CollectionDTOValidator" class="com.blstream.myhoard.validation.CollectionDTOValidator" />
 
 	<bean id="collectionDAO" class="com.blstream.myhoard.db.dao.CollectionDAO">
 		<property name="sessionFactory" ref="sessionFactory" />
@@ -78,7 +82,12 @@
 		<property name="collectionService" ref="collectionService" />
 	</bean>
 
+
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+
+	<bean id="CollectionDAO" class="com.blstream.myhoard.db.dao.CollectionDAO" />
+
+        <bean id="CollectionDTOValidator" class="com.blstream.myhoard.validation.CollectionDTOValidator" />
 
 	<mvc:annotation-driven />
 

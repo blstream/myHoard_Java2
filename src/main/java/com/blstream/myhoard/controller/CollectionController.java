@@ -25,34 +25,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @RequestMapping(value = "/collections")
 public class CollectionController {
 
-<<<<<<< HEAD
-	@Autowired
-	private CollectionService collectionService;
-	
-        @Autowired
-        CollectionDTOValidator collectionDTOValidator;
-    
-	@RequestMapping(method = RequestMethod.GET)
-	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody List<CollectionDTO> getCollections() {
-		return collectionService.getList();
-	}
 
-	@RequestMapping(method = RequestMethod.POST)
-	@ResponseStatus(HttpStatus.CREATED)
-	public @ResponseBody CollectionDTO addCollection(@RequestBody CollectionDTO collection, BindingResult result) {
-        collectionDTOValidator.validate(collection, result);
-        if (result.hasErrors()) {
-            throw new MyHoardException(400);    
-        }	    
-		try {
-			collectionService.create(collection);
-			return collection;
-		} catch (Exception ex) {
-			throw new MyHoardException(400);
-		}
-	}
-=======
     @Autowired
     private CollectionService collectionService;
 
@@ -81,7 +54,6 @@ public class CollectionController {
             throw new MyHoardException(400);
         }
     }
->>>>>>> origin/sprint2
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
@@ -94,23 +66,7 @@ public class CollectionController {
         }
     }
 
-<<<<<<< HEAD
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody CollectionDTO updateCollection(@PathVariable String id, @RequestBody CollectionDTO collection, BindingResult result) {
-	    collectionDTOValidator.validate(collection, result);
-        if (result.hasErrors()) {
-            throw new MyHoardException(400);	
-        }
-		try {
-			collection.setId(id);
-			collectionService.update(collection);
-			return collection;
-		} catch (Exception ex) {
-			throw new MyHoardException(111);
-		}
-	}
-=======
+
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
@@ -127,7 +83,6 @@ public class CollectionController {
             throw new MyHoardException(111);
         }
     }
->>>>>>> origin/sprint2
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)

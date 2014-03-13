@@ -21,16 +21,14 @@
 	<context:property-placeholder location="file:${catalina.home}/myhoard-conf/application.properties" />
  
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-<<<<<<< HEAD
-=======
+
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
->>>>>>> origin/sprint2
+
 		<property name="url" value="${db.url}" />
 		<property name="username" value="${db.username}" />
 		<property name="password" value="${db.password}" />
 	</bean>
-<<<<<<< HEAD
-=======
+
 
 	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
@@ -55,7 +53,6 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
-	<bean id="CollectionDTOValidator" class="com.blstream.myhoard.validation.CollectionDTOValidator" />
 
 	<bean id="collectionDAO" class="com.blstream.myhoard.db.dao.CollectionDAO">
 		<property name="sessionFactory" ref="sessionFactory" />
@@ -78,7 +75,7 @@
 	<bean id="itemController" class="com.blstream.myhoard.controller.ItemController">
 		<property name="itemService" ref="itemService" />
 	</bean>
->>>>>>> origin/sprint2
+
 
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
 

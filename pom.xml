@@ -1,14 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-<<<<<<< HEAD
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.blstream.myhoard</groupId>
-	<artifactId>MyHoardJava2</artifactId>
-	<packaging>war</packaging>
-	<version>1.0.0</version>
-	<name>MyHoardJava2 Maven Webapp</name>
-	<url>http://maven.apache.org</url>
-=======
+
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.blstream.myhoard</groupId>
@@ -17,7 +8,6 @@
     <version>2.0.0</version>
     <name>MyHoardJava2 Maven Webapp</name>
     <url>http://maven.apache.org</url>
->>>>>>> origin/sprint2
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -100,22 +90,7 @@
             <scope>provided</scope>
         </dependency>
 	</dependencies>
-<<<<<<< HEAD
-	<build>
-		<finalName>ROOT</finalName>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.9</version>
-				<configuration>
-					<downloadSources>true</downloadSources>
-					<downloadJavadocs>false</downloadJavadocs>
-					<wtpversion>2.0</wtpversion>
-				</configuration>
-			</plugin>
-=======
->>>>>>> origin/sprint2
+
 
     <build>
         <finalName>ROOT</finalName>
@@ -141,30 +116,7 @@
                 </configuration>
             </plugin>
 
-<<<<<<< HEAD
-<!--			<plugin>
-				<groupId>org.apache.tomcat.maven</groupId>
-				<artifactId>tomcat7-maven-plugin</artifactId>
-				<version>2.2</version>
-			</plugin>-->		
-			<plugin>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<webResources>
-						<resource>
-							<filtering>true</filtering>
-							<directory>src/main/webapp</directory>
-							<includes>
-								<include>index.jsp</include>
-							</includes>
-						</resource>
-					</webResources>
-				</configuration>
-			</plugin> 			
-		</plugins>
-	</build>
-=======
+
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.4</version>
@@ -182,5 +134,4 @@
             </plugin>
         </plugins>
     </build>
->>>>>>> origin/sprint2
 </project>

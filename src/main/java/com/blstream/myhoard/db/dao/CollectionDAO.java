@@ -3,54 +3,20 @@ package com.blstream.myhoard.db.dao;
 import java.util.List;
 import org.hibernate.Session;
 import com.blstream.myhoard.db.model.*;
-<<<<<<< HEAD
-import javax.annotation.PostConstruct;
-import org.hibernate.HibernateException;
-=======
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
->>>>>>> origin/sprint2
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 public class CollectionDAO implements ResourceDAO<CollectionDS> {
 
-<<<<<<< HEAD
-	private static SessionFactory sessionFactory;
 
-	@Autowired
-	private DriverManagerDataSource ds;
-
-	@PostConstruct
-	private void initialize() {
-		if (sessionFactory == null)
-			try {
-				sessionFactory = new org.hibernate.cfg.Configuration()
-						.configure()
-						.setProperty("hibernate.connection.url", ds.getUrl())
-						.setProperty("hibernate.connection.username", ds.getUsername())
-						.setProperty("hibernate.connection.password", ds.getPassword())
-						.buildSessionFactory();
-			} catch (HibernateException ex) {
-				// Log the exception.
-				System.err.println("Initial SessionFactory creation failed." + ex);
-				throw new ExceptionInInitializerError(ex);
-			}
-	}
-
-	@Override
-	public List<CollectionDS> getList() {
-//		Session session = HibernateUtil.beginTransaction();
-		Session session = sessionFactory.getCurrentSession();
-		session.beginTransaction();
-
-		List<CollectionDS> result = session.createQuery("from CollectionDS").list();
-=======
     private SessionFactory sessionFactory;
->>>>>>> origin/sprint2
+
 
     public List<CollectionDS> getList() {
         Session session = sessionFactory.getCurrentSession();

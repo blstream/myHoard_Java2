@@ -13,8 +13,8 @@ import org.hibernate.SessionFactory;
 import org.springframework.transaction.annotation.Transactional;
 =======
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 >>>>>>> 6d66a8be6ee3d3eb18d6477a9417ecbb36ab65ab
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @Transactional
 public class CollectionDAO implements ResourceDAO<CollectionDS> {

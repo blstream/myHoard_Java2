@@ -10,15 +10,11 @@ import java.util.HashSet;
 import java.util.Set;
 import org.hibernate.SessionFactory;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @Transactional
 public class CollectionDAO implements ResourceDAO<CollectionDS> {
 
-
     private SessionFactory sessionFactory;
-
-
 
     public List<CollectionDS> getList() {
         Session session = sessionFactory.getCurrentSession();

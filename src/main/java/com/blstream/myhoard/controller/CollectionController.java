@@ -3,13 +3,9 @@ package com.blstream.myhoard.controller;
 import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.CollectionDTO;
-import com.blstream.myhoard.biz.service.CollectionService;
 import com.blstream.myhoard.biz.service.ResourceService;
 import com.blstream.myhoard.validation.*;
-
 import java.util.List;
-
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -38,15 +34,15 @@ public class CollectionController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody
-    List<CollectionDTO> getCollections() {
+    @ResponseBody
+    public List<CollectionDTO> getCollections() {
         return collectionService.getList();
     }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public @ResponseBody
-    CollectionDTO addCollection(@RequestBody CollectionDTO collection, BindingResult result) {
+    @ResponseBody
+    public CollectionDTO addCollection(@RequestBody CollectionDTO collection, BindingResult result) {
         collectionDTOValidator.validate(collection, result);
         if (result.hasErrors()) {
             throw new MyHoardException(400);
@@ -61,8 +57,8 @@ public class CollectionController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody
-    CollectionDTO getCollection(@PathVariable String id) {
+    @ResponseBody
+    public CollectionDTO getCollection(@PathVariable String id) {
         try {
             return collectionService.get(Integer.parseInt(id));
         } catch (Exception ex) {
@@ -73,8 +69,8 @@ public class CollectionController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody
-    CollectionDTO updateCollection(@PathVariable String id, @RequestBody CollectionDTO collection, BindingResult result) {
+    @ResponseBody
+    public CollectionDTO updateCollection(@PathVariable String id, @RequestBody CollectionDTO collection, BindingResult result) {
         collectionDTOValidator.validate(collection, result);
         if (result.hasErrors()) {
             throw new MyHoardException(400);
@@ -100,8 +96,8 @@ public class CollectionController {
 
     @ExceptionHandler(MyHoardException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public @ResponseBody
-    ErrorCode returnCode(MyHoardException exception) {
+    @ResponseBody
+    public ErrorCode returnCode(MyHoardException exception) {
         return new ErrorCode(exception.getErrorCode());
     }
 }

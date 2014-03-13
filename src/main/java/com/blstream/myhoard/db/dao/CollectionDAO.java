@@ -19,6 +19,7 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
     private SessionFactory sessionFactory;
 
 
+
     public List<CollectionDS> getList() {
         Session session = sessionFactory.getCurrentSession();
 //        List<CollectionDS> result = session.createQuery("select new CollectionDS(c.id, c.owner, c.name, c.description, count(item.id), c.createdDate, c.modifiedDate) from ItemDS as item right join item.collection as c group by c.id").list();

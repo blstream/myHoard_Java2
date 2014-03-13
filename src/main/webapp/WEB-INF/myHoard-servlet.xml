@@ -17,6 +17,8 @@
 
 	<context:annotation-config />
 
+	<context:annotation-config />
+
 	<context:component-scan base-package="com.blstream.myhoard.controller" />
 
 	<context:property-placeholder location="file:${catalina.home}/myhoard-conf/application.properties" />
@@ -81,6 +83,7 @@
 	<bean id="collectionController" class="com.blstream.myhoard.controller.CollectionController">
 		<property name="collectionService" ref="collectionService" />
 	</bean>
+
 
 
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />

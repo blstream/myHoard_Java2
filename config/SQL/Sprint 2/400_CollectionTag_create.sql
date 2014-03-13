@@ -7,3 +7,4 @@ CREATE TABLE IF NOT EXISTS CollectionTag (
 	FOREIGN KEY(collection) REFERENCES Collection(id),
 	FOREIGN KEY(tag) REFERENCES Tag(id)
 );
+

@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://www.springframework.org/schema/context
 		http://www.springframework.org/schema/context/spring-context-3.0.xsd
 		http://www.springframework.org/schema/mvc
-		http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+		http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd" xmlns:tx="http://www.springframework.org/schema/tx">
+
+	<context:annotation-config />
 
 	<context:annotation-config />
 
@@ -19,12 +21,66 @@
 	<context:property-placeholder location="file:${catalina.home}/myhoard-conf/application.properties" />
  
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+<<<<<<< HEAD
+=======
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+>>>>>>> origin/sprint2
 		<property name="url" value="${db.url}" />
 		<property name="username" value="${db.username}" />
 		<property name="password" value="${db.password}" />
 	</bean>
+<<<<<<< HEAD
+=======
 
-	<bean id="CollectionBean" class="com.blstream.myhoard.biz.service.CollectionService" />
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.current_session_context_class">thread</prop>
+				<prop key="hibernate.show_sql">true</prop>
+			</props>
+		</property>
+		<property name="mappingResources">
+			<list>
+				<value>CollectionDS.hbm.xml</value>
+				<value>ItemDS.hbm.xml</value>
+				<value>MediaDS.hbm.xml</value>
+				<value>TagDS.hbm.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="txManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<bean id="CollectionDTOValidator" class="com.blstream.myhoard.validation.CollectionDTOValidator" />
+
+	<bean id="collectionDAO" class="com.blstream.myhoard.db.dao.CollectionDAO">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id="itemDAO" class="com.blstream.myhoard.db.dao.ItemDAO">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id="mediaDAO" class="com.blstream.myhoard.db.dao.MediaDAO">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<bean id="collectionService" class="com.blstream.myhoard.biz.service.CollectionService">
+		<property name="collectionDAO" ref="collectionDAO" />
+	</bean>
+	<bean id="mediaService" class="com.blstream.myhoard.biz.service.MediaService" />
+	<bean id="itemService" class="com.blstream.myhoard.biz.service.ItemService">
+		<property name="itemDAO" ref="itemDAO" />
+	</bean>
+
+	<bean id="itemController" class="com.blstream.myhoard.controller.ItemController">
+		<property name="itemService" ref="itemService" />
+	</bean>
+>>>>>>> origin/sprint2
+
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
 
 	<bean id="CollectionDAO" class="com.blstream.myhoard.db.dao.CollectionDAO" />
 

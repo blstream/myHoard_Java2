@@ -1,141 +1,151 @@
 package com.blstream.myhoard.db.model;
 
 import com.blstream.myhoard.biz.model.CollectionDTO;
-import java.util.Arrays;
+import com.blstream.myhoard.biz.model.TagDTO;
 import java.util.Date;
 import java.util.HashSet;
-import org.springframework.util.StringUtils;
+import java.util.Set;
 
 public class CollectionDS {
 
-	private int id;
-	private String owner;
-	private String name;
-	private String description;
-	private String tags;
-	private int itemsNumber;
-	private Date createdDate;
-	private Date modifiedDate;
+    private int id;
+    private String owner;
+    private String name;
+    private String description;
+    private Set<TagDS> tags = new HashSet<>(0);
+    private int itemsNumber;
+    private Date createdDate;
+    private Date modifiedDate;
 
-	public CollectionDS() {
-		itemsNumber = 0;
-		createdDate = java.util.Calendar.getInstance().getTime();
-		modifiedDate = (Date)createdDate.clone();
-	}
+    public CollectionDS() {
+        createdDate = java.util.Calendar.getInstance().getTime();
+        modifiedDate = (Date) createdDate.clone();
+    }
 
-	public CollectionDS(int id, String owner, String name, String description, Object tags, int itemsNumber, Date createdDate, Date modifiedDate) {
-		this.id = id;
-		this.owner = owner;
-		this.name = name;
-		this.description = description;
-		if (tags == null)
-			this.tags = null;
-		else if (tags instanceof String)
-			this.tags = (String)tags;
-		else if (tags instanceof HashSet)
-			this.tags = StringUtils.arrayToCommaDelimitedString(((HashSet<String>)tags).toArray());
-		else
-			throw new RuntimeException("tags error");
-		this.itemsNumber = itemsNumber;
-		this.createdDate = createdDate;
-		this.modifiedDate = modifiedDate;
-	}
-	
-	public int getId() {
-		return id;
-	}
+    public CollectionDS(int id, String owner, String name, String description, Set<TagDS> tags, long itemsNumber, Date createdDate, Date modifiedDate) {
+        this.id = id;
+        this.owner = owner;
+        this.name = name;
+        this.description = description;
+        this.tags = tags;
+        this.itemsNumber = (int) itemsNumber;
+        this.createdDate = createdDate;
+        this.modifiedDate = modifiedDate;
+    }
+    
+    public CollectionDS(int id, String owner, String name, String description, long itemsNumber, Date createdDate, Date modifiedDate) {
+        this.id = id;
+        this.owner = owner;
+        this.name = name;
+        this.description = description;
+        this.itemsNumber = (int) itemsNumber;
+        this.createdDate = createdDate;
+        this.modifiedDate = modifiedDate;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public String getOwner() {
-		return owner;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
+    public String getOwner() {
+        return owner;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public String getTags() {
-		return tags;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setTags(String tags) {
-		this.tags = tags;
-	}
+    public Set<TagDS> getTags() {
+        return tags;
+    }
 
-	public int getItemsNumber() {
-		return itemsNumber;
-	}
+    public int getItemsNumber() {
+        return itemsNumber;
+    }
 
-	public void setItemsNumber(int itemsNumber) {
-		this.itemsNumber = itemsNumber;
-	}
+    public void setItemsNumber(int itemsNumber) {
+        this.itemsNumber = itemsNumber;
+    }
 
-	public Date getCreatedDate() {
-		return createdDate;
-	}
+    public void setTags(Set<TagDS> tags) {
+        this.tags = tags;
+    }
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
+    public Date getCreatedDate() {
+        return createdDate;
+    }
 
-	public Date getModifiedDate() {
-		return modifiedDate;
-	}
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
 
-	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
-	}
+    public Date getModifiedDate() {
+        return modifiedDate;
+    }
 
-	public CollectionDTO toCollectionDTO() {
-		return new CollectionDTO(Integer.toString(id),
-				owner,
-				name,
-				description,
-				tags != null ? new HashSet<>(Arrays.asList(tags.split(","))) : new HashSet<String>(),
-				itemsNumber,
-				createdDate,
-				modifiedDate);
-	}
+    public void setModifiedDate(Date modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }
 
-	public void updateObject(CollectionDS object) {
-		if (this == object)
-			return;
-		if (name == null || object.name != null && !name.equals(object.name))
-			name = object.name;
-		if (description == null || object.description != null && !description.equals(object.description))
-			description = object.description;
-		if (tags == null || object.tags != null && !tags.equals(object.tags))
-			tags = object.tags;
-	}
+    public CollectionDTO toCollectionDTO() {
+        Set<TagDTO> set = new HashSet<>(tags.size());
+        for (TagDS i : tags)
+               set.add(i.toTagTO());
+            
+        return new CollectionDTO(Integer.toString(id),
+                owner,
+                name,
+                description,
+                set,
+                getItemsNumber(),
+                createdDate,
+                modifiedDate);
+    }
 
-	@Override
-	public String toString() {
-		return  "id          : " + id +
-				"\nowner       : " + owner +
-				"\nname        : " + name +
-				"\ndescription : " + description +
-				"\ntags        : " + tags +
-				"\nitemsNumber : " + itemsNumber +
-				"\ncreatedDate : " + createdDate +
-				"\nmodifiedDate: " + modifiedDate;
-	}
+    public void updateObject(CollectionDS object) {
+        if (this == object) {
+            return;
+        }
+        if (name == null || object.name != null && !name.equals(object.name)) {
+            name = object.name;
+        }
+        if (description == null || object.description != null && !description.equals(object.description)) {
+            description = object.description;
+        }
+        if (tags == null || object.tags != null && !tags.equals(object.tags)) {
+            tags = object.tags;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "id          : " + id
+                + "\nowner       : " + owner
+                + "\nname        : " + name
+                + "\ndescription : " + description
+                + "\ntags        : " + tags
+                + "\nitemsNumber : " + getItemsNumber()
+                + "\ncreatedDate : " + createdDate
+                + "\nmodifiedDate: " + modifiedDate;
+    }
 }

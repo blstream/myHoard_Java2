@@ -3,14 +3,22 @@ package com.blstream.myhoard.db.dao;
 import java.util.List;
 import org.hibernate.Session;
 import com.blstream.myhoard.db.model.*;
+<<<<<<< HEAD
 import javax.annotation.PostConstruct;
 import org.hibernate.HibernateException;
+=======
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
+>>>>>>> origin/sprint2
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 public class CollectionDAO implements ResourceDAO<CollectionDS> {
 
+<<<<<<< HEAD
 	private static SessionFactory sessionFactory;
 
 	@Autowired
@@ -40,60 +48,84 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
 		session.beginTransaction();
 
 		List<CollectionDS> result = session.createQuery("from CollectionDS").list();
+=======
+    private SessionFactory sessionFactory;
+>>>>>>> origin/sprint2
 
-//		HibernateUtil.commitTransaction();
-		sessionFactory.getCurrentSession().getTransaction().commit();
-		return result;
-	}
+    public List<CollectionDS> getList() {
+        Session session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+//        List<CollectionDS> result = session.createQuery("select new CollectionDS(c.id, c.owner, c.name, c.description, count(item.id), c.createdDate, c.modifiedDate) from ItemDS as item right join item.collection as c group by c.id").list();
+        List<CollectionDS> result = session.createQuery("from CollectionDS").list();
+        List<Long> count = session.createQuery("select count(item.id) from ItemDS as item right join item.collection as c group by c.id").list();
+        for (int i = 0; i < result.size(); i++)
+            result.get(i).setItemsNumber(count.get(i).intValue());
+        session.getTransaction().commit();
+        return result;
+    }
 
-	@Override
-	public CollectionDS get(int id) throws IndexOutOfBoundsException {
-//		Session session = HibernateUtil.beginTransaction();
-		Session session = sessionFactory.getCurrentSession();
-		session.beginTransaction();
-		List<CollectionDS> result = session.createQuery("from CollectionDS where id = " + id).list();
-//		HibernateUtil.commitTransaction();
-		sessionFactory.getCurrentSession().getTransaction().commit();
-		return result.get(0);
-	}
+    @Override
+    public CollectionDS get(int id) throws IndexOutOfBoundsException {
+        Session session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+//        CollectionDS result = (CollectionDS)session.createQuery("select new CollectionDS(c.id, c.owner, c.name, c.description, count(item.id), c.createdDate, c.modifiedDate) from ItemDS as item right join item.collection as c where c.id = " + id + " group by c.id").uniqueResult();
+        CollectionDS result = (CollectionDS)session.createQuery("from CollectionDS where id = " + id).uniqueResult();
+        result.setItemsNumber(((Long)session.createQuery("select count(item.id) from ItemDS as item right join item.collection as c where c.id = " + id + " group by c.id").uniqueResult()).intValue());
+        session.getTransaction().commit();
+        return result;
+    }
 
-	@Override
-	public void create(CollectionDS obj) {
-//		Session session = HibernateUtil.beginTransaction();
-		Session session = sessionFactory.getCurrentSession();
-		session.beginTransaction();
-		session.save(obj);
-//		HibernateUtil.commitTransaction();
-		sessionFactory.getCurrentSession().getTransaction().commit();
-	}
+    @Override
+    public void create(CollectionDS obj) {
+        Session session = sessionFactory.getCurrentSession();
+        List<String> tags = new ArrayList<>();
+        for (TagDS i : obj.getTags())
+            tags.add(i.getTag());
+        session.beginTransaction();
+        Set<TagDS> result = new HashSet<>((List<TagDS>)session.createQuery("from TagDS where tag in (:tags)").setParameterList("tags", tags).list());
+        obj.getTags().removeAll(result);
+        result.addAll(obj.getTags());
+        obj.setTags(result);
+        session.save(obj);
+        session.getTransaction().commit();
+    }
 
-	@Override
-	public void update(CollectionDS obj) {
-		CollectionDS object = get(obj.getId());
-		object.updateObject(obj);
+    @Override
+    public void update(CollectionDS obj) {
+        CollectionDS object = get(obj.getId());
+        object.updateObject(obj);
+        List<String> tags = new ArrayList<>();
+        for (TagDS i : obj.getTags())
+            tags.add(i.getTag());
+        
+        Session session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+        Set<TagDS> result = new HashSet<>((List<TagDS>)session.createQuery("from TagDS where tag in (:tags)").setParameterList("tags", tags).list());
+        object.getTags().removeAll(result);
+        result.addAll(object.getTags());
+        object.setTags(result);
+        object.setModifiedDate(Calendar.getInstance().getTime());
+        session.update(object);
+        session.getTransaction().commit();
 
-//		Session session = HibernateUtil.beginTransaction();
-		Session session = sessionFactory.getCurrentSession();
-		session.beginTransaction();
-		object.setModifiedDate(java.util.Calendar.getInstance().getTime());
-		session.update(object);
-//		HibernateUtil.commitTransaction();
-		sessionFactory.getCurrentSession().getTransaction().commit();
+        // TODO mapper
+        obj.updateObject(object);
+        obj.setOwner(object.getOwner());
+        obj.setCreatedDate(object.getCreatedDate());
+        obj.setModifiedDate(object.getModifiedDate());
+    }
 
-		obj.updateObject(object);
-		obj.setOwner(object.getOwner());
-		obj.setCreatedDate(object.getCreatedDate());
-		obj.setModifiedDate(object.getModifiedDate());
-	}
+    @Override
+    public void remove(int id) {
+        Session session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+        session.createQuery("delete CollectionDS where id = " + id).executeUpdate();
+        session.getTransaction().commit();
+    }
 
-	@Override
-	public void remove(int id) {
-//		Session session = HibernateUtil.beginTransaction();
-		Session session = sessionFactory.getCurrentSession();
-		session.beginTransaction();
-		session.createQuery("delete CollectionDS where id = " + id).executeUpdate();
-//		HibernateUtil.commitTransaction();
-		sessionFactory.getCurrentSession().getTransaction().commit();
-	}
+    @Override
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
 }

@@ -4,20 +4,22 @@
 	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="com.blstream.myhoard.db.model">
-	<class name="CollectionDS" table="Collection">
+	<class name="ItemDS" table="Item">
 		<id name="id" type="int" column="id">
 			<generator class="native" />
 		</id>
-		<property name="name" type="string" />
+		<property name="name" column = "name" type="string" />
 		<property name="description" type="string" />
-		<set name="tags" table="CollectionTag" cascade="all" lazy="false">
-			<key column="collection" />
-			<many-to-many column="tag"  class="TagDS" />
+		<property name="latitude" type="float" />
+		<property name="longitude" type="float" />
+		<property name="quantity" type="int" />
+		<set name="media" lazy="false" fetch="join">
+			<key column="item_id" />
+			<one-to-many class="MediaDS" />
 		</set>
-		<!--<property name="tags" type="string" />-->
-		<!--<property name="itemsNumber" formula="(select count(item.id) from ItemDS as item right join item.collection as c group by c.id)" />-->
 		<property name="createdDate" column="created_date" type="timestamp" />
 		<property name="modifiedDate" column="modified_date" type="timestamp" />
+		<many-to-one name="collection" column="collection" class="CollectionDS" not-null="true" fetch="join" lazy="false"/>
 		<property name="owner" column="owner" type="string" />
 	</class>
 </hibernate-mapping>

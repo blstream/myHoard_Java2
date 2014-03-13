@@ -4,4 +4,5 @@ CREATE TABLE IF NOT EXISTS Tag (
 	
 	UNIQUE(tag),
 	PRIMARY KEY(id)
-)CHARACTER SET utf8 COLLATE utf8_polish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+

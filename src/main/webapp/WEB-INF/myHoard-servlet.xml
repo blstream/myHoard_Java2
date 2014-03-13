@@ -83,16 +83,4 @@
 	<mvc:annotation-driven />
 
 	<tx:annotation-driven transaction-manager="txManager"/>
-
-	<tx:advice id="txAdvice" transaction-manager="txManager">
-		<tx:attributes>
-			<tx:method name="get*" read-only="true" />
-			<tx:method name="*" propagation="REQUIRED" />
-		</tx:attributes>
-	</tx:advice>
-
-	<aop:config>
-		<aop:pointcut id="dao" expression="execution(* com.blstream.myhoard.db.dao.*.*(..))" />
-		<aop:advisor advice-ref="txAdvice" pointcut-ref="dao" />
-	</aop:config>
 </beans>

@@ -6,10 +6,8 @@ import com.blstream.myhoard.biz.model.*;
 import com.blstream.myhoard.db.dao.*;
 import com.blstream.myhoard.db.model.CollectionDS;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 public class CollectionService implements ResourceService<CollectionDTO> {
 
     private ResourceDAO<CollectionDS> collectionDAO;

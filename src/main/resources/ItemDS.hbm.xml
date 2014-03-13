@@ -13,13 +13,13 @@
 		<property name="latitude" type="float" />
 		<property name="longitude" type="float" />
 		<property name="quantity" type="int" />
-		<set name="media" lazy="false" fetch="join">
-			<key column="item_id" />
+		<set name="media" lazy="false">
+			<key column="item" />
 			<one-to-many class="MediaDS" />
 		</set>
 		<property name="createdDate" column="created_date" type="timestamp" />
 		<property name="modifiedDate" column="modified_date" type="timestamp" />
-		<many-to-one name="collection" column="collection" class="CollectionDS" not-null="true" fetch="join" lazy="false"/>
+		<many-to-one name="collection" column="collection" class="CollectionDS" not-null="true" lazy="false"/>
 		<property name="owner" column="owner" type="string" />
 	</class>
 </hibernate-mapping>

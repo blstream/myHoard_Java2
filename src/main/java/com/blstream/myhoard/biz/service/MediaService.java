@@ -1,29 +1,23 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.blstream.myhoard.biz.service;
 
 import com.blstream.myhoard.biz.model.MediaDTO;
-import com.blstream.myhoard.db.dao.MediaDAO;
+import com.blstream.myhoard.db.dao.ResourceDAO;
 import com.blstream.myhoard.db.model.MediaDS;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-/**
- *
- * @author gohilukk
- */
+@Service
 public class MediaService implements ResourceService<MediaDTO> {
+ 
+    private ResourceDAO<MediaDS> mediaDAO;
 
-    @Autowired
-    private MediaDAO mediaDAO;
+    public void setMediaDAO(ResourceDAO<MediaDS> mediaDAO) {
+        this.mediaDAO = mediaDAO;
+    }
 
     @Override
     public List<MediaDTO> getList() {

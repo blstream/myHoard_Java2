@@ -4,6 +4,7 @@ import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.CollectionDTO;
 import com.blstream.myhoard.biz.service.CollectionService;
+import com.blstream.myhoard.biz.service.ResourceService;
 import com.blstream.myhoard.validation.*;
 
 import java.util.List;
@@ -25,11 +26,15 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @RequestMapping(value = "/collections")
 public class CollectionController {
 
-    @Autowired
-    private CollectionService collectionService;
+//    @Autowired
+    private ResourceService<CollectionDTO> collectionService;
 
     @Autowired
     CollectionDTOValidator collectionDTOValidator;
+
+    public void setCollectionService(ResourceService<CollectionDTO> collectionService) {
+        this.collectionService = collectionService;
+    }
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)

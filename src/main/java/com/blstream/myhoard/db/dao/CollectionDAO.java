@@ -8,31 +8,29 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 import org.hibernate.SessionFactory;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public class CollectionDAO implements ResourceDAO<CollectionDS> {
 
     private SessionFactory sessionFactory;
 
     public List<CollectionDS> getList() {
         Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
 //        List<CollectionDS> result = session.createQuery("select new CollectionDS(c.id, c.owner, c.name, c.description, count(item.id), c.createdDate, c.modifiedDate) from ItemDS as item right join item.collection as c group by c.id").list();
         List<CollectionDS> result = session.createQuery("from CollectionDS").list();
         List<Long> count = session.createQuery("select count(item.id) from ItemDS as item right join item.collection as c group by c.id").list();
         for (int i = 0; i < result.size(); i++)
             result.get(i).setItemsNumber(count.get(i).intValue());
-        session.getTransaction().commit();
         return result;
     }
 
     @Override
     public CollectionDS get(int id) throws IndexOutOfBoundsException {
         Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
 //        CollectionDS result = (CollectionDS)session.createQuery("select new CollectionDS(c.id, c.owner, c.name, c.description, count(item.id), c.createdDate, c.modifiedDate) from ItemDS as item right join item.collection as c where c.id = " + id + " group by c.id").uniqueResult();
         CollectionDS result = (CollectionDS)session.createQuery("from CollectionDS where id = " + id).uniqueResult();
         result.setItemsNumber(((Long)session.createQuery("select count(item.id) from ItemDS as item right join item.collection as c where c.id = " + id + " group by c.id").uniqueResult()).intValue());
-        session.getTransaction().commit();
         return result;
     }
 
@@ -42,13 +40,12 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
         List<String> tags = new ArrayList<>();
         for (TagDS i : obj.getTags())
             tags.add(i.getTag());
-        session.beginTransaction();
+
         Set<TagDS> result = new HashSet<>((List<TagDS>)session.createQuery("from TagDS where tag in (:tags)").setParameterList("tags", tags).list());
         obj.getTags().removeAll(result);
         result.addAll(obj.getTags());
         obj.setTags(result);
         session.save(obj);
-        session.getTransaction().commit();
     }
 
     @Override
@@ -60,14 +57,12 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
             tags.add(i.getTag());
         
         Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
         Set<TagDS> result = new HashSet<>((List<TagDS>)session.createQuery("from TagDS where tag in (:tags)").setParameterList("tags", tags).list());
         object.getTags().removeAll(result);
         result.addAll(object.getTags());
         object.setTags(result);
         object.setModifiedDate(Calendar.getInstance().getTime());
         session.update(object);
-        session.getTransaction().commit();
 
         // TODO mapper
         obj.updateObject(object);
@@ -79,9 +74,7 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
     @Override
     public void remove(int id) {
         Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
         session.createQuery("delete CollectionDS where id = " + id).executeUpdate();
-        session.getTransaction().commit();
     }
 
     @Override

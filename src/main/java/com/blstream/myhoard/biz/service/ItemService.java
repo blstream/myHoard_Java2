@@ -6,10 +6,8 @@ import com.blstream.myhoard.db.model.ItemDS;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 public class ItemService implements ResourceService<ItemDTO> {
 
     private ResourceDAO<ItemDS> itemDAO;

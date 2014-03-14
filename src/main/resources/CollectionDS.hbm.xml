@@ -14,8 +14,6 @@
 			<key column="collection" />
 			<many-to-many column="tag"  class="TagDS" />
 		</set>
-		<!--<property name="tags" type="string" />-->
-		<!--<property name="itemsNumber" formula="(select count(item.id) from ItemDS as item right join item.collection as c group by c.id)" />-->
 		<property name="createdDate" column="created_date" type="timestamp" />
 		<property name="modifiedDate" column="modified_date" type="timestamp" />
 		<property name="owner" column="owner" type="string" />

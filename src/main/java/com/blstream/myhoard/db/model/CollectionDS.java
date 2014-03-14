@@ -1,6 +1,7 @@
 package com.blstream.myhoard.db.model;
 
 import com.blstream.myhoard.biz.model.CollectionDTO;
+import com.blstream.myhoard.biz.model.ItemDTO;
 import com.blstream.myhoard.biz.model.TagDTO;
 import java.util.Date;
 import java.util.HashSet;
@@ -12,14 +13,14 @@ public class CollectionDS {
     private String owner;
     private String name;
     private String description;
-    private Set<TagDS> tags = new HashSet<>(0);
+    private Set<TagDS> tags;
     private int itemsNumber;
     private Date createdDate;
     private Date modifiedDate;
 
     public CollectionDS() {
         createdDate = java.util.Calendar.getInstance().getTime();
-        modifiedDate = (Date) createdDate.clone();
+        modifiedDate = (Date)createdDate.clone();
     }
 
     public CollectionDS(int id, String owner, String name, String description, Set<TagDS> tags, long itemsNumber, Date createdDate, Date modifiedDate) {
@@ -28,7 +29,7 @@ public class CollectionDS {
         this.name = name;
         this.description = description;
         this.tags = tags;
-        this.itemsNumber = (int) itemsNumber;
+        this.itemsNumber = (int)itemsNumber;
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
     }
@@ -38,7 +39,7 @@ public class CollectionDS {
         this.owner = owner;
         this.name = name;
         this.description = description;
-        this.itemsNumber = (int) itemsNumber;
+        this.itemsNumber = (int)itemsNumber;
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
     }
@@ -79,16 +80,16 @@ public class CollectionDS {
         return tags;
     }
 
+    public void setTags(Set<TagDS> tags) {
+        this.tags = tags;
+    }
+
     public int getItemsNumber() {
         return itemsNumber;
     }
 
     public void setItemsNumber(int itemsNumber) {
         this.itemsNumber = itemsNumber;
-    }
-
-    public void setTags(Set<TagDS> tags) {
-        this.tags = tags;
     }
 
     public Date getCreatedDate() {
@@ -108,22 +109,23 @@ public class CollectionDS {
     }
 
     public CollectionDTO toCollectionDTO() {
-        Set<TagDTO> set = new HashSet<>(tags.size());
-        for (TagDS i : tags)
-               set.add(i.toTagTO());
+        Set<TagDTO> set = new HashSet<>();
+        if (tags != null)
+            for (TagDS i : tags)
+                set.add(i.toTagTO());
             
         return new CollectionDTO(Integer.toString(id),
                 owner,
                 name,
                 description,
                 set,
-                getItemsNumber(),
+                itemsNumber,
                 createdDate,
                 modifiedDate);
     }
 
     public void updateObject(CollectionDS object) {
-        if (this == object) {
+        if (this == object || object == null) {
             return;
         }
         if (name == null || object.name != null && !name.equals(object.name)) {

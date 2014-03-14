@@ -6,6 +6,7 @@ import com.blstream.myhoard.biz.model.CollectionDTO;
 import com.blstream.myhoard.biz.service.ResourceService;
 import com.blstream.myhoard.validation.*;
 import java.util.List;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -22,11 +23,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @RequestMapping(value = "/collections")
 public class CollectionController {
 
-//    @Autowired
     private ResourceService<CollectionDTO> collectionService;
-
-    @Autowired
-    CollectionDTOValidator collectionDTOValidator;
 
     public void setCollectionService(ResourceService<CollectionDTO> collectionService) {
         this.collectionService = collectionService;
@@ -42,16 +39,14 @@ public class CollectionController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public CollectionDTO addCollection(@RequestBody CollectionDTO collection, BindingResult result) {
-        collectionDTOValidator.validate(collection, result);
-        if (result.hasErrors()) {
-            throw new MyHoardException(400);
-        }
+    public CollectionDTO addCollection(@RequestBody @Valid CollectionDTO collection, BindingResult result) {
+        if (result.hasErrors())
+            throw new MyHoardException(400, result.toString());
         try {
             collectionService.create(collection);
             return collection;
         } catch (Exception ex) {
-            throw new MyHoardException(400);
+            throw new MyHoardException(400, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
     }
 
@@ -61,8 +56,10 @@ public class CollectionController {
     public CollectionDTO getCollection(@PathVariable String id) {
         try {
             return collectionService.get(Integer.parseInt(id));
-        } catch (Exception ex) {
-            throw new MyHoardException(300);
+        } catch (NumberFormatException ex) {
+            throw new MyHoardException(300, "Niepoprawne id: " + id);
+        } catch (RuntimeException ex) {
+            throw new MyHoardException(300, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
     }
 
@@ -70,17 +67,13 @@ public class CollectionController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public CollectionDTO updateCollection(@PathVariable String id, @RequestBody CollectionDTO collection, BindingResult result) {
-//        collectionDTOValidator.validate(collection, result);
-        if (result.hasErrors()) {
-            throw new MyHoardException(400);
-        }
+    public CollectionDTO updateCollection(@PathVariable String id, @RequestBody CollectionDTO collection) {
         try {
             collection.setId(id);
             collectionService.update(collection);
             return collection;
         } catch (Exception ex) {
-            throw new MyHoardException(111);
+            throw new MyHoardException(111, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
     }
 
@@ -89,8 +82,10 @@ public class CollectionController {
     public void removeCollection(@PathVariable String id) {
         try {
             collectionService.remove(Integer.parseInt(id));
-        } catch (Exception ex) {
-            throw new MyHoardException(400);
+        } catch (NumberFormatException ex) {
+            throw new MyHoardException(400, "Niepoprawne id: " + id);
+        } catch (RuntimeException ex) {
+            throw new MyHoardException(400, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
     }
 
@@ -98,6 +93,6 @@ public class CollectionController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ErrorCode returnCode(MyHoardException exception) {
-        return new ErrorCode(exception.getErrorCode());
+        return new ErrorCode(exception.getErrorCode(), exception.getErrorMsg());
     }
 }

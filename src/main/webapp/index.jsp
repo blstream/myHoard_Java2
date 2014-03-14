@@ -12,9 +12,9 @@
         <h1>Team: Java2</h1>
         <p>Version: ${version}</p>
 
-        <a href="index.jsp?kill">Ubij procesy</a><br/>
+<!--        <a href="index.jsp?kill">Ubij procesy</a><br/>
         <a href="index.jsp?collections">Wylistuj kolekcje</a><br/>
-        <a href="index.jsp?media">Wylistuj media</a><br/>
+        <a href="index.jsp?media">Wylistuj media</a><br/>-->
         <a href="${pageContext.request.contextPath}/uploadFile.jsp">Go to uploadFile.jsp</a><br/>
 
         <%

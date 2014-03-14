@@ -1,5 +1,6 @@
 package com.blstream.myhoard.biz.service;
 
+import com.blstream.myhoard.biz.exception.MyHoardException;
 import java.util.ArrayList;
 import java.util.List;
 import com.blstream.myhoard.biz.model.*;
@@ -35,6 +36,7 @@ public class CollectionService implements ResourceService<CollectionDTO> {
         CollectionDS collection = obj.toCollectionDS();
         collectionDAO.create(collection);
         obj.setId(Integer.toString(collection.getId()));
+        obj.setOwner(collection.getOwner());
     }
 
     @Override
@@ -43,14 +45,18 @@ public class CollectionService implements ResourceService<CollectionDTO> {
         collectionDAO.update(object);
         obj.updateObject(object.toCollectionDTO());
         obj.setOwner(object.getOwner());
-        obj.setCreated_date(object.getCreatedDate());
-        obj.setModified_date(object.getModifiedDate());
+        obj.setCreatedDate(object.getCreatedDate());
+        obj.setModifiedDate(object.getModifiedDate());
     }
 
     @Override
     public void remove(int id) {
-        collectionDAO.get(id);	// żeby "nie usuwało" nieistniejącego obiektu
-        collectionDAO.remove(id);
+        try {
+            collectionDAO.get(id);	// żeby "nie usuwało" nieistniejącego obiektu
+            collectionDAO.remove(id);
+        } catch (RuntimeException ex) {
+            throw new MyHoardException(111, "Element o id(" + id + ") prawdopodobnie nie istnieje.");
+        }
     }
 
 }

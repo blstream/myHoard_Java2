@@ -12,8 +12,9 @@ public class CustomTagSerializer extends JsonSerializer<Set<TagDTO>> {
     @Override
     public void serialize(Set<TagDTO> t, JsonGenerator jg, SerializerProvider sp) throws IOException, JsonProcessingException {
         jg.writeStartArray();
-        for (TagDTO i : t)
-            jg.writeString(i.getTag());
+        if (t != null)
+            for (TagDTO i : t)
+                jg.writeString(i.getTag());
         jg.writeEndArray();
     }
 

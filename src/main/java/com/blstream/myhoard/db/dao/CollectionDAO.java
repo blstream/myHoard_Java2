@@ -42,10 +42,12 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
         for (TagDS i : obj.getTags())
             tags.add(i.getTag());
 
-        Set<TagDS> result = new HashSet<>((List<TagDS>)session.createQuery("from TagDS where tag in (:tags)").setParameterList("tags", tags).list());
-        obj.getTags().removeAll(result);
-        result.addAll(obj.getTags());
-        obj.setTags(result);
+        if (!tags.isEmpty()) {
+            Set<TagDS> result = new HashSet<>((List<TagDS>)session.createQuery("from TagDS where tag in (:tags)").setParameterList("tags", tags).list());
+            obj.getTags().removeAll(result);
+            result.addAll(obj.getTags());
+            obj.setTags(result);
+        }
         session.save(obj);
     }
 
@@ -58,10 +60,12 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
             tags.add(i.getTag());
         
         Session session = sessionFactory.getCurrentSession();
-        Set<TagDS> result = new HashSet<>((List<TagDS>)session.createQuery("from TagDS where tag in (:tags)").setParameterList("tags", tags).list());
-        object.getTags().removeAll(result);
-        result.addAll(object.getTags());
-        object.setTags(result);
+        if (!tags.isEmpty()) {
+            Set<TagDS> result = new HashSet<>((List<TagDS>)session.createQuery("from TagDS where tag in (:tags)").setParameterList("tags", tags).list());
+            object.getTags().removeAll(result);
+            result.addAll(object.getTags());
+            object.setTags(result);
+        }
         object.setModifiedDate(Calendar.getInstance().getTime());
         session.update(object);
 

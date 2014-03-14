@@ -19,7 +19,8 @@
 		</set>
 		<property name="createdDate" column="created_date" type="timestamp" />
 		<property name="modifiedDate" column="modified_date" type="timestamp" />
-		<many-to-one name="collection" column="collection" class="CollectionDS" not-null="true" lazy="false"/>
+		<property name="collection" type="int" />
+		<!--<many-to-one name="collection" column="collection" class="CollectionDS" not-null="true" lazy="false"/>-->
 		<property name="owner" column="owner" type="string" />
 	</class>
 </hibernate-mapping>

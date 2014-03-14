@@ -48,6 +48,12 @@ public class ItemController {
         return itemService.get(Integer.parseInt(id));
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public void removeItem(@PathVariable String id) {
+        itemService.remove(Integer.parseInt(id));
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public @ResponseBody ErrorCode errorHandler(Exception e) {

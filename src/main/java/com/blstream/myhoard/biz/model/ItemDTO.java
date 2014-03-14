@@ -133,14 +133,14 @@ public class ItemDTO {
 
     public ItemDS toItemDS() {
         Set<MediaDS> set = new HashSet<>(media.size());
-        CollectionDS c = new CollectionDS();
+//        CollectionDS c = new CollectionDS();
         for (MediaDTO i : media)
             try {
                 set.add(i.toMediaDS());
             } catch (SQLException ex) {
                 throw new MyHoardException(ex.getErrorCode(), ex.getSQLState());
             }
-        c.setId(Integer.parseInt(collection));
+//        c.setId(Integer.parseInt(collection));
         return new ItemDS(Integer.parseInt(id),
                 name,
                 description,
@@ -150,7 +150,8 @@ public class ItemDTO {
                 set,
                 createdDate,
                 modifiedDate,
-                c,
+                Integer.parseInt(collection),
+//                c,
                 owner);
     }
 }

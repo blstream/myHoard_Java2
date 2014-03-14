@@ -20,12 +20,12 @@ public class ItemDS {
     private Set<MediaDS> media = new HashSet<>(0);
     private Date createdDate;
     private Date modifiedDate;
-    private CollectionDS collection;
+    private int collection;
     private String owner;
 
     public ItemDS() {}
 
-    public ItemDS(int id, String name, String description, float latitude, float longitude, int quantity, Set<MediaDS> media, Date createdDate, Date modifiedDate, CollectionDS collection, String owner) {
+    public ItemDS(int id, String name, String description, float latitude, float longitude, int quantity, Set<MediaDS> media, Date createdDate, Date modifiedDate, int collection, String owner) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -114,11 +114,11 @@ public class ItemDS {
         this.modifiedDate = modifiedDate;
     }
 
-    public CollectionDS getCollection() {
+    public int getCollection() {
         return collection;
     }
 
-    public void setCollection(CollectionDS collection) {
+    public void setCollection(int collection) {
         this.collection = collection;
     }
 
@@ -146,7 +146,8 @@ public class ItemDS {
                 set,
                 createdDate,
                 modifiedDate,
-                Integer.toString(collection.getId()),
+                Integer.toString(collection),
+//                Integer.toString(collection.getId()),
                 owner);
     }
 }

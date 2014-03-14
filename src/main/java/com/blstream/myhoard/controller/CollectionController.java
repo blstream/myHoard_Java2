@@ -71,7 +71,7 @@ public class CollectionController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public CollectionDTO updateCollection(@PathVariable String id, @RequestBody CollectionDTO collection, BindingResult result) {
-        collectionDTOValidator.validate(collection, result);
+//        collectionDTOValidator.validate(collection, result);
         if (result.hasErrors()) {
             throw new MyHoardException(400);
         }

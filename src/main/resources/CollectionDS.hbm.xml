@@ -10,9 +10,9 @@
 		</id>
 		<property name="name" type="string" />
 		<property name="description" type="string" />
-		<set name="tags" table="CollectionTag" cascade="all" lazy="false">
+		<set name="tags" table="CollectionTag" lazy="false" cascade="delete">
 			<key column="collection" />
-			<many-to-many column="tag"  class="TagDS" />
+			<many-to-many column="tag" class="TagDS" fetch="join" />
 		</set>
 		<property name="createdDate" column="created_date" type="timestamp" />
 		<property name="modifiedDate" column="modified_date" type="timestamp" />

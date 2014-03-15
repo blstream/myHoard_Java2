@@ -13,6 +13,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 public class CollectionDTO {
 
+    @JsonIgnore
     private String id;
 
     @NotNull
@@ -21,8 +22,11 @@ public class CollectionDTO {
 
     private String description;
     private Set<TagDTO> tags;
+    @JsonIgnore
     private int itemsNumber;
+    @JsonIgnore
     private Date createdDate;
+    @JsonIgnore
     private Date modifiedDate;
     private String owner;
 

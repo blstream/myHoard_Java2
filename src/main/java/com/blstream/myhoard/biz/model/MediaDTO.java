@@ -31,8 +31,6 @@ public class MediaDTO {
     @JsonIgnore
     private byte[] thumbnail;
     @JsonIgnore
-    private String collection;
-    @JsonIgnore
     private Date created_date;
 
     public MediaDTO() throws IOException {
@@ -42,11 +40,10 @@ public class MediaDTO {
         created_date = java.util.Calendar.getInstance().getTime();
     }
 
-    public MediaDTO(String id, byte[] file, byte[] thumbnail, String collection, Date createdDate) {
+    public MediaDTO(String id, byte[] file, byte[] thumbnail, Date createdDate) {
         this.id = id;
         this.file = file;
         this.thumbnail = thumbnail;
-        this.collection = collection;
         this.created_date = createdDate;
     }
 
@@ -72,14 +69,6 @@ public class MediaDTO {
 
     public void setThumbnail(byte[] thumbnail) {
         this.thumbnail = thumbnail;
-    }
-
-    public String getCollection() {
-        return collection;
-    }
-
-    public void setCollection(String collection) {
-        this.collection = collection;
     }
 
     public Date getCreated_date() {

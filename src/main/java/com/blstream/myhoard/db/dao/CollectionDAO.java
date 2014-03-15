@@ -66,8 +66,11 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
         Session session = sessionFactory.getCurrentSession();
         if (!tags.isEmpty()) {
             Set<TagDS> result = new HashSet<>((List<TagDS>)session.createQuery("from TagDS where tag in (:tags)").setParameterList("tags", tags).list());
-            object.getTags().removeAll(result);
-            result.addAll(object.getTags());
+            Set<TagDS> remaining = object.getTags();
+            remaining.removeAll(result);
+            for (TagDS i : remaining)   // pozostałe tagi trzeba utworzyć
+                session.save(i);
+            result.addAll(remaining);
             object.setTags(result);
         }
         object.setModifiedDate(Calendar.getInstance().getTime());

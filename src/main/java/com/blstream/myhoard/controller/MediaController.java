@@ -65,7 +65,6 @@ public class MediaController extends HttpServlet {
         MediaDTO media = new MediaDTO();
         try {
             media.setFile(file.getBytes());
-            media.setCollection("1");
             mediaService.create(media);
             return media;
         } catch (IOException ex) {

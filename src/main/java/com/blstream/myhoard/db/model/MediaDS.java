@@ -66,7 +66,6 @@ public class MediaDS {
         return new MediaDTO(Integer.toString(id),
                 file == null ? null : file.getBytes(1, (int) file.length()),
                 thumbnail == null ? null : thumbnail.getBytes(1, (int) thumbnail.length()),
-                "TODO: remove",
                 createdDate);
     }
 }

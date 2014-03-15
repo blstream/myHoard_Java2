@@ -16,7 +16,6 @@ public class ItemDS {
     private String description;
     private float latitude;
     private float longitude;
-    private int quantity;
     private Set<MediaDS> media = new HashSet<>(0);
     private Date createdDate;
     private Date modifiedDate;
@@ -25,13 +24,12 @@ public class ItemDS {
 
     public ItemDS() {}
 
-    public ItemDS(int id, String name, String description, float latitude, float longitude, int quantity, Set<MediaDS> media, Date createdDate, Date modifiedDate, int collection, String owner) {
+    public ItemDS(int id, String name, String description, float latitude, float longitude, Set<MediaDS> media, Date createdDate, Date modifiedDate, int collection, String owner) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.quantity = quantity;
         this.media = media;
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
@@ -77,14 +75,6 @@ public class ItemDS {
 
     public void setLongitude(float longitude) {
         this.longitude = longitude;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
     }
 
     public Set<MediaDS> getMedia() {
@@ -142,7 +132,6 @@ public class ItemDS {
                 name,
                 description,
                 new Location(latitude, longitude),
-                quantity,
                 set,
                 createdDate,
                 modifiedDate,

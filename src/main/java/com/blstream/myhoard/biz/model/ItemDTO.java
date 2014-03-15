@@ -18,7 +18,6 @@ public class ItemDTO {
     private String name;
     private String description;
     private Location location;
-    private int quantity;
     private Set<MediaDTO> media = new HashSet<>(0);
     private Date createdDate;
     private Date modifiedDate;
@@ -27,12 +26,11 @@ public class ItemDTO {
 
     public ItemDTO() {}
 
-    public ItemDTO(String id, String name, String description, Location location, int quantity, Set<MediaDTO> media, Date createdDate, Date modifiedDate, String collection, String owner) {
+    public ItemDTO(String id, String name, String description, Location location, Set<MediaDTO> media, Date createdDate, Date modifiedDate, String collection, String owner) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.location = location;
-        this.quantity = quantity;
         this.media = media;
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
@@ -70,14 +68,6 @@ public class ItemDTO {
 
     public void setLocation(Location location) {
         this.location = location;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
     }
 
     @JsonSerialize(using = CustomMediaSerializer.class)
@@ -146,7 +136,6 @@ public class ItemDTO {
                 description,
                 location.getLat(),
                 location.getLng(),
-                quantity,
                 set,
                 createdDate,
                 modifiedDate,

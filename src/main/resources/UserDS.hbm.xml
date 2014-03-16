@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.blstream.myhoard.db.model">
+	<class name="UserDS" table="User">
+		<id name="id" type="int" column="id">
+			<generator class="native" />
+		</id>
+                <property name="mail" column="mail" type="string" unique="true" />
+		<property name="username" column="username" type="string" unique="true" />
+		<property name="password" column="password" type="string" />
+	</class>        
+</hibernate-mapping>

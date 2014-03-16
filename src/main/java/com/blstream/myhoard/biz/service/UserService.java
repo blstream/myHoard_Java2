@@ -32,6 +32,7 @@ public class UserService implements ResourceService<UserDTO> {
     public void create(UserDTO obj) {
         UserDS user = obj.toUserDS();
         userDAO.create(user);
+        obj.updateObject(user.toUserDTO());
     }
 
     @Override

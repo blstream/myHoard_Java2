@@ -18,10 +18,7 @@ public class UserDS {
     public UserDS(int id, String mail, String username, String password) {
         this.id = id;
         this.mail = mail;
-        if(username == null)
-            this.username = mail;
-        else
-            this.username = username;
+        this.username = username;
         try {
         MessageDigest md = MessageDigest.getInstance( "SHA1" );
         md.update( password.getBytes() );

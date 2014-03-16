@@ -28,6 +28,8 @@ public class UserDAO implements ResourceDAO<UserDS> {
     
     @Override
     public void create(UserDS obj) {
+        if(obj.getUsername()==null)
+            obj.setUsername(obj.getMail());
         Session session = sessionFactory.getCurrentSession();
         session.save(obj);
     }

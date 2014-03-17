@@ -77,23 +77,27 @@ public class MediaService implements ResourceService<MediaDTO> {
         mediaDAO.remove(id);
     }
     
-    public byte[] getThumbnail(int id,int size) {
+    public byte[] getThumbnail(Integer id,Integer size) {
         MediaDTO media = get(id);
         if (media.getFile() != null) {
-            try {
-                InputStream in = new ByteArrayInputStream(media.getFile());
-                BufferedImage originalImage = ImageIO.read(in);
-                int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
-                BufferedImage resizedImage = new BufferedImage(size, size, type);
-                Graphics2D g = resizedImage.createGraphics();
-                g.drawImage(originalImage, 0, 0, size, size, null);
-                g.dispose();
+            if(size > 0) {
+                try {
+                    InputStream in = new ByteArrayInputStream(media.getFile());
+                    BufferedImage originalImage = ImageIO.read(in);
+                    int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+                    BufferedImage resizedImage = new BufferedImage(size, size, type);
+                    Graphics2D g = resizedImage.createGraphics();
+                    g.drawImage(originalImage, 0, 0, size, size, null);
+                    g.dispose();
 
-                ByteArrayOutputStream b = new ByteArrayOutputStream();
-                ImageIO.write(resizedImage, "jpg", b);
-                return b.toByteArray();
-            } catch (IOException ex) {
-                Logger.getLogger(MediaDTO.class.getName()).log(Level.SEVERE, null, ex);
+                    ByteArrayOutputStream b = new ByteArrayOutputStream();
+                    ImageIO.write(resizedImage, "jpg", b);
+                    return b.toByteArray();
+                } catch (IOException ex) {
+                    Logger.getLogger(MediaDTO.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                return media.getFile();
             }
         } 
         return null;

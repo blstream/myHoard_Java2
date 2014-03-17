@@ -105,7 +105,7 @@ public class MediaController extends HttpServlet {
     @RequestMapping(value = "/{id}/thumbnail",params={"size"}, method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
-    byte[] getThumbnail(@PathVariable String id,@RequestParam(value = "size", required = false) String size) {
+    byte[] getThumbnail(@PathVariable String id,@RequestParam(value = "size", required = true) String size) {
         try {
             return mediaService.getThumbnail(Integer.parseInt(id),Integer.parseInt(size));
         } catch (Exception ex) {
@@ -116,7 +116,7 @@ public class MediaController extends HttpServlet {
     @RequestMapping(value = "/{id}/thumbnailShow",params={"size"}, method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
-    void getThumbnailShow(@PathVariable String id,@RequestParam(value = "size", required = false) String size, HttpServletResponse response) {
+    void getThumbnailShow(@PathVariable String id,@RequestParam(value = "size", required = true) String size, HttpServletResponse response) {
         try {
             byte[] imageBytes = mediaService.getThumbnail(Integer.parseInt(id),Integer.parseInt(size));
 

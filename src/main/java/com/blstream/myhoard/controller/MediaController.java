@@ -105,9 +105,20 @@ public class MediaController extends HttpServlet {
     @RequestMapping(value = "/{id}/thumbnail",params={"size"}, method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
-    byte[] getThumbnail(@PathVariable String id,@RequestParam(value = "size", required = true) String size) {
+    byte[] getThumbnailSize(@PathVariable String id,@RequestParam(value = "size", required = true) String size) {
         try {
             return mediaService.getThumbnail(Integer.parseInt(id),Integer.parseInt(size));
+        } catch (Exception ex) {
+            throw new MyHoardException(300);
+        }
+    }
+    
+    @RequestMapping(value = "/{id}/thumbnail", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody
+    byte[] getThumbnail(@PathVariable String id) {
+        try {
+            return mediaService.getThumbnail(Integer.parseInt(id), 0);
         } catch (Exception ex) {
             throw new MyHoardException(300);
         }
@@ -116,9 +127,25 @@ public class MediaController extends HttpServlet {
     @RequestMapping(value = "/{id}/thumbnailShow",params={"size"}, method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
-    void getThumbnailShow(@PathVariable String id,@RequestParam(value = "size", required = true) String size, HttpServletResponse response) {
+    void getThumbnailShowSize(@PathVariable String id,@RequestParam(value = "size", required = true) String size, HttpServletResponse response) {
         try {
             byte[] imageBytes = mediaService.getThumbnail(Integer.parseInt(id),Integer.parseInt(size));
+
+            response.setContentType("image/jpeg");
+            response.setContentLength(imageBytes.length);
+
+            response.getOutputStream().write(imageBytes);
+        } catch (Exception ex) {
+            throw new MyHoardException(300);
+        }
+    }
+    
+    @RequestMapping(value = "/{id}/thumbnailShow", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody
+    void getThumbnailShow(@PathVariable String id, HttpServletResponse response) {
+        try {
+            byte[] imageBytes = mediaService.getThumbnail(Integer.parseInt(id),0);
 
             response.setContentType("image/jpeg");
             response.setContentLength(imageBytes.length);

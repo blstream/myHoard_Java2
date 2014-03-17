@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.*;
+import org.springframework.web.bind.annotation.RequestParam;
 /**
  *
  * @author gohilukk
@@ -101,23 +102,23 @@ public class MediaController extends HttpServlet {
         }
     }
 
-    @RequestMapping(value = "/{id}/thumbnail", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/thumbnail",params={"size"}, method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
-    byte[] getThumbnail(@PathVariable String id) {
+    byte[] getThumbnail(@PathVariable String id,@RequestParam(value = "size", required = false) String size) {
         try {
-            return mediaService.get(Integer.parseInt(id)).getThumbnail();
+            return mediaService.getThumbnail(Integer.parseInt(id),Integer.parseInt(size));
         } catch (Exception ex) {
             throw new MyHoardException(300);
         }
     }
 
-    @RequestMapping(value = "/{id}/thumbnailShow", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/thumbnailShow",params={"size"}, method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
-    void getThumbnailShow(@PathVariable String id, HttpServletResponse response) {
+    void getThumbnailShow(@PathVariable String id,@RequestParam(value = "size", required = false) String size, HttpServletResponse response) {
         try {
-            byte[] imageBytes = mediaService.get(Integer.parseInt(id)).getThumbnail();
+            byte[] imageBytes = mediaService.getThumbnail(Integer.parseInt(id),Integer.parseInt(size));
 
             response.setContentType("image/jpeg");
             response.setContentLength(imageBytes.length);

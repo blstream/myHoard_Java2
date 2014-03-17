@@ -3,11 +3,18 @@ package com.blstream.myhoard.biz.service;
 import com.blstream.myhoard.biz.model.MediaDTO;
 import com.blstream.myhoard.db.dao.ResourceDAO;
 import com.blstream.myhoard.db.model.MediaDS;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -45,7 +52,6 @@ public class MediaService implements ResourceService<MediaDTO> {
 
     @Override
     public void create(MediaDTO obj) {
-        obj.resizeFile();
         MediaDS media;
         try {
             media = obj.toMediaDS();
@@ -69,6 +75,28 @@ public class MediaService implements ResourceService<MediaDTO> {
     public void remove(int id) {
         mediaDAO.get(id); // jezeli ne istnieje obiekt rzuci to wyjatkiem indexoutofbounds
         mediaDAO.remove(id);
+    }
+    
+    public byte[] getThumbnail(int id,int size) {
+        MediaDTO media = get(id);
+        if (media.getFile() != null) {
+            try {
+                InputStream in = new ByteArrayInputStream(media.getFile());
+                BufferedImage originalImage = ImageIO.read(in);
+                int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+                BufferedImage resizedImage = new BufferedImage(size, size, type);
+                Graphics2D g = resizedImage.createGraphics();
+                g.drawImage(originalImage, 0, 0, size, size, null);
+                g.dispose();
+
+                ByteArrayOutputStream b = new ByteArrayOutputStream();
+                ImageIO.write(resizedImage, "jpg", b);
+                return b.toByteArray();
+            } catch (IOException ex) {
+                Logger.getLogger(MediaDTO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } 
+        return null;
     }
    
 }

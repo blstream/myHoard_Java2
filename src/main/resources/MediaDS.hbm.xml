@@ -9,7 +9,6 @@
 			<generator class="native" />
 		</id>
 		<property name="file" column="file" type="blob" />
-		<property name="thumbnail" column="thumbnail" type="blob" />
 		<property name="createdDate" column="created_date" type="timestamp" update="false" />
 		<many-to-one name="item" column="item" class="ItemDS" not-null="false" lazy="false"/>
 	</class>        

@@ -39,13 +39,9 @@ public class CollectionController {
     @ResponseBody
     public CollectionDTO addCollection(@RequestBody @Valid CollectionDTO collection, BindingResult result) {
         if (result.hasErrors())
-            throw new MyHoardException(400, result.toString());
-        try {
-            collectionService.create(collection);
-            return collection;
-        } catch (Exception ex) {
-            throw new MyHoardException(400, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
-        }
+            throw new MyHoardException(400, result.getFieldError().getDefaultMessage());
+        collectionService.create(collection);
+        return collection;
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -56,8 +52,6 @@ public class CollectionController {
             return collectionService.get(Integer.parseInt(id));
         } catch (NumberFormatException ex) {
             throw new MyHoardException(300, "Niepoprawne id: " + id);
-        } catch (RuntimeException ex) {
-            throw new MyHoardException(300, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
     }
 
@@ -65,14 +59,12 @@ public class CollectionController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public CollectionDTO updateCollection(@PathVariable String id, @RequestBody CollectionDTO collection) {
-        try {
-            collection.setId(id);
-            collectionService.update(collection);
-            return collection;
-        } catch (Exception ex) {
-            throw new MyHoardException(111, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
-        }
+    public CollectionDTO updateCollection(@PathVariable String id, @Valid @RequestBody CollectionDTO collection, BindingResult result) {
+        if (collection.getName() != null && result.hasErrors())
+            throw new MyHoardException(320, result.getFieldError().getDefaultMessage());
+        collection.setId(id);
+        collectionService.update(collection);
+        return collection;
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
@@ -82,8 +74,6 @@ public class CollectionController {
             collectionService.remove(Integer.parseInt(id));
         } catch (NumberFormatException ex) {
             throw new MyHoardException(400, "Niepoprawne id: " + id);
-        } catch (RuntimeException ex) {
-            throw new MyHoardException(400, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
     }
 

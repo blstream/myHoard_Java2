@@ -19,43 +19,56 @@ public class CollectionService implements ResourceService<CollectionDTO> {
 
     @Override
     public List<CollectionDTO> getList() {
-        List<CollectionDTO> result = new ArrayList<>();
-        for (CollectionDS i : collectionDAO.getList()) {
-            result.add(i.toCollectionDTO());
+        try {
+            List<CollectionDTO> result = new ArrayList<>();
+            for (CollectionDS i : collectionDAO.getList())
+                result.add(i.toDTO());
+            return result;
+        } catch (RuntimeException ex) {
+            throw new MyHoardException(300, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
-        return result;
     }
 
     @Override
     public CollectionDTO get(int id) {
-        return collectionDAO.get(id).toCollectionDTO();
+        try {
+            return collectionDAO.get(id).toDTO();
+        } catch (RuntimeException ex) {
+            throw new MyHoardException(300, "Element o id(" + id + ") prawdopodobnie nie istnieje.");
+        }
     }
 
     @Override
     public void create(CollectionDTO obj) {
-        CollectionDS collection = obj.toCollectionDS();
-        collectionDAO.create(collection);
-        obj.setId(Integer.toString(collection.getId()));
-        obj.setOwner(collection.getOwner());
+        try {
+            CollectionDS collection = new CollectionDS();
+            collection.toDTO(obj);
+            collectionDAO.create(collection);
+            obj.setId(Integer.toString(collection.getId()));
+            obj.setOwner(collection.getOwner());
+        } catch (RuntimeException ex) {
+            throw new MyHoardException(400, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
+        }
     }
 
     @Override
     public void update(CollectionDTO obj) {
-        CollectionDS object = obj.toCollectionDS();
-        collectionDAO.update(object);
-        obj.updateObject(object.toCollectionDTO());
-        obj.setOwner(object.getOwner());
-        obj.setCreatedDate(object.getCreatedDate());
-        obj.setModifiedDate(object.getModifiedDate());
+        try {
+            CollectionDS object = new CollectionDS();
+            object.fromDTO(obj);
+            collectionDAO.update(object);
+            obj.fromDS(object);
+        } catch (RuntimeException ex) {
+            throw new MyHoardException(111, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
+        }
     }
 
     @Override
     public void remove(int id) {
         try {
-            collectionDAO.get(id);	// żeby "nie usuwało" nieistniejącego obiektu
             collectionDAO.remove(id);
         } catch (RuntimeException ex) {
-            throw new MyHoardException(111, "Element o id(" + id + ") prawdopodobnie nie istnieje.");
+            throw new MyHoardException(400, "Element o id(" + id + ") prawdopodobnie nie istnieje.");
         }
     }
 

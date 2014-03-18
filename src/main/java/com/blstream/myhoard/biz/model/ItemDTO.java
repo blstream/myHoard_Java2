@@ -1,30 +1,53 @@
 package com.blstream.myhoard.biz.model;
 
 import com.blstream.myhoard.biz.exception.MyHoardException;
-import com.blstream.myhoard.db.model.CollectionDS;
 import com.blstream.myhoard.db.model.ItemDS;
 import com.blstream.myhoard.db.model.MediaDS;
+import com.blstream.myhoard.validator.CheckString;
+import com.blstream.myhoard.validator.ValidationOpt;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.hibernate.validator.constraints.NotEmpty;
 
 public class ItemDTO {
 
     private String id = "0";
+
+    @NotNull(message = "Nazwa elementu jest wymagana")
+    @NotEmpty(message = "Nazwa elementu jest wymagana")
+    @Size(min = 2, max = 100)
+    @CheckString(message = "Za dużo białych znaków", value = ValidationOpt.ITEM_NAME)
     private String name;
+
     private String description;
     private Location location;
     private Set<MediaDTO> media = new HashSet<>(0);
+    @JsonIgnore
     private Date createdDate;
+    @JsonIgnore
     private Date modifiedDate;
+
+    @NotNull(message = "Element musi być przypisany do kolekcji")
+    @NotEmpty(message = "Element musi być przypisany do kolekcji")
     private String collection;
+    @JsonIgnore
     private String owner;
 
-    public ItemDTO() {}
+    @JsonIgnore
+    private boolean mediaAltered = false;
+
+    public ItemDTO() {
+        createdDate = java.util.Calendar.getInstance().getTime();
+        modifiedDate = (Date)createdDate.clone();
+    }
 
     public ItemDTO(String id, String name, String description, Location location, Set<MediaDTO> media, Date createdDate, Date modifiedDate, String collection, String owner) {
         this.id = id;
@@ -77,10 +100,8 @@ public class ItemDTO {
 
     @JsonDeserialize(using = CustomMediaDeserializer.class)
     public void setMedia(Set<MediaDTO> media) {
-        if (media == null)
-            this.media = new HashSet<>(0);
-        else
-            this.media = media;
+        this.media = media;
+        mediaAltered = true;
     }
 
     @JsonSerialize(using = CustomDateSerializer.class)
@@ -89,7 +110,7 @@ public class ItemDTO {
         return createdDate;
     }
 
-    @JsonProperty(value = "created_date")
+    @JsonIgnore
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
@@ -100,7 +121,7 @@ public class ItemDTO {
         return modifiedDate;
     }
 
-    @JsonProperty(value = "modified_date")
+    @JsonIgnore
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
@@ -113,12 +134,18 @@ public class ItemDTO {
         this.collection = collection;
     }
 
+    @JsonProperty(value = "owner")
     public String getOwner() {
         return owner;
     }
 
+    @JsonIgnore
     public void setOwner(String owner) {
         this.owner = owner;
+    }
+
+    public boolean isMediaAltered() {
+        return mediaAltered;
     }
 
     public ItemDS toItemDS() {
@@ -130,6 +157,8 @@ public class ItemDTO {
             } catch (SQLException ex) {
                 throw new MyHoardException(ex.getErrorCode(), ex.getSQLState());
             }
+        if (location == null)
+            location = new Location(Float.NaN, Float.NaN);
 //        c.setId(Integer.parseInt(collection));
         return new ItemDS(Integer.parseInt(id),
                 name,

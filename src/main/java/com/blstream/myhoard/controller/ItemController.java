@@ -5,9 +5,10 @@ import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.ItemDTO;
 import com.blstream.myhoard.biz.service.ResourceService;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,40 +27,74 @@ public class ItemController {
         this.itemService = itemService;
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET)
-    public @ResponseBody
-    List<ItemDTO> getItems() {
-        return itemService.getList();
-    }
-
-    @ResponseStatus(HttpStatus.CREATED)
-    @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody
-    ItemDTO createItem(@RequestBody ItemDTO obj) {
-        itemService.create(obj);
-        return obj;
-    }
-
     @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<ItemDTO> getItems() {
+        try {
+            return itemService.getList();
+        } catch (Exception ex) {
+            throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    public ItemDTO createItem(@Valid @RequestBody ItemDTO obj, BindingResult result) {
+        if (result.hasErrors())
+            throw new MyHoardException(320, result.getFieldError().getDefaultMessage());
+        try {
+            itemService.create(obj);
+            return obj;
+        } catch (Exception ex) {
+            throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
+        }
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public @ResponseBody
-    ItemDTO getItem(@PathVariable String id) {
-        return itemService.get(Integer.parseInt(id));
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public ItemDTO getItem(@PathVariable String id) {
+        try {
+            return itemService.get(Integer.parseInt(id));
+        } catch (NumberFormatException ex) {
+            throw new MyHoardException(320, "Niepoprawne id: " + id);
+        } catch (RuntimeException ex) {
+            throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
+        }
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public ItemDTO updateItem(@PathVariable String id, @Valid @RequestBody ItemDTO obj, BindingResult result) {
+        if (obj.getName() != null && result.hasFieldErrors("name") || obj.getCollection() != null && result.hasFieldErrors("collection"))
+            throw new MyHoardException(320, result.getFieldError(obj.getName() != null ? "name" : "collection").getDefaultMessage());
+        try {
+            obj.setId(id);
+            itemService.update(obj);
+            return obj;
+        } catch (Exception ex) {
+            throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
+        }
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeItem(@PathVariable String id) {
-        itemService.remove(Integer.parseInt(id));
+        try {
+            itemService.remove(Integer.parseInt(id));
+        } catch (NumberFormatException ex) {
+            throw new MyHoardException(320, "Niepoprawne id: " + id);
+        } catch (RuntimeException ex) {
+            throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
+        }
     }
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(MyHoardException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public @ResponseBody ErrorCode errorHandler(Exception e) {
-        if (e instanceof MyHoardException)
-            return new ErrorCode(((MyHoardException)e).getErrorCode(), ((MyHoardException)e).getErrorMsg());
-        else
-            return new ErrorCode(-1, e.getMessage());
+    public @ResponseBody ErrorCode errorHandler(MyHoardException e) {
+        return new ErrorCode(e.getErrorCode(), e.getErrorMsg());
     }
 }

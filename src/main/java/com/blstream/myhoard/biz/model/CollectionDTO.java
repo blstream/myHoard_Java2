@@ -2,6 +2,8 @@ package com.blstream.myhoard.biz.model;
 
 import java.util.Date;
 import com.blstream.myhoard.db.model.*;
+import com.blstream.myhoard.validator.CheckString;
+import com.blstream.myhoard.validator.ValidationOpt;
 import java.util.HashSet;
 import java.util.Set;
 import javax.validation.constraints.NotNull;
@@ -14,14 +16,15 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class CollectionDTO {
 
     @JsonIgnore
-    private String id;
+    private String id = "0";
 
-    @NotNull
-    @NotEmpty
+    @NotNull(message = "Nazwa kolekcji jest wymagana")
+    @NotEmpty(message = "Nazwa kolekcji jest wymagana")
+    @CheckString(message = "Za dużo białych znaków w nazwie", value = ValidationOpt.COLLECTION_NAME)
     private String name;
 
     private String description;
-    private Set<TagDTO> tags;
+    private Set<TagDTO> tags = new HashSet<>(0);
     @JsonIgnore
     private int itemsNumber;
     @JsonIgnore
@@ -30,11 +33,12 @@ public class CollectionDTO {
     private Date modifiedDate;
     private String owner;
 
+    @JsonIgnore
+    private boolean tagsAltered = false;
+
     public CollectionDTO() {
-        id = "0";	// by Integer.parseInt() nie rzucał wyjątku
         createdDate = java.util.Calendar.getInstance().getTime();
         modifiedDate = (Date) createdDate.clone();
-//        tags = new HashSet<>();
     }
 
     public CollectionDTO(String id, String owner, String name, String description, Set<TagDTO> tags, int itemsNumber, Date createdDate, Date modifiedDate) {
@@ -92,6 +96,7 @@ public class CollectionDTO {
     @JsonDeserialize(using = CustomTagDeserializer.class)
     public void setTags(Set<TagDTO> tags) {
         this.tags = tags;
+        this.tagsAltered = true;
     }
 
     @JsonProperty(value = "items_number")
@@ -126,27 +131,63 @@ public class CollectionDTO {
         this.modifiedDate = modifiedDate;
     }
 
-    public CollectionDS toCollectionDS() {
+    public boolean isTagsAltered() {
+        return tagsAltered;
+    }
+
+//    public CollectionDS toCollectionDS() {
+//        Set<TagDS> set = new HashSet<>();
+//        if (tags != null)
+//            for (TagDTO i : tags)
+//                set.add(i.toTagDS());
+//        return new CollectionDS(Integer.parseInt(id), owner, name, description, set, itemsNumber, createdDate, modifiedDate, emptySet);
+//    }
+
+    public void toDS(CollectionDS obj) {
         Set<TagDS> set = new HashSet<>();
         if (tags != null)
             for (TagDTO i : tags)
                 set.add(i.toTagDS());
-        return new CollectionDS(Integer.parseInt(id), owner, name, description, set, itemsNumber, createdDate, modifiedDate);
+        obj.setId(Integer.parseInt(id));
+        obj.setOwner(owner);
+        obj.setName(name);
+        obj.setDescription(description);
+        obj.setTags(set);
+        obj.setItemsNumber(itemsNumber);
+        obj.setCreatedDate(createdDate);
+        obj.setModifiedDate(modifiedDate);
+    }
+
+    public void fromDS(CollectionDS obj) {
+        tags = new HashSet<>();
+        if (obj.getTags() != null)
+            for (TagDS i : obj.getTags())
+                tags.add(i.toTagTO());
+        id = Integer.toString(obj.getId());
+        owner = obj.getOwner();
+        name = obj.getName();
+        description = obj.getDescription();
+        itemsNumber = obj.getItemsNumber();
+        createdDate = (Date)obj.getCreatedDate().clone();
+        modifiedDate = (Date)obj.getModifiedDate().clone();
+        tagsAltered = obj.isTagsAltered();
     }
 
     public void updateObject(CollectionDTO object) {
-        if (this == object || object == null) {
+        if (this == object || object == null)
             return;
-        }
-        if (name == null || !name.equals(object.name)) {
+        if (owner == null || object.owner != null && !owner.equals(object.owner))
+            owner = object.owner;
+        if (name == null || !name.equals(object.name))
             name = object.name;
-        }
-        if (description == null || !description.equals(object.description)) {
+        if (description == null || !description.equals(object.description))
             description = object.description;
-        }
-        if (tags == null || !tags.equals(object.tags)) {
+        if (tags == null || !object.tagsAltered) {
             tags = object.tags;
+            tagsAltered = object.tagsAltered;
         }
+        if (itemsNumber == 0)
+            itemsNumber = object.itemsNumber;
     }
 
     @Override

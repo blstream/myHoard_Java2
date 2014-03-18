@@ -10,7 +10,7 @@ public class MediaDS {
     private int id;
     private Blob file;
     private Date createdDate;
-    private ItemDS item;
+    private int item;
 
     public MediaDS() {}
 
@@ -44,11 +44,11 @@ public class MediaDS {
         this.createdDate = createdDate;
     }
 
-    public ItemDS getItem() {
+    public int getItem() {
         return item;
     }
 
-    public void setItem(ItemDS item) {
+    public void setItem(int item) {
         this.item = item;
     }
 
@@ -56,5 +56,18 @@ public class MediaDS {
         return new MediaDTO(Integer.toString(id),
                 file == null ? null : file.getBytes(1, (int) file.length()),
                 createdDate);
+    }
+
+    public int hashCode() {
+        return id;
+    }
+
+    public boolean equals(Object o) {
+        if (o == null || !(o instanceof MediaDS))
+            return false;
+        else {
+            MediaDS m = (MediaDS)o;
+            return id == m.id && file != null && file.equals(m.file) && createdDate != null && createdDate.equals(m.createdDate);
+        }
     }
 }

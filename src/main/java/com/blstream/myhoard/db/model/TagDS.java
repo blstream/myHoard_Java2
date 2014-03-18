@@ -34,9 +34,9 @@ public class TagDS {
         return new TagDTO(Integer.toString(id), tag);
     }
 
-    public int hashCode() {
-        return tag.hashCode();
-    }
+//    public int hashCode() {
+//        return tag.hashCode();
+//    }
 
     public boolean equals(Object o) {
         return (o == this) || (o instanceof TagDS && tag != null && tag.equals(((TagDS)o).tag));

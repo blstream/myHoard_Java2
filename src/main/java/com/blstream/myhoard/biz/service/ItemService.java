@@ -20,27 +20,27 @@ public class ItemService implements ResourceService<ItemDTO> {
     public List<ItemDTO> getList() {
         List<ItemDTO> result = new ArrayList<>();
         for (ItemDS i : itemDAO.getList())
-            result.add(i.toItemDTO());
+            result.add(i.toDTO());
         return result;
     }
 
     @Override
     public ItemDTO get(int id) {
-        return itemDAO.get(id).toItemDTO();
+        return itemDAO.get(id).toDTO();
     }
 
     @Override
     public void create(ItemDTO obj) {
         ItemDS item = obj.toItemDS();
         itemDAO.create(item);
-        obj.setId(Integer.toString(item.getId()));
-        obj.setCreatedDate(item.getCreatedDate());
-        obj.setModifiedDate(item.getModifiedDate());
+        item.toDTO(obj);
     }
 
     @Override
     public void update(ItemDTO obj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ItemDS item = obj.toItemDS();
+        itemDAO.update(item);
+        item.toDTO(obj);
     }
 
     @Override

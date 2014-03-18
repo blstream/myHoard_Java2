@@ -14,15 +14,19 @@ public class ItemDS {
     private int id;
     private String name;
     private String description;
-    private float latitude;
-    private float longitude;
+    private float latitude = Float.NaN;
+    private float longitude = Float.NaN;
     private Set<MediaDS> media = new HashSet<>(0);
     private Date createdDate;
     private Date modifiedDate;
     private int collection;
     private String owner;
+    private boolean mediaAltered = true;
 
-    public ItemDS() {}
+    public ItemDS() {
+        createdDate = java.util.Calendar.getInstance().getTime();
+        modifiedDate = (Date)createdDate.clone();
+    }
 
     public ItemDS(int id, String name, String description, float latitude, float longitude, Set<MediaDS> media, Date createdDate, Date modifiedDate, int collection, String owner) {
         this.id = id;
@@ -82,10 +86,8 @@ public class ItemDS {
     }
 
     public void setMedia(Set<MediaDS> media) {
-        if (media == null)
-            this.media = new HashSet<>(0);
-        else
-            this.media = media;
+        this.media = media;
+        mediaAltered = true;
     }
 
     public Date getCreatedDate() {
@@ -120,7 +122,30 @@ public class ItemDS {
         this.owner = owner;
     }
 
-    public ItemDTO toItemDTO() {
+    public boolean isMediaAltered() {
+        return mediaAltered;
+    }
+
+    public void updateObject(ItemDS object) {
+        if (this == object || object == null)
+            return;
+        if (name == null || object.name != null && !name.equals(object.name))
+            name = object.name;
+        if (description == null || object.description != null && !description.equals(object.description))
+            description = object.description;
+        if (latitude != latitude)
+            latitude = object.latitude;
+        if (longitude != longitude)
+            longitude = object.longitude;
+        if (media == null || !object.mediaAltered) {
+            media = object.media;
+            mediaAltered = object.mediaAltered;
+        }
+        if (collection != object.collection)
+            collection = object.collection;
+    }
+
+    public ItemDTO toDTO() {
         Set<MediaDTO> set = new HashSet<>(media.size());
         for (MediaDS i : media)
             try {
@@ -131,12 +156,58 @@ public class ItemDS {
         return new ItemDTO(Integer.toString(id),
                 name,
                 description,
-                new Location(latitude, longitude),
+                latitude != latitude || longitude != longitude ? null : new Location(latitude, longitude),
                 set,
                 createdDate,
                 modifiedDate,
                 Integer.toString(collection),
-//                Integer.toString(collection.getId()),
                 owner);
+    }
+
+    public void toDTO(ItemDTO obj) {
+        if (obj == null)
+            return;
+        Set<MediaDTO> set = new HashSet<>(media.size());
+        for (MediaDS i : media)
+            try {
+                set.add(i.toMediaDTO());
+            } catch (SQLException ex) {
+                throw new MyHoardException(ex.getErrorCode(), ex.getSQLState());
+            }
+        obj.setId(Integer.toString(id));
+        obj.setName(name);
+        obj.setDescription(description);
+        obj.setLocation(latitude != latitude || longitude != longitude ? null : new Location(latitude, longitude));
+        obj.setMedia(set);
+        obj.setCreatedDate(createdDate);
+        obj.setModifiedDate(modifiedDate);
+        obj.setCollection(Integer.toString(collection));
+        obj.setOwner(owner);
+    }
+
+    public void fromDTO(ItemDTO obj) {
+        if (obj == null)
+            return;
+        media = new HashSet<>();
+        if (obj.getMedia() != null)
+            for (MediaDTO i : obj.getMedia())
+                try {
+                    media.add(i.toMediaDS());
+                } catch (SQLException ex) {
+                    throw new MyHoardException(ex.getErrorCode(), ex.getSQLState());
+                }
+        id = Integer.parseInt(obj.getId());
+        name = obj.getName();
+        description = obj.getDescription();
+        if (obj.getLocation() == null)
+            latitude = longitude = Float.NaN;
+        else {
+            latitude = obj.getLocation().getLat();
+            longitude = obj.getLocation().getLng();
+        }
+        createdDate = obj.getCreatedDate();
+        modifiedDate = obj.getModifiedDate();
+        collection = Integer.parseInt(obj.getCollection());
+        owner = obj.getOwner();
     }
 }

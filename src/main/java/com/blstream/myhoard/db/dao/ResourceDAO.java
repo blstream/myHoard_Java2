@@ -1,12 +1,15 @@
 package com.blstream.myhoard.db.dao;
 
 import java.util.List;
+import java.util.Map;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public interface ResourceDAO<T> {
 
     public List<T> getList();
+
+    public List<T> getList(Map<String, String> params);
 
     public T get(int id);
 

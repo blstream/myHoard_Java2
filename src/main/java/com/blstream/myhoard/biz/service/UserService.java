@@ -7,6 +7,7 @@ import com.blstream.myhoard.biz.model.*;
 import com.blstream.myhoard.db.dao.*;
 import com.blstream.myhoard.db.model.CollectionDS;
 import com.blstream.myhoard.db.model.UserDS;
+import java.util.Map;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,6 +26,11 @@ public class UserService implements ResourceService<UserDTO> {
             result.add(i.toUserDTO());
         }
         return result;
+    }
+
+    @Override
+    public List<UserDTO> getList(Map<String, String> params) {
+        return null;
     }
 
 

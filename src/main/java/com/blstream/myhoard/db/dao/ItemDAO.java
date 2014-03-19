@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -25,6 +26,11 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
     public List<ItemDS> getList() {
         Session session = sessionFactory.getCurrentSession();
         return session.createCriteria(ItemDS.class).list();
+    }
+
+    @Override
+    public List<ItemDS> getList(Map<String, String> args) {
+        return null;
     }
 
     @Override

@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -38,6 +39,11 @@ public class MediaService implements ResourceService<MediaDTO> {
             Logger.getLogger(MediaService.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
+    }
+
+    @Override
+    public List<MediaDTO> getList(Map<String, String> params) {
+        return null;
     }
 
     @Override

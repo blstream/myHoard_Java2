@@ -3,6 +3,7 @@ package com.blstream.myhoard.db.dao;
 import java.util.List;
 import org.hibernate.Session;
 import com.blstream.myhoard.db.model.*;
+import java.util.Map;
 
 import org.hibernate.SessionFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,11 @@ public class UserDAO implements ResourceDAO<UserDS> {
         Session session = sessionFactory.getCurrentSession();
         List<UserDS> result = session.createQuery("from UserDS").list();
         return result;
+    }
+
+    @Override
+    public List<UserDS> getList(Map<String, String> args) {
+        return null;
     }
 
     @Override

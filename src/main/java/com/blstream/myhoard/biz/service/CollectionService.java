@@ -6,6 +6,7 @@ import java.util.List;
 import com.blstream.myhoard.biz.model.*;
 import com.blstream.myhoard.db.dao.*;
 import com.blstream.myhoard.db.model.CollectionDS;
+import java.util.Map;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,6 +28,18 @@ public class CollectionService implements ResourceService<CollectionDTO> {
         } catch (RuntimeException ex) {
             throw new MyHoardException(300, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
+    }
+
+    @Override
+    public List<CollectionDTO> getList(Map<String, String> params) {
+        if (!"asc".equals(params.get("sort_dir")) && !"desc".equals(params.get("sort_dir")))
+            throw new MyHoardException(400, "Nieprawidłowy porządek : " + params.get("sort_dir"));
+        if (Integer.parseInt(params.get("max_count")) <= 0)
+            throw new MyHoardException(400, "Nieprawidłowa warotść max_count: " + params.get("max_count"));
+        List<CollectionDTO> list = new ArrayList<>();
+        for (CollectionDS i : collectionDAO.getList(params))
+            list.add(i.toDTO());
+        return list;
     }
 
     @Override
@@ -71,5 +84,4 @@ public class CollectionService implements ResourceService<CollectionDTO> {
             throw new MyHoardException(400, "Element o id(" + id + ") prawdopodobnie nie istnieje.");
         }
     }
-
 }

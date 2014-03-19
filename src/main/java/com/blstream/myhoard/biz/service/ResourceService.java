@@ -1,10 +1,13 @@
 package com.blstream.myhoard.biz.service;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ResourceService<T> {
 
     public List<T> getList();
+
+    public List<T> getList(Map<String, String> params);
 
     public T get(int id);
 

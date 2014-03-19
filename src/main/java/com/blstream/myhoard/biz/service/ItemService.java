@@ -5,6 +5,7 @@ import com.blstream.myhoard.db.dao.ResourceDAO;
 import com.blstream.myhoard.db.model.ItemDS;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,6 +23,11 @@ public class ItemService implements ResourceService<ItemDTO> {
         for (ItemDS i : itemDAO.getList())
             result.add(i.toDTO());
         return result;
+    }
+
+    @Override
+    public List<ItemDTO> getList(Map<String, String> params) {
+        return null;
     }
 
     @Override

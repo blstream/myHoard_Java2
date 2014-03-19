@@ -4,7 +4,10 @@ import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.CollectionDTO;
 import com.blstream.myhoard.biz.service.ResourceService;
+import com.blstream.myhoard.db.model.SortResult;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -32,6 +36,24 @@ public class CollectionController {
     @ResponseBody
     public List<CollectionDTO> getCollections() {
         return collectionService.getList();
+    }
+
+    @RequestMapping(value = "/sort", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public SortResult sortCollections(@RequestParam(value = "sort_by", defaultValue = "name") String fieldName,
+            @RequestParam(value = "sort_direction", defaultValue = "asc") String sortDir,
+            @RequestParam(value = "max_count", defaultValue = "1") String maxCount,
+            @RequestParam(value = "start_num", defaultValue = "0") String startNum) {
+        Map<String, String> params = new HashMap<>();
+        SortResult result = new SortResult();
+        params.put("sort_by", fieldName);
+        params.put("sort_dir", sortDir);
+        params.put("max_count", maxCount);
+        params.put("start_num", startNum);
+        result.setCollections(collectionService.getList(params));
+        result.setTotalCount(result.getCollections().size());
+        return result;
     }
 
     @RequestMapping(method = RequestMethod.POST)

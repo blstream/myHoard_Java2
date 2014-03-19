@@ -2,6 +2,7 @@ package com.blstream.myhoard.db.dao;
 
 import com.blstream.myhoard.db.model.MediaDS;
 import java.util.List;
+import java.util.Map;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,11 @@ public class MediaDAO implements ResourceDAO<MediaDS> {
         Session session = sessionFactory.getCurrentSession();
         List<MediaDS> result = session.createQuery("from MediaDS").list();
         return result;
+    }
+
+    @Override
+    public List<MediaDS> getList(Map<String, String> args) {
+        return null;
     }
 
     @Override

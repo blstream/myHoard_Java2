@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class CollectionDAO implements ResourceDAO<CollectionDS> {
 
     private SessionFactory sessionFactory;
+
+    @Override
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public List<CollectionDS> getList() {
@@ -27,6 +34,16 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
         for (int i = 0; i < result.size(); i++)
             result.get(i).setItemsNumber(count.get(i).intValue());
         return result;
+    }
+
+    @Override
+    public List<CollectionDS> getList(Map<String, String> params) {
+        Session session = sessionFactory.getCurrentSession();
+        return session.createCriteria(CollectionDS.class)
+                .addOrder("asc".equals(params.get("sort_dir")) ? Order.asc(params.get("sort_by")) : Order.desc(params.get("sort_by")))
+                .setMaxResults(Integer.parseInt(params.get("max_count")))
+                .setFirstResult(Integer.parseInt(params.get("start_num")))
+                .list();
     }
 
     @Override
@@ -99,10 +116,4 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
                 .add(Restrictions.eq("id", id))
                 .uniqueResult());
     }
-
-    @Override
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
 }

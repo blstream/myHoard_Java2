@@ -11,6 +11,7 @@
     <body>
         <h1>Team: Java2</h1>
         <p>Version: ${version}</p>
+        <p>Commit hash: ${commitNumber}</p>
 
 <!--        <a href="index.jsp?kill">Ubij procesy</a><br/>
         <a href="index.jsp?collections">Wylistuj kolekcje</a><br/>

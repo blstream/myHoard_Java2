@@ -6,6 +6,7 @@ import com.blstream.myhoard.db.model.*;
 import java.util.Map;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -30,6 +31,13 @@ public class UserDAO implements ResourceDAO<UserDS> {
         Session session = sessionFactory.getCurrentSession();
         UserDS result = (UserDS) session.createQuery("from UserDS where id = " + id).uniqueResult();
         return result;
+    }
+    
+    public UserDS getByUsername(String username) {
+        Session session = sessionFactory.getCurrentSession();
+        return (UserDS) session.createCriteria(UserDS.class)
+                .add(Restrictions.eq("username", username))
+                .uniqueResult();
     }
     
     @Override

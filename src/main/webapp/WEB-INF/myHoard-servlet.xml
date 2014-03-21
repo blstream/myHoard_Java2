@@ -41,6 +41,7 @@
 				<value>MediaDS.hbm.xml</value>
 				<value>TagDS.hbm.xml</value>
 				<value>UserDS.hbm.xml</value>
+				<value>SessionDS.hbm.xml</value>
 			</list>
 		</property>
 	</bean>
@@ -61,6 +62,9 @@
         <bean id="userDAO" class="com.blstream.myhoard.db.dao.UserDAO">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
+        <bean id="sessionDAO" class="com.blstream.myhoard.db.dao.SessionDAO">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
 
 	<bean id="collectionService" class="com.blstream.myhoard.biz.service.CollectionService">
 		<property name="collectionDAO" ref="collectionDAO" />
@@ -74,6 +78,9 @@
 	<bean id="userService" class="com.blstream.myhoard.biz.service.UserService">
 		<property name="userDAO" ref="userDAO" />
 	</bean>
+        <bean id="sessionService" class="com.blstream.myhoard.biz.service.SessionService">
+		<property name="sessionDAO" ref="sessionDAO" />
+	</bean>
 
 	<bean id="itemController" class="com.blstream.myhoard.controller.ItemController">
 		<property name="itemService" ref="itemService" />
@@ -83,6 +90,10 @@
 	</bean>
 	<bean id="userController" class="com.blstream.myhoard.controller.UserController">
 		<property name="userService" ref="userService" />
+	</bean>
+        <bean id="tokenController" class="com.blstream.myhoard.controller.TokenController">
+		<property name="userService" ref="userService" />
+                <property name="sessionService" ref="sessionService" />
 	</bean>
 
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />

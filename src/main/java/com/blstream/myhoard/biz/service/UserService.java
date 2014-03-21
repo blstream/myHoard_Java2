@@ -62,6 +62,10 @@ public class UserService implements ResourceService<UserDTO> {
     public UserDTO get(int id) {
         return userDAO.get(id).toUserDTO();
     }
+    
+    public UserDTO getByUsername(String username) {
+        return ((UserDAO)userDAO).getByUsername(username).toUserDTO();
+    }
 
 
 }

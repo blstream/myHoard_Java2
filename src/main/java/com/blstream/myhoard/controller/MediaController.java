@@ -102,7 +102,7 @@ public class MediaController extends HttpServlet {
         }
     }
 
-    @RequestMapping(value = "/{id}/thumbnail",params={"size"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/",params={"size"}, method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
     byte[] getThumbnailSize(@PathVariable String id,@RequestParam(value = "size", required = true) String size) {
@@ -113,7 +113,7 @@ public class MediaController extends HttpServlet {
         }
     }
     
-    @RequestMapping(value = "/{id}/thumbnail", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
     byte[] getThumbnail(@PathVariable String id) {

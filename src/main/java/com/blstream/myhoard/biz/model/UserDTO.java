@@ -1,5 +1,6 @@
 package com.blstream.myhoard.biz.model;
 
+import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.db.model.UserDS;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -16,18 +17,18 @@ public class UserDTO {
 
     @JsonIgnore
     private String id;
-    
+
     @Email
     private String email;
 
     private String username;
-    
+
     private String password;
 
     private String grant_type;
-    
+
     private String refresh_token;
-    
+
     public UserDTO() {
         id = "0";
     }
@@ -38,7 +39,7 @@ public class UserDTO {
         this.username = username;
         this.password = password;
     }
-    
+
     public String getId() {
         return id;
     }
@@ -62,11 +63,12 @@ public class UserDTO {
     public void setUsername(String username) {
         this.username = username;
     }
-    
+
     @JsonIgnore
     public String getPassword() {
         return password;
     }
+
     @JsonProperty("password")
     public void setPassword(String password) {
         this.password = password;
@@ -91,8 +93,8 @@ public class UserDTO {
     public void setRefresh_token(String refresh_token) {
         this.refresh_token = refresh_token;
     }
-    
-     public void updateObject(UserDTO object) {
+
+    public void updateObject(UserDTO object) {
         if (this == object || object == null) {
             return;
         }
@@ -106,8 +108,8 @@ public class UserDTO {
             password = object.password;
         }
     }
-    
+
     public UserDS toUserDS() {
-        return new UserDS(Integer.parseInt(id),email, username, password);
+        return new UserDS(Integer.parseInt(id), email, username, password);
     }
 }

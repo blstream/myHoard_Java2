@@ -116,4 +116,14 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
                 .add(Restrictions.eq("id", id))
                 .uniqueResult());
     }
+
+    @Override
+    public CollectionDS getByAccess_token(String access_token) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public CollectionDS getByUsername(String username) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

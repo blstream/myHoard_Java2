@@ -84,4 +84,9 @@ public class CollectionService implements ResourceService<CollectionDTO> {
             throw new MyHoardException(400, "Element o id(" + id + ") prawdopodobnie nie istnieje.");
         }
     }
+
+    @Override
+    public CollectionDTO getByAccess_token(String access_token) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

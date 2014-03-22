@@ -5,8 +5,10 @@
  */
 package com.blstream.myhoard.controller;
 
+import com.blstream.myhoard.biz.exception.MyHoardException;
+import com.blstream.myhoard.biz.model.SessionDTO;
+import com.blstream.myhoard.biz.service.ResourceService;
 import java.io.IOException;
-import java.util.Enumeration;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -14,10 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  *
@@ -28,6 +27,13 @@ public class SecurityFilter implements Filter {
     @Autowired
     private HttpServletRequest request;
 
+    private ResourceService<SessionDTO> sessionService;
+    private boolean autorization = false;
+
+    public void setSessionService(ResourceService<SessionDTO> sessionService) {
+        this.sessionService = sessionService;
+    }
+
     @Override
     public void init(FilterConfig fc) throws ServletException {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -35,20 +41,25 @@ public class SecurityFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest sr, ServletResponse sr1, FilterChain fc) throws IOException, ServletException {
-        //HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        //String authorization = request.getHeader("Authorization");
+
         request = (HttpServletRequest) sr;
         String accessToken = request.getHeader("Authorization");
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        if (request.getMethod().equals("POST") && request.getRequestURI().equals(request.getContextPath() + "/users")) {
+            autorization = true;
+        }
+
+        SessionDTO sessionDTO = sessionService.getByAccess_token(accessToken);
+        if (sessionDTO != null) {
+            sessionDTO.getId();
+            //TODO wez uzytkownika po id, 
+            //sr.setAttribute("user", user);
+            //sr.getAttribute("user")
+        }
         
-        Enumeration headerNames = request.getHeaderNames();
-		while (headerNames.hasMoreElements()) {
-			String key = (String) headerNames.nextElement();
-			String value = request.getHeader(key);
-		}
-        
+        //if (autorization) {
         fc.doFilter(sr, sr1);
-        return;
+
     }
 
     @Override

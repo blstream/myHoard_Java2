@@ -108,5 +108,10 @@ public class MediaService implements ResourceService<MediaDTO> {
         } 
         return null;
     }
+
+    @Override
+    public MediaDTO getByAccess_token(String access_token) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
    
 }

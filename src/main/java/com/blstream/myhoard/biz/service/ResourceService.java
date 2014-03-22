@@ -16,4 +16,6 @@ public interface ResourceService<T> {
     public void update(T obj);
 
     public void remove(int id);
+    
+    public T getByAccess_token(String access_token);
 }

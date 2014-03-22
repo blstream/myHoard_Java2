@@ -22,4 +22,7 @@ public interface ResourceDAO<T> {
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory);
 
+    public T getByAccess_token(String access_token);
+
+    public T getByUsername(String username);
 }

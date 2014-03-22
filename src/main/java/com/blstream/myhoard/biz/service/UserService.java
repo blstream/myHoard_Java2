@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService implements ResourceService<UserDTO> {
 
-    private Resource2DAO<UserDS> userDAO;
+    private ResourceDAO<UserDS> userDAO;
     
-    public void setUserDAO(Resource2DAO<UserDS> userDAO) {
+    public void setUserDAO(ResourceDAO<UserDS> userDAO) {
         this.userDAO = userDAO;
     }
     
@@ -65,6 +65,11 @@ public class UserService implements ResourceService<UserDTO> {
     
     public UserDTO getByUsername(String username) {
         return userDAO.getByUsername(username).toUserDTO();
+    }
+
+    @Override
+    public UserDTO getByAccess_token(String access_token) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 

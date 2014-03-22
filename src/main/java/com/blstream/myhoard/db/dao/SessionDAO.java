@@ -37,10 +37,11 @@ public class SessionDAO implements ResourceDAO<SessionDS> {
                 .uniqueResult();
     }
     
-    public SessionDS getByToken(String access_token) {
+    @Override
+    public SessionDS getByAccess_token(String access_token) {
         Session session = sessionFactory.getCurrentSession();
         return (SessionDS)session.createCriteria(SessionDS.class)
-                .add(Restrictions.eq("access_token", access_token))
+                .add(Restrictions.eq("accessToken", access_token))
                 .uniqueResult();
     }
 
@@ -57,6 +58,11 @@ public class SessionDAO implements ResourceDAO<SessionDS> {
 
     @Override
     public void remove(int id) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public SessionDS getByUsername(String username) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

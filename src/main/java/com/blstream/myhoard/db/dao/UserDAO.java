@@ -10,7 +10,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public class UserDAO implements Resource2DAO<UserDS> {
+public class UserDAO implements ResourceDAO<UserDS> {
 
     private SessionFactory sessionFactory;
 
@@ -31,8 +31,7 @@ public class UserDAO implements Resource2DAO<UserDS> {
         Session session = sessionFactory.getCurrentSession();
         UserDS result = (UserDS) session.createQuery("from UserDS where id = " + id).uniqueResult();
         return result;
-    }
-    
+    }    
 
     
     @Override
@@ -69,6 +68,11 @@ public class UserDAO implements Resource2DAO<UserDS> {
         return (UserDS) session.createCriteria(UserDS.class)
                 .add(Restrictions.eq("username", username))
                 .uniqueResult();
+    }
+
+    @Override
+    public UserDS getByAccess_token(String access_token) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

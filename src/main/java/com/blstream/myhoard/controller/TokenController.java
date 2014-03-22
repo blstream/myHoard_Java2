@@ -47,20 +47,11 @@ public class TokenController {
         try {
             UserDTO saved = ((UserService) userService).getByUsername(user.getUsername());
             //TODO SHA1 of user Password
-
-            try {
-                MessageDigest md = MessageDigest.getInstance("SHA1");
-                md.update(user.getPassword().getBytes());
-                String pass = new BigInteger(1, md.digest()).toString(16);
-                user.setPassword(pass);
-            } catch (NoSuchAlgorithmException e) {
-                throw new MyHoardException(400);
-            }
-
-            if (user.getGrant_type()!=null){
+            user.setPassword(encode(user.getPassword()));
+            if (user.getGrant_type() != null) {
                 if (saved.getEmail().equals(user.getEmail()) && saved.getPassword().equals(user.getPassword()) && user.getGrant_type().equals("password")) {
-                    //TODO Generowanie tokenu,
-                    SessionDTO created = new SessionDTO("0", "acces_token", java.util.Calendar.getInstance().getTime(), "refresh_token", saved.getId());
+                    //TODO Generowanie tokenu, temporary broken access_token
+                    SessionDTO created = new SessionDTO("0", encode(java.util.Calendar.getInstance().getTime().toString()), java.util.Calendar.getInstance().getTime(), "refresh_token", saved.getId());
                     sessionService.create(created);
                     return created;
                 } else {
@@ -70,6 +61,17 @@ public class TokenController {
             throw new MyHoardException(400, "Empty field: grant_type");
         } catch (Exception ex) {
             throw new MyHoardException(400, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
+        }
+    }
+
+    public String encode(String tmp) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA1");
+            md.update(tmp.getBytes());
+            String pass = new BigInteger(1, md.digest()).toString(16);
+            return pass;
+        } catch (NoSuchAlgorithmException e) {
+            throw new MyHoardException(400);
         }
     }
 

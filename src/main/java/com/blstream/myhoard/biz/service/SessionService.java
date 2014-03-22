@@ -30,9 +30,9 @@ public class SessionService implements ResourceService<SessionDTO> {
     public SessionDTO get(int id) {
         return sessionDAO.get(id).toSessionDTO();
     }
-    
+
     public SessionDTO get(String access_token) {
-        return ((SessionDAO)sessionDAO).getByToken(access_token).toSessionDTO();
+        return ((SessionDAO) sessionDAO).getByAccess_token(access_token).toSessionDTO();
     }
 
     @Override
@@ -51,7 +51,14 @@ public class SessionService implements ResourceService<SessionDTO> {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    
-
+    @Override
+    public SessionDTO getByAccess_token(String access_token) {
+        SessionDS sessionDS = sessionDAO.getByAccess_token(access_token);
+        if (sessionDS.equals(null)) {
+            return null;
+        } else {
+            return sessionDAO.getByAccess_token(access_token).toSessionDTO();
+        }
+    }
 
 }

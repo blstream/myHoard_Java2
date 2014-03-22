@@ -54,4 +54,14 @@ public class MediaDAO implements ResourceDAO<MediaDS> {
         this.sessionFactory = sessionFactory;
     }
 
+    @Override
+    public MediaDS getByAccess_token(String access_token) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public MediaDS getByUsername(String username) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

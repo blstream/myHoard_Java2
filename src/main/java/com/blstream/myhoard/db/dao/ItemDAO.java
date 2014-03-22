@@ -91,4 +91,14 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
         this.sessionFactory = sessionFactory;
     }
 
+    @Override
+    public ItemDS getByAccess_token(String access_token) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ItemDS getByUsername(String username) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

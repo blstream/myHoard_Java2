@@ -55,4 +55,9 @@ public class ItemService implements ResourceService<ItemDTO> {
         itemDAO.remove(id);
     }
 
+    @Override
+    public ItemDTO getByAccess_token(String access_token) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

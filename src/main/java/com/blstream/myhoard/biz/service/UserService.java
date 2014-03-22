@@ -13,12 +13,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService implements ResourceService<UserDTO> {
 
-    private ResourceDAO<UserDS> userDAO;
-
-    public void setUserDAO(ResourceDAO<UserDS> userDAO) {
+    private Resource2DAO<UserDS> userDAO;
+    
+    public void setUserDAO(Resource2DAO<UserDS> userDAO) {
         this.userDAO = userDAO;
     }
-
+    
     @Override
     public List<UserDTO> getList() {
         List<UserDTO> result = new ArrayList<>();
@@ -64,7 +64,7 @@ public class UserService implements ResourceService<UserDTO> {
     }
     
     public UserDTO getByUsername(String username) {
-        return ((UserDAO)userDAO).getByUsername(username).toUserDTO();
+        return userDAO.getByUsername(username).toUserDTO();
     }
 
 

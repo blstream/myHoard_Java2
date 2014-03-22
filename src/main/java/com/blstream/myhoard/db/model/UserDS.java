@@ -57,14 +57,15 @@ public class UserDS {
     }
 
     public void setPassword(String password) {
-        try {
+        /*try {
         MessageDigest md = MessageDigest.getInstance( "SHA1" );
         md.update( password.getBytes() );
         this.password = new BigInteger( 1, md.digest() ).toString(16);
         }
         catch (NoSuchAlgorithmException e) {
         throw new MyHoardException(400,"Błąd SHA");
-        }
+        }*/
+        this.password = password;
     }
 
     public void updateObject(UserDS object) {

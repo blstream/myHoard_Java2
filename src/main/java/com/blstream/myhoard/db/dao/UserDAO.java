@@ -10,7 +10,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public class UserDAO implements ResourceDAO<UserDS> {
+public class UserDAO implements Resource2DAO<UserDS> {
 
     private SessionFactory sessionFactory;
 
@@ -33,12 +33,7 @@ public class UserDAO implements ResourceDAO<UserDS> {
         return result;
     }
     
-    public UserDS getByUsername(String username) {
-        Session session = sessionFactory.getCurrentSession();
-        return (UserDS) session.createCriteria(UserDS.class)
-                .add(Restrictions.eq("username", username))
-                .uniqueResult();
-    }
+
     
     @Override
     public void create(UserDS obj) {
@@ -68,5 +63,12 @@ public class UserDAO implements ResourceDAO<UserDS> {
         this.sessionFactory = sessionFactory;
     }
 
+    @Override
+    public UserDS getByUsername(String username) {
+        Session session = sessionFactory.getCurrentSession();
+        return (UserDS) session.createCriteria(UserDS.class)
+                .add(Restrictions.eq("username", username))
+                .uniqueResult();
+    }
 
 }

@@ -46,7 +46,8 @@ public class SessionDAO implements ResourceDAO<SessionDS> {
 
     @Override
     public void create(SessionDS obj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = sessionFactory.getCurrentSession();
+        session.save(obj);
     }
 
     @Override

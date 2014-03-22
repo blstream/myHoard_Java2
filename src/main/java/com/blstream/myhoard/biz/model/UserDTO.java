@@ -28,9 +28,9 @@ public class UserDTO {
         id = "0";
     }
 
-    public UserDTO(String id, String mail, String username, String password) {
+    public UserDTO(String id, String email, String username, String password) {
         this.id = id;
-        this.email = mail;
+        this.email = email;
         this.username = username;
         this.password = password;
     }
@@ -43,12 +43,12 @@ public class UserDTO {
         this.id = id;
     }
 
-    public String getMail() {
+    public String getEmail() {
         return email;
     }
 
-    public void setMail(String mail) {
-        this.email = mail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getUsername() {

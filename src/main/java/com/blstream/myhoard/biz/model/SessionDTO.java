@@ -21,15 +21,19 @@ public class SessionDTO {
     
     private String refresh_token;
 
+    @JsonIgnore
+    private String user_id;
+    
     public SessionDTO() {
         id = "0";
     }
 
-    public SessionDTO(String id, String access_token, Date date_created, String refresh_token) {
+    public SessionDTO(String id, String access_token, Date date_created, String refresh_token, String user_id) {
         this.id = id;
         this.access_token = access_token;
         this.date_created = date_created;
         this.refresh_token = refresh_token;
+        this.user_id = user_id;
     }
     
     public String getId() {
@@ -64,7 +68,15 @@ public class SessionDTO {
         this.refresh_token = refresh_token;
     }
 
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
+    
     public SessionDS toSessionDS() {
-        return new SessionDS(Integer.parseInt(id),access_token, date_created, refresh_token);
+        return new SessionDS(Integer.parseInt(id),access_token, date_created, refresh_token, Integer.parseInt(user_id));
     }
 }

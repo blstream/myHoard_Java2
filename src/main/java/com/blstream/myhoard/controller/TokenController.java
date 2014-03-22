@@ -6,6 +6,9 @@ import com.blstream.myhoard.biz.model.SessionDTO;
 import com.blstream.myhoard.biz.model.UserDTO;
 import com.blstream.myhoard.biz.service.ResourceService;
 import com.blstream.myhoard.biz.service.UserService;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -43,9 +46,21 @@ public class TokenController {
         */try {
             UserDTO saved = ((UserService)userService).getByUsername(user.getUsername());
             //TODO SHA1 of user Password
-            if(saved.getMail().equals(user.getMail()) && saved.getPassword().equals(user.getPassword())) {
+            
+                    try {
+                    MessageDigest md = MessageDigest.getInstance( "SHA1" );
+                    md.update( user.getPassword().getBytes() );
+                    String pass = new BigInteger( 1, md.digest() ).toString(16);
+                    user.setPassword(pass);
+                    }
+                    catch (NoSuchAlgorithmException e) {
+                    throw new MyHoardException(400);
+                    }
+            
+            
+            if(saved.getEmail().equals(user.getEmail()) && saved.getPassword().equals(user.getPassword())) {
                 //TODO Generowanie tokenu,
-                SessionDTO created = new SessionDTO("0","acces_token",java.util.Calendar.getInstance().getTime(),"refresh_token");
+                SessionDTO created = new SessionDTO("0","acces_token",java.util.Calendar.getInstance().getTime(),"refresh_token", saved.getId());
                 sessionService.create(created);
                 return created;
             } else

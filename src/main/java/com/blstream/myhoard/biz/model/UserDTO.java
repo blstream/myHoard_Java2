@@ -24,6 +24,10 @@ public class UserDTO {
     
     private String password;
 
+    private String grant_type;
+    
+    private String refresh_token;
+    
     public UserDTO() {
         id = "0";
     }
@@ -68,6 +72,26 @@ public class UserDTO {
         this.password = password;
     }
 
+    @JsonIgnore
+    public String getGrant_type() {
+        return grant_type;
+    }
+
+    @JsonProperty("grant_type")
+    public void setGrant_type(String grant_type) {
+        this.grant_type = grant_type;
+    }
+
+    @JsonIgnore
+    public String getRefresh_token() {
+        return refresh_token;
+    }
+
+    @JsonProperty("refresh_token")
+    public void setRefresh_token(String refresh_token) {
+        this.refresh_token = refresh_token;
+    }
+    
      public void updateObject(UserDTO object) {
         if (this == object || object == null) {
             return;

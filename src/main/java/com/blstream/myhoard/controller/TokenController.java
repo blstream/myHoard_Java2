@@ -32,7 +32,7 @@ public class TokenController {
     public void setSessionService(ResourceService<SessionDTO> sessionService) {
         this.sessionService = sessionService;
     }
-    
+
     public void setUserService(ResourceService<UserDTO> userService) {
         this.userService = userService;
     }
@@ -42,30 +42,32 @@ public class TokenController {
     @ResponseBody
     public SessionDTO login(@RequestBody @Valid UserDTO user, BindingResult result) {
         /*if (result.hasErrors())
-            throw new MyHoardException(400, result.toString());
-        */try {
-            UserDTO saved = ((UserService)userService).getByUsername(user.getUsername());
+         throw new MyHoardException(400, result.toString());
+         */
+        try {
+            UserDTO saved = ((UserService) userService).getByUsername(user.getUsername());
             //TODO SHA1 of user Password
-            
-                    try {
-                    MessageDigest md = MessageDigest.getInstance( "SHA1" );
-                    md.update( user.getPassword().getBytes() );
-                    String pass = new BigInteger( 1, md.digest() ).toString(16);
-                    user.setPassword(pass);
-                    }
-                    catch (NoSuchAlgorithmException e) {
-                    throw new MyHoardException(400);
-                    }
-            
-            
-            if(saved.getEmail().equals(user.getEmail()) && saved.getPassword().equals(user.getPassword())) {
-                //TODO Generowanie tokenu,
-                SessionDTO created = new SessionDTO("0","acces_token",java.util.Calendar.getInstance().getTime(),"refresh_token", saved.getId());
-                sessionService.create(created);
-                return created;
-            } else
-                throw new MyHoardException(101,"BadCredentials");
-            
+
+            try {
+                MessageDigest md = MessageDigest.getInstance("SHA1");
+                md.update(user.getPassword().getBytes());
+                String pass = new BigInteger(1, md.digest()).toString(16);
+                user.setPassword(pass);
+            } catch (NoSuchAlgorithmException e) {
+                throw new MyHoardException(400);
+            }
+
+            if (user.getGrant_type()!=null){
+                if (saved.getEmail().equals(user.getEmail()) && saved.getPassword().equals(user.getPassword()) && user.getGrant_type().equals("password")) {
+                    //TODO Generowanie tokenu,
+                    SessionDTO created = new SessionDTO("0", "acces_token", java.util.Calendar.getInstance().getTime(), "refresh_token", saved.getId());
+                    sessionService.create(created);
+                    return created;
+                } else {
+                    throw new MyHoardException(101, "BadCredentials");
+                }
+            }
+            throw new MyHoardException(400, "Empty field: grant_type");
         } catch (Exception ex) {
             throw new MyHoardException(400, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }

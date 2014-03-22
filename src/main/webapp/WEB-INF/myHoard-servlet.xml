@@ -76,8 +76,9 @@
 		<property name="itemDAO" ref="itemDAO" />
 	</bean>
 	<bean id="userService" class="com.blstream.myhoard.biz.service.UserService">
-		<property name="userDAO" ref="userDAO" />
-	</bean>
+		<property name="userDAO" ref="userDAO" />               
+	</bean>     
+        
         <bean id="sessionService" class="com.blstream.myhoard.biz.service.SessionService">
 		<property name="sessionDAO" ref="sessionDAO" />
 	</bean>
@@ -98,6 +99,8 @@
 
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
 
+	<bean id="securityFilter" class="com.blstream.myhoard.controller.SecurityFilter" />        
+        
 	<mvc:annotation-driven />
 
 	<tx:annotation-driven transaction-manager="txManager"/>

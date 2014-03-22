@@ -17,7 +17,7 @@ public class SessionDTO {
     
     private String access_token;
 
-    private Date date_created;
+    private Date expires_in;
     
     private String refresh_token;
 
@@ -31,7 +31,7 @@ public class SessionDTO {
     public SessionDTO(String id, String access_token, Date date_created, String refresh_token, String user_id) {
         this.id = id;
         this.access_token = access_token;
-        this.date_created = date_created;
+        this.expires_in = expires_in;
         this.refresh_token = refresh_token;
         this.user_id = user_id;
     }
@@ -44,27 +44,27 @@ public class SessionDTO {
         this.id = id;
     }
 
-    public String getAccessToken() {
+    public String getAccess_token() {
         return access_token;
     }
 
-    public void setAccessToken(String access_token) {
+    public void setAccess_token(String access_token) {
         this.access_token = access_token;
     }
 
-    public Date getDateCreated() {
-        return date_created;
+    public Date getExpires_in() {
+        return expires_in;
     }
 
-    public void setDateCreated(Date date_created) {
-        this.date_created = date_created;
+    public void setExpires_in(Date expires_in) {
+        this.expires_in = expires_in;
     }
     
-    public String getRefreshToken() {
+    public String getRefresh_token() {
         return refresh_token;
     }
     
-    public void setRefreshToken(String refresh_token) {
+    public void setRefresh_token(String refresh_token) {
         this.refresh_token = refresh_token;
     }
 
@@ -77,6 +77,6 @@ public class SessionDTO {
     }
     
     public SessionDS toSessionDS() {
-        return new SessionDS(Integer.parseInt(id),access_token, date_created, refresh_token, Integer.parseInt(user_id));
+        return new SessionDS(Integer.parseInt(id),access_token, expires_in, refresh_token, Integer.parseInt(user_id));
     }
 }

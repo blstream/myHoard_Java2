@@ -38,9 +38,9 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public UserDTO addUser(@RequestBody @Valid UserDTO user, BindingResult result) {
-        /*if (result.hasErrors())
-            throw new MyHoardException(400, result.toString());
-        */try {
+        if (result.hasErrors())
+            throw new MyHoardException(400, result.getFieldError().getDefaultMessage());
+        try {
             userService.create(user);
             return user;
         } catch (Exception ex) {

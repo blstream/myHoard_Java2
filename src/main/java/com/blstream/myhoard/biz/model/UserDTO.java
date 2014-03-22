@@ -6,6 +6,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.hibernate.validator.constraints.Email;
 
 /**
  *
@@ -16,7 +17,8 @@ public class UserDTO {
     @JsonIgnore
     private String id;
     
-    private String mail;
+    @Email
+    private String email;
 
     private String username;
     
@@ -28,7 +30,7 @@ public class UserDTO {
 
     public UserDTO(String id, String mail, String username, String password) {
         this.id = id;
-        this.mail = mail;
+        this.email = mail;
         this.username = username;
         this.password = password;
     }
@@ -42,11 +44,11 @@ public class UserDTO {
     }
 
     public String getMail() {
-        return mail;
+        return email;
     }
 
     public void setMail(String mail) {
-        this.mail = mail;
+        this.email = mail;
     }
 
     public String getUsername() {
@@ -73,8 +75,8 @@ public class UserDTO {
         if (username == null || object.username != null && !username.equals(object.username)) {
             username = object.username;
         }
-        if (mail == null || object.mail != null && !mail.equals(object.mail)) {
-            mail = object.mail;
+        if (email == null || object.email != null && !email.equals(object.email)) {
+            email = object.email;
         }
         if (password == null || object.password != null && !password.equals(object.password)) {
             password = object.password;
@@ -82,6 +84,6 @@ public class UserDTO {
     }
     
     public UserDS toUserDS() {
-        return new UserDS(Integer.parseInt(id),mail, username, password);
+        return new UserDS(Integer.parseInt(id),email, username, password);
     }
 }

@@ -19,7 +19,7 @@
         <a href="${pageContext.request.contextPath}/uploadFile.jsp">Go to uploadFile.jsp</a><br/>
 
         <%
-            ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+/*            ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
             SessionFactory sessionFactory = (SessionFactory)context.getBean("sessionFactory");
             if (request.getParameter("kill") != null) {
                 Session sesja = sessionFactory.getCurrentSession();
@@ -50,6 +50,6 @@
                     out.println(String.format("\t\t<tr><td>%d</td><td>%s</td></tr>", i.getId(), i.getCreatedDate()));
                 out.print("\t</table>");
             }
-        %>
+*/        %>
     </body>
 </html>

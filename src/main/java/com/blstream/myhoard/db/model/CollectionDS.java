@@ -14,25 +14,14 @@ public class CollectionDS {
     private String description;
     private Set<TagDS> tags = new HashSet<>(0);
     private int itemsNumber;
-    private Date createdDate;
-    private Date modifiedDate;
+    private Date created_date;
+    private Date modified_date;
     private boolean tagsAltered = false;
 
     public CollectionDS() {
-        createdDate = java.util.Calendar.getInstance().getTime();
-        modifiedDate = (Date)createdDate.clone();
+        created_date = java.util.Calendar.getInstance().getTime();
+        modified_date = (Date)created_date.clone();
     }
-
-//    public CollectionDS(int id, String owner, String name, String description, Set<TagDS> tags, long itemsNumber, Date createdDate, Date modifiedDate) {
-//        this.id = id;
-//        this.owner = owner;
-//        this.name = name;
-//        this.description = description;
-//        this.tags = tags;
-//        this.itemsNumber = (int)itemsNumber;
-//        this.createdDate = createdDate;
-//        this.modifiedDate = modifiedDate;
-//    }
 
     public int getId() {
         return id;
@@ -83,20 +72,20 @@ public class CollectionDS {
         this.itemsNumber = itemsNumber;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
+    public Date getCreated_date() {
+        return created_date;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
+    public void setCreated_date(Date created_date) {
+        this.created_date = created_date;
     }
 
-    public Date getModifiedDate() {
-        return modifiedDate;
+    public Date getModified_date() {
+        return modified_date;
     }
 
-    public void setModifiedDate(Date modifiedDate) {
-        this.modifiedDate = modifiedDate;
+    public void setModified_date(Date modified_date) {
+        this.modified_date = modified_date;
     }
 
     public boolean isTagsAltered() {
@@ -115,8 +104,8 @@ public class CollectionDS {
                 description,
                 set,
                 itemsNumber,
-                createdDate,
-                modifiedDate);
+                created_date,
+                modified_date);
     }
 
     public void toDTO(CollectionDTO obj) {
@@ -130,8 +119,8 @@ public class CollectionDS {
         obj.setDescription(description);
         obj.setTags(set);
         obj.setItemsNumber(itemsNumber);
-        obj.setCreatedDate(createdDate);
-        obj.setModifiedDate(modifiedDate);
+        obj.setCreatedDate(created_date);
+        obj.setModifiedDate(modified_date);
     }
 
     public void fromDTO(CollectionDTO obj) {
@@ -144,8 +133,8 @@ public class CollectionDS {
         name = obj.getName();
         description = obj.getDescription();
         itemsNumber = obj.getItemsNumber();
-        createdDate = (Date)obj.getCreatedDate().clone();
-        modifiedDate = (Date)obj.getModifiedDate().clone();
+        created_date = (Date)obj.getCreatedDate().clone();
+        modified_date = (Date)obj.getModifiedDate().clone();
         tagsAltered = obj.isTagsAltered();
     }
 
@@ -174,7 +163,7 @@ public class CollectionDS {
                 + "\ndescription : " + description
                 + "\ntags        : " + tags
                 + "\nitemsNumber : " + getItemsNumber()
-                + "\ncreatedDate : " + createdDate
-                + "\nmodifiedDate: " + modifiedDate;
+                + "\ncreatedDate : " + created_date
+                + "\nmodifiedDate: " + modified_date;
     }
 }

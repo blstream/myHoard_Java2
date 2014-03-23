@@ -4,7 +4,9 @@ import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.ItemDTO;
 import com.blstream.myhoard.biz.service.ResourceService;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -36,6 +39,23 @@ public class ItemController {
         } catch (Exception ex) {
             throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
+    }
+
+    @RequestMapping(method = RequestMethod.GET, params = {"name", "collection"})
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<ItemDTO> findItems(@RequestParam(value = "name") String name,
+            @RequestParam(value = "collection") String collection) {
+        if (name.length() < 2 || name.length() > 20)
+            throw new MyHoardException(400, "Zbyt krótka/długa nazwa do wyszukiwania");
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", name);
+        try {
+            params.put("collection", Integer.parseInt(collection));
+        } catch (NumberFormatException ex) {
+            throw new MyHoardException(400, "Niepoprawny identyfikaotr kolekcji: " + collection);
+        }
+        return itemService.getList(params);
     }
 
     @RequestMapping(method = RequestMethod.POST)

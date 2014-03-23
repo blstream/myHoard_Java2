@@ -6,14 +6,13 @@ import com.blstream.myhoard.db.model.MediaDS;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,19 +23,25 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
 
     @Override
     public List<ItemDS> getList() {
-        Session session = sessionFactory.getCurrentSession();
-        return session.createCriteria(ItemDS.class).list();
+        return sessionFactory.getCurrentSession()
+                .createCriteria(ItemDS.class)
+                .list();
     }
 
     @Override
-    public List<ItemDS> getList(Map<String, String> args) {
-        return null;
+    public List<ItemDS> getList(Map<String, Object> params) {
+        return sessionFactory.getCurrentSession()
+                .createCriteria(ItemDS.class)
+                .add(Restrictions.ilike("name", (String)params.get("name"), MatchMode.ANYWHERE))
+                .add(Restrictions.ilike("description", (String)params.get("name"), MatchMode.ANYWHERE))
+                .add(Restrictions.eq("collection", params.get("collection")))
+                .list();
     }
 
     @Override
     public ItemDS get(int id) {
-        Session session = sessionFactory.getCurrentSession();
-        return (ItemDS)session.createCriteria(ItemDS.class)
+        return (ItemDS)sessionFactory.getCurrentSession()
+                .createCriteria(ItemDS.class)
                 .add(Restrictions.eq("id", id))
                 .uniqueResult();
     }

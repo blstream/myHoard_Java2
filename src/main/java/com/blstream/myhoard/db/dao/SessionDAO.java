@@ -25,7 +25,7 @@ public class SessionDAO implements ResourceDAO<SessionDS> {
     }
 
     @Override
-    public List<SessionDS> getList(Map<String, String> params) {
+    public List<SessionDS> getList(Map<String, Object> params) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

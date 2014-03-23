@@ -26,8 +26,11 @@ public class ItemService implements ResourceService<ItemDTO> {
     }
 
     @Override
-    public List<ItemDTO> getList(Map<String, String> params) {
-        return null;
+    public List<ItemDTO> getList(Map<String, Object> params) {
+        List<ItemDTO> result = new ArrayList<>();
+        for (ItemDS i : itemDAO.getList(params))
+            result.add(i.toDTO());
+        return result;
     }
 
     @Override

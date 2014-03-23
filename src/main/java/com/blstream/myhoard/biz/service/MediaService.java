@@ -42,7 +42,7 @@ public class MediaService implements ResourceService<MediaDTO> {
     }
 
     @Override
-    public List<MediaDTO> getList(Map<String, String> params) {
+    public List<MediaDTO> getList(Map<String, Object> params) {
         return null;
     }
 

@@ -14,8 +14,8 @@
 			<key column="collection" />
 			<many-to-many column="tag" class="TagDS" fetch="join" />
 		</set>
-		<property name="createdDate" column="created_date" type="timestamp" />
-		<property name="modifiedDate" column="modified_date" type="timestamp" />
+		<property name="created_date" type="timestamp" />
+		<property name="modified_date" type="timestamp" />
 		<property name="owner" column="owner" type="string" />
 	</class>
 </hibernate-mapping>

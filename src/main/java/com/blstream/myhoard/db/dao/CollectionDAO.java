@@ -1,5 +1,6 @@
 package com.blstream.myhoard.db.dao;
 
+import com.blstream.myhoard.biz.exception.MyHoardException;
 import java.util.List;
 import org.hibernate.Session;
 import com.blstream.myhoard.db.model.*;
@@ -10,6 +11,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -37,13 +39,34 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
     }
 
     @Override
-    public List<CollectionDS> getList(Map<String, String> params) {
+    public List<CollectionDS> getList(Map<String, Object> params) {
         Session session = sessionFactory.getCurrentSession();
-        return session.createCriteria(CollectionDS.class)
-                .addOrder("asc".equals(params.get("sort_dir")) ? Order.asc(params.get("sort_by")) : Order.desc(params.get("sort_by")))
-                .setMaxResults(Integer.parseInt(params.get("max_count")))
-                .setFirstResult(Integer.parseInt(params.get("start_num")))
-                .list();
+        Criteria criteria = session.createCriteria(CollectionDS.class);
+        if (params.containsKey("sort_dir")) {
+            if ("asc".equals(params.get("sort_dir")))
+                for (String i : (String[])params.get("sort_by"))
+                    criteria.addOrder(Order.asc(i));
+            else
+                for (String i : (String[])params.get("sort_by"))
+                    criteria.addOrder(Order.desc(i));
+        }
+        if (params.containsKey("max_count"))
+            criteria.setMaxResults(Integer.parseInt((String)params.get("max_count")));
+        if (params.containsKey("start_num"))
+            criteria.setFirstResult(Integer.parseInt((String)params.get("start_num")));
+        List<CollectionDS> result = criteria.list();
+        StringBuilder builder = new StringBuilder("select count(Item.id) from Collection left join Item on Collection.id = Item.collection where Collection.id in (");
+        for (int i = 0; i < result.size(); i++)
+            builder.append('"').append(result.get(i).getId()).append("\",");
+        builder.deleteCharAt(builder.length() - 1).append(") group by Collection.id");
+        List<Number> count = session.createSQLQuery(builder.toString()).list();
+        if ("asc".equals(params.get("sort_dir")))
+            for (int i = 0; i < result.size(); i++)
+                result.get(i).setItemsNumber(count.get(i).intValue());
+        else
+            for (int i = 0; i < result.size(); i++)
+                result.get(i).setItemsNumber(count.get(result.size() - i - 1).intValue());
+        return result;
     }
 
     @Override
@@ -99,14 +122,14 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
             result.addAll(remaining);
             object.setTags(result);
         }
-        object.setModifiedDate(Calendar.getInstance().getTime());
+        object.setModified_date(Calendar.getInstance().getTime());
         session.update(object);
 
         // TODO mapper
         obj.updateObject(object);
         obj.setTags(object.getTags());
-        obj.setCreatedDate(object.getCreatedDate());
-        obj.setModifiedDate(object.getModifiedDate());
+        obj.setCreated_date(object.getCreated_date());
+        obj.setModified_date(object.getModified_date());
     }
 
     @Override
@@ -116,6 +139,11 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
                 .add(Restrictions.eq("id", id))
                 .uniqueResult());
     }
+
+//    @Override
+//    public Criteria getCriteria() {
+//        return sessionFactory.getCurrentSession().createCriteria(CollectionDS.class);
+//    }
 
     @Override
     public CollectionDS getByAccess_token(String access_token) {

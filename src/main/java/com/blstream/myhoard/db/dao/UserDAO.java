@@ -22,7 +22,7 @@ public class UserDAO implements ResourceDAO<UserDS> {
     }
 
     @Override
-    public List<UserDS> getList(Map<String, String> args) {
+    public List<UserDS> getList(Map<String, Object> args) {
         return null;
     }
 

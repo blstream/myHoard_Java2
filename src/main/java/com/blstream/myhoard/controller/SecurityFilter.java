@@ -60,7 +60,7 @@ public class SecurityFilter implements Filter {
            
             authorization_needed = false;
         }
-        if(accessToken == null) {
+        if(accessToken == null && authorization_needed) {
             String response = "{\"error_message\": \"Token not provided\",\"error_code\": 102}";
             HttpServletResponse resp = (HttpServletResponse) sr1;
             OutputStream  out = resp.getOutputStream();

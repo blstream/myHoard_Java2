@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import com.blstream.myhoard.biz.model.*;
 import com.blstream.myhoard.db.dao.*;
-import com.blstream.myhoard.db.model.CollectionDS;
 import com.blstream.myhoard.db.model.UserDS;
 import java.util.Map;
 import org.springframework.stereotype.Service;
@@ -69,6 +68,11 @@ public class UserService implements ResourceService<UserDTO> {
 
     @Override
     public UserDTO getByAccess_token(String access_token) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public UserDTO getByRefresh_token(String refresh_token) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

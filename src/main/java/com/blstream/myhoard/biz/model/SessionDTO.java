@@ -28,7 +28,7 @@ public class SessionDTO {
         id = "0";
     }
 
-    public SessionDTO(String id, String access_token, Date date_created, String refresh_token, String user_id) {
+    public SessionDTO(String id, String access_token, Date expires_in, String refresh_token, String user_id) {
         this.id = id;
         this.access_token = access_token;
         this.expires_in = expires_in;

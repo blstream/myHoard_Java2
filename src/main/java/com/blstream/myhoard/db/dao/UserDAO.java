@@ -75,4 +75,9 @@ public class UserDAO implements ResourceDAO<UserDS> {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public UserDS getByRefresh_token(String refresh_token) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

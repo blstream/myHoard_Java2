@@ -7,8 +7,10 @@ package com.blstream.myhoard.controller;
 
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.SessionDTO;
+import com.blstream.myhoard.biz.model.UserDTO;
 import com.blstream.myhoard.biz.service.ResourceService;
 import java.io.IOException;
+import java.io.OutputStream;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -16,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -28,10 +31,16 @@ public class SecurityFilter implements Filter {
     private HttpServletRequest request;
 
     private ResourceService<SessionDTO> sessionService;
-    private boolean autorization = false;
+    private ResourceService<UserDTO> userService;
+    private boolean authorization_needed;
+    private boolean authorization_given;
 
     public void setSessionService(ResourceService<SessionDTO> sessionService) {
         this.sessionService = sessionService;
+    }
+    
+    public void setUserService(ResourceService<UserDTO> userService) {
+        this.userService = userService;
     }
 
     @Override
@@ -41,24 +50,55 @@ public class SecurityFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest sr, ServletResponse sr1, FilterChain fc) throws IOException, ServletException {
-
+        authorization_needed = true;
+        authorization_given = true;
         request = (HttpServletRequest) sr;
         String accessToken = request.getHeader("Authorization");
-
-        if (request.getMethod().equals("POST") && request.getRequestURI().equals(request.getContextPath() + "/users")) {
-            autorization = true;
-        }
-
-        SessionDTO sessionDTO = sessionService.getByAccess_token(accessToken);
-        if (sessionDTO != null) {
-            sessionDTO.getId();
-            //TODO wez uzytkownika po id, 
-            //sr.setAttribute("user", user);
-            //sr.getAttribute("user")
-        }
         
-        //if (autorization) {
-        fc.doFilter(sr, sr1);
+        if (request.getMethod().equals("POST") && request.getRequestURI().equals(request.getContextPath() + "/users") ||
+            (request.getMethod().equals("POST") && request.getRequestURI().equals(request.getContextPath() + "/oauth/token"))) {           
+           
+            authorization_needed = false;
+        }
+        if(accessToken == null) {
+            String response = "{\"error_message\": \"Token not provided\",\"error_code\": 102}";
+            HttpServletResponse resp = (HttpServletResponse) sr1;
+            OutputStream  out = resp.getOutputStream();
+            out.write(response.getBytes());
+            resp.setStatus(401);
+            resp.setContentType("application/json");
+            out.close();
+        } else if(authorization_needed) {
+            SessionDTO sessionDTO = sessionService.getByAccess_token(accessToken);
+            if (sessionDTO != null) {
+                long actual = java.util.Calendar.getInstance().getTimeInMillis();
+                if((actual - sessionDTO.getExpires_in().getTime()) > 300000) {
+                    authorization_given = false;
+                    String response = "{\"error_message\": \"Invalid token\",\"error_code\": 103}";
+                    HttpServletResponse resp = (HttpServletResponse) sr1;
+                    OutputStream  out = resp.getOutputStream();
+                    out.write(response.getBytes());
+                    resp.setStatus(401);
+                    resp.setContentType("application/json");
+                    out.close();
+                } else {
+                UserDTO user = (UserDTO)userService.get(Integer.parseInt(sessionDTO.getUser_id()));
+                sr.setAttribute("user", user);
+                }
+            } else {
+                authorization_given = false;
+                String response = "{\"error_message\": \"Invalid token\",\"error_code\": 103}";
+                HttpServletResponse resp = (HttpServletResponse) sr1;
+                OutputStream  out = resp.getOutputStream();
+                out.write(response.getBytes());
+                resp.setStatus(401);
+                resp.setContentType("application/json");
+                out.close();
+            }
+        
+        }
+        if(authorization_given)
+            fc.doFilter(sr, sr1);
 
     }
 

@@ -126,4 +126,9 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
     public CollectionDS getByUsername(String username) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public CollectionDS getByRefresh_token(String refresh_token) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

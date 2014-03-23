@@ -66,4 +66,12 @@ public class SessionDAO implements ResourceDAO<SessionDS> {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public SessionDS getByRefresh_token(String refresh_token) {
+        Session session = sessionFactory.getCurrentSession();
+        return (SessionDS)session.createCriteria(SessionDS.class)
+                .add(Restrictions.eq("refreshToken", refresh_token))
+                .uniqueResult();
+    }
+
 }

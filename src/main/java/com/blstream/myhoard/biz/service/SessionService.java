@@ -61,4 +61,14 @@ public class SessionService implements ResourceService<SessionDTO> {
         }
     }
 
+    @Override
+    public SessionDTO getByRefresh_token(String refresh_token) {
+        SessionDS sessionDS = sessionDAO.getByRefresh_token(refresh_token);
+        if (sessionDS.equals(null)) {
+            return null;
+        } else {
+            return sessionDAO.getByRefresh_token(refresh_token).toSessionDTO();
+        }
+    }
+
 }

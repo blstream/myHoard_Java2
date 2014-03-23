@@ -64,4 +64,9 @@ public class MediaDAO implements ResourceDAO<MediaDS> {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public MediaDS getByRefresh_token(String refresh_token) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

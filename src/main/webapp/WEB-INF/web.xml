@@ -44,5 +44,5 @@
     <filter-mapping>
         <filter-name>securityFilter</filter-name>
         <servlet-name>myHoard</servlet-name>
-    </filter-mapping>
+    </filter-mapping> 
 </web-app>

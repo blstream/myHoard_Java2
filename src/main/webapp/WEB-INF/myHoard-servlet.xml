@@ -101,6 +101,7 @@
 
 	<bean id="securityFilter" class="com.blstream.myhoard.controller.SecurityFilter" >        
 		<property name="sessionService" ref="sessionService" />
+                <property name="userService" ref="userService" />
         </bean>
         
 	<mvc:annotation-driven />

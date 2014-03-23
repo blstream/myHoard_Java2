@@ -1,10 +1,6 @@
 package com.blstream.myhoard.biz.model;
 
-import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.db.model.UserDS;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.hibernate.validator.constraints.Email;

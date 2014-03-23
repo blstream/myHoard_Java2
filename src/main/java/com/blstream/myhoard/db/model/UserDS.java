@@ -19,13 +19,15 @@ public class UserDS {
         this.id = id;
         this.mail = mail;
         this.username = username;
-        try {
-        MessageDigest md = MessageDigest.getInstance( "SHA1" );
-        md.update( password.getBytes() );
-        this.password = new BigInteger( 1, md.digest() ).toString(16);
-        }
-        catch (NoSuchAlgorithmException e) {
-        throw new MyHoardException(400);
+        if(password!=null) {
+            try {
+            MessageDigest md = MessageDigest.getInstance( "SHA1" );
+            md.update( password.getBytes() );
+            this.password = new BigInteger( 1, md.digest() ).toString(16);
+            }
+            catch (NoSuchAlgorithmException e) {
+            throw new MyHoardException(400);
+            }
         }
     }
 

@@ -45,7 +45,11 @@ public class CollectionController {
         Map<String, Object> params = new HashMap<>();
         params.put("sort_by", fieldName);
         params.put("sort_dir", sortDir);
-        return collectionService.getList(params);
+        try {
+            return collectionService.getList(params);
+        } catch (Exception ex) {
+            throw new MyHoardException(400, "Nieznany błąd: " + ex);
+        }
     }
 
     /**

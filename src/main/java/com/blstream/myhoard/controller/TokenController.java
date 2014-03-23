@@ -46,10 +46,10 @@ public class TokenController {
             UserDTO saved = ((UserService) userService).getByUsername(user.getUsername());
             user.setPassword(encode(user.getPassword()));
             if (user.getGrant_type() != null) {
-                if (saved.getUsername().equals(user.getUsername()) && saved.getPassword().equals(user.getPassword()) && user.getGrant_type().equals("password")) {
+                if (saved.getUsername().equals(user.getUsername()) && saved.getPassword().equals(user.getPassword())) {
                     if(user.getGrant_type().equals("password")) {
                     //TODO Generowanie tokenu, temporary broken access_token
-                    SessionDTO created = new SessionDTO("0", encode((java.util.Calendar.getInstance().getTime().toString()+user.getUsername())), java.util.Calendar.getInstance().getTime(), encode("refresh_token"), saved.getId());
+                    SessionDTO created = new SessionDTO("0", encode((java.util.Calendar.getInstance().getTime().toString()+user.getUsername())), java.util.Calendar.getInstance().getTime(), encode("refresh_token" + java.util.Calendar.getInstance().getTime()+user.getUsername()), saved.getId());
                     sessionService.create(created);
                     return created;
                     } else {
@@ -58,7 +58,7 @@ public class TokenController {
                         else
                             throw new MyHoardException(400,"no refresh token received");
                         
-                        SessionDTO created = new SessionDTO("0", encode((java.util.Calendar.getInstance().getTime().toString()+user.getUsername())), java.util.Calendar.getInstance().getTime(), encode("refresh_token"), saved.getId());
+                        SessionDTO created = new SessionDTO("0", encode((java.util.Calendar.getInstance().getTime().toString()+user.getUsername())), java.util.Calendar.getInstance().getTime(), encode("refresh_token" + java.util.Calendar.getInstance().getTime()+user.getUsername()), saved.getId());
                         sessionService.create(created);
                         return created;
                     

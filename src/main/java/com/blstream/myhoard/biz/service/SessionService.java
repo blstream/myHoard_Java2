@@ -22,7 +22,7 @@ public class SessionService implements ResourceService<SessionDTO> {
     }
 
     @Override
-    public List<SessionDTO> getList(Map<String, String> params) {
+    public List<SessionDTO> getList(Map<String, Object> params) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

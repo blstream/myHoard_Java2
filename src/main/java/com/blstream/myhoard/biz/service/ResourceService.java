@@ -7,7 +7,7 @@ public interface ResourceService<T> {
 
     public List<T> getList();
 
-    public List<T> getList(Map<String, String> params);
+    public List<T> getList(Map<String, Object> params);
 
     public T get(int id);
 

@@ -154,8 +154,8 @@ public class CollectionDTO {
         obj.setDescription(description);
         obj.setTags(set);
         obj.setItemsNumber(itemsNumber);
-        obj.setCreatedDate(createdDate);
-        obj.setModifiedDate(modifiedDate);
+        obj.setCreated_date(createdDate);
+        obj.setModified_date(modifiedDate);
     }
 
     public void fromDS(CollectionDS obj) {
@@ -168,8 +168,8 @@ public class CollectionDTO {
         name = obj.getName();
         description = obj.getDescription();
         itemsNumber = obj.getItemsNumber();
-        createdDate = (Date)obj.getCreatedDate().clone();
-        modifiedDate = (Date)obj.getModifiedDate().clone();
+        createdDate = (Date)obj.getCreated_date().clone();
+        modifiedDate = (Date)obj.getModified_date().clone();
         tagsAltered = obj.isTagsAltered();
     }
 

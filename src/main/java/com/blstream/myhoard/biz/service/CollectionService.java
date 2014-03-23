@@ -100,4 +100,9 @@ public class CollectionService implements ResourceService<CollectionDTO> {
     public CollectionDTO getByAccess_token(String access_token) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public CollectionDTO getByRefresh_token(String refresh_token) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

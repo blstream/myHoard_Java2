@@ -20,7 +20,7 @@ public class MediaDAO implements ResourceDAO<MediaDS> {
     }
 
     @Override
-    public List<MediaDS> getList(Map<String, String> args) {
+    public List<MediaDS> getList(Map<String, Object> args) {
         return null;
     }
 

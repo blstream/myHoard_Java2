@@ -106,4 +106,9 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public ItemDS getByRefresh_token(String refresh_token) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

@@ -28,7 +28,7 @@ public class UserService implements ResourceService<UserDTO> {
     }
 
     @Override
-    public List<UserDTO> getList(Map<String, String> params) {
+    public List<UserDTO> getList(Map<String, Object> params) {
         return null;
     }
 

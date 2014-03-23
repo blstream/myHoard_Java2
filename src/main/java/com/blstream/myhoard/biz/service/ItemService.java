@@ -26,8 +26,11 @@ public class ItemService implements ResourceService<ItemDTO> {
     }
 
     @Override
-    public List<ItemDTO> getList(Map<String, String> params) {
-        return null;
+    public List<ItemDTO> getList(Map<String, Object> params) {
+        List<ItemDTO> result = new ArrayList<>();
+        for (ItemDS i : itemDAO.getList(params))
+            result.add(i.toDTO());
+        return result;
     }
 
     @Override
@@ -57,11 +60,6 @@ public class ItemService implements ResourceService<ItemDTO> {
 
     @Override
     public ItemDTO getByAccess_token(String access_token) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ItemDTO getByRefresh_token(String refresh_token) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -31,24 +31,40 @@ public class CollectionController {
         this.collectionService = collectionService;
     }
 
+    /**
+     * Obsługa wypisywania/sortowania kolekcji
+     * @param fieldName - po jakich polach sortować (domyślnie po nazwie)
+     * @param sortDir   - w jakim kierunku ("asc" lub "desc"; domyślnie "asc")
+     * @return Lista kolekcji.
+     */
     @RequestMapping(method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<CollectionDTO> getCollections() {
-        return collectionService.getList();
-    }
-
-    @RequestMapping(value = "/sort", method = RequestMethod.GET)
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public SortResult sortCollections(@RequestParam(value = "sort_by", defaultValue = "name") String fieldName,
-            @RequestParam(value = "sort_direction", defaultValue = "asc") String sortDir,
-            @RequestParam(value = "max_count", defaultValue = "1") String maxCount,
-            @RequestParam(value = "start_num", defaultValue = "0") String startNum) {
-        Map<String, String> params = new HashMap<>();
-        SortResult result = new SortResult();
+    public List<CollectionDTO> getCollections(@RequestParam(value = "sort_by", defaultValue = "name") String[] fieldName,
+            @RequestParam(value = "sort_direction", defaultValue = "asc") String sortDir) {
+        Map<String, Object> params = new HashMap<>();
         params.put("sort_by", fieldName);
         params.put("sort_dir", sortDir);
+        try {
+            return collectionService.getList(params);
+        } catch (Exception ex) {
+            throw new MyHoardException(400, "Nieznany błąd: " + ex);
+        }
+    }
+
+    /**
+     * Obsługa stronicowania.
+     * @param maxCount - ile elementów wypisać
+     * @param startNum - od którego elementu zacząć
+     * @return Wynik stronicowania.
+     */
+    @RequestMapping(method = RequestMethod.GET, params = {"max_count", "start_num"})
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public SortResult listCollections(@RequestParam(value = "max_count", defaultValue = "2147483647") Integer maxCount,
+            @RequestParam(value = "start_num", defaultValue = "0") String startNum) {
+        Map<String, Object> params = new HashMap<>();
+        SortResult result = new SortResult();
         params.put("max_count", maxCount);
         params.put("start_num", startNum);
         result.setCollections(collectionService.getList(params));

@@ -8,7 +8,10 @@ import com.blstream.myhoard.biz.service.ResourceService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+<<<<<<< HEAD
 import javax.servlet.http.HttpServletRequest;
+=======
+>>>>>>> ab1be4fb92a0f16d5e6a98174ab92bd6659ecc63
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -43,23 +46,7 @@ public class ItemController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET, params = {"name", "collection"})
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public List<ItemDTO> findItems(@RequestParam(value = "name") String name,
-            @RequestParam(value = "collection") String collection) {
-        if (name.length() < 2 || name.length() > 20)
-            throw new MyHoardException(400, "Zbyt krótka/długa nazwa do wyszukiwania");
-        Map<String, Object> params = new HashMap<>();
-        params.put("name", name);
-        try {
-            params.put("collection", Integer.parseInt(collection));
-        } catch (NumberFormatException ex) {
-            throw new MyHoardException(400, "Niepoprawny identyfikaotr kolekcji: " + collection);
-        }
-        return itemService.getList(params);
-    }
-
+<<<<<<< HEAD
     @RequestMapping(value = "/collections/{id}/items", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -76,6 +63,9 @@ public class ItemController {
     }
 
     @RequestMapping(value = "/items", method = RequestMethod.GET, params = {"name", "collection"})
+=======
+    @RequestMapping(method = RequestMethod.GET, params = {"name", "collection"})
+>>>>>>> ab1be4fb92a0f16d5e6a98174ab92bd6659ecc63
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<ItemDTO> findItems(@RequestParam(value = "name") String name,
@@ -92,7 +82,11 @@ public class ItemController {
         return itemService.getList(params);
     }
 
+<<<<<<< HEAD
     @RequestMapping(value = "/items", method = RequestMethod.POST)
+=======
+    @RequestMapping(method = RequestMethod.POST)
+>>>>>>> ab1be4fb92a0f16d5e6a98174ab92bd6659ecc63
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public ItemDTO createItem(@Valid @RequestBody ItemDTO obj, BindingResult result) {

@@ -23,7 +23,6 @@ public class ItemDTO {
 
     @NotNull(message = "Nazwa elementu jest wymagana")
     @NotEmpty(message = "Nazwa elementu jest wymagana")
-    @Size(min = 2, max = 100)
     @CheckString(message = "Za dużo białych znaków", value = ValidationOpt.ITEM_NAME)
     private String name;
 

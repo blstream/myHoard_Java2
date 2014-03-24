@@ -54,7 +54,6 @@ public class ItemService implements ResourceService<ItemDTO> {
 
     @Override
     public void remove(int id) {
-        itemDAO.get(id);
         itemDAO.remove(id);
     }
 

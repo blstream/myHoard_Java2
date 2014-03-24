@@ -3,10 +3,12 @@ package com.blstream.myhoard.controller;
 import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.ItemDTO;
+import com.blstream.myhoard.biz.model.UserDTO;
 import com.blstream.myhoard.biz.service.ResourceService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -21,7 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
-@RequestMapping("/items")
+//@RequestMapping("/items")
 public class ItemController {
 
     private ResourceService<ItemDTO> itemService;
@@ -30,7 +32,7 @@ public class ItemController {
         this.itemService = itemService;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "/items", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<ItemDTO> getItems() {
@@ -41,7 +43,22 @@ public class ItemController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET, params = {"name", "collection"})
+    @RequestMapping(value = "/collections/{id}/items", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<ItemDTO> getItems(@PathVariable("id") String id, HttpServletRequest request) {
+        try {
+            UserDTO user = (UserDTO)request.getAttribute("user");
+            Map<String, Object> params = new HashMap<>();
+            params.put("collection", Integer.parseInt(id));
+            params.put("owner", user.getUsername());
+            return itemService.getList(params);
+        } catch (Exception ex) {
+            throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
+        }
+    }
+
+    @RequestMapping(value = "/items", method = RequestMethod.GET, params = {"name", "collection"})
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<ItemDTO> findItems(@RequestParam(value = "name") String name,
@@ -58,7 +75,7 @@ public class ItemController {
         return itemService.getList(params);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "/items", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public ItemDTO createItem(@Valid @RequestBody ItemDTO obj, BindingResult result) {
@@ -72,7 +89,7 @@ public class ItemController {
         }
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/items/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public ItemDTO getItem(@PathVariable String id) {
@@ -85,7 +102,7 @@ public class ItemController {
         }
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/items/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public ItemDTO updateItem(@PathVariable String id, @Valid @RequestBody ItemDTO obj, BindingResult result) {
@@ -100,7 +117,7 @@ public class ItemController {
         }
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/items/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeItem(@PathVariable String id) {
         try {

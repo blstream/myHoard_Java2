@@ -30,7 +30,12 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
 
     @Override
     public List<ItemDS> getList(Map<String, Object> params) {
-        if (params.containsKey("collection") && params.containsKey("owner"))
+        if (params.size() == 1)
+            return sessionFactory.getCurrentSession()
+                    .createCriteria(ItemDS.class)
+                    .add(Restrictions.eq("owner", params.get("owner")))
+                    .list();
+        else if (params.containsKey("collection") && params.containsKey("owner"))
             return sessionFactory.getCurrentSession()
                     .createCriteria(ItemDS.class)
                     .add(Restrictions.eq("collection", params.get("collection")))

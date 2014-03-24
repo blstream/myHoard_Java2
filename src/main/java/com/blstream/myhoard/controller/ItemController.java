@@ -35,9 +35,12 @@ public class ItemController {
     @RequestMapping(value = "/items", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<ItemDTO> getItems() {
+    public List<ItemDTO> getItems(HttpServletRequest request) {
         try {
-            return itemService.getList();
+            UserDTO user = (UserDTO)request.getAttribute("user");
+            Map<String, Object> params = new HashMap<>();
+            params.put("owner", user.getUsername());
+            return itemService.getList(params);
         } catch (Exception ex) {
             throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
@@ -62,26 +65,33 @@ public class ItemController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<ItemDTO> findItems(@RequestParam(value = "name") String name,
-            @RequestParam(value = "collection") String collection) {
+            @RequestParam(value = "collection") String collection,
+            HttpServletRequest request) {
         if (name.length() < 2 || name.length() > 20)
             throw new MyHoardException(400, "Zbyt krótka/długa nazwa do wyszukiwania");
-        Map<String, Object> params = new HashMap<>();
-        params.put("name", name);
         try {
+            UserDTO user = (UserDTO)request.getAttribute("user");
+            Map<String, Object> params = new HashMap<>();
+            params.put("name", name);
             params.put("collection", Integer.parseInt(collection));
+            params.put("owner", user.getUsername());
+            return itemService.getList(params);
         } catch (NumberFormatException ex) {
             throw new MyHoardException(400, "Niepoprawny identyfikaotr kolekcji: " + collection);
+        } catch (Exception ex) {
+            throw new MyHoardException(400, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
-        return itemService.getList(params);
     }
 
     @RequestMapping(value = "/items", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public ItemDTO createItem(@Valid @RequestBody ItemDTO obj, BindingResult result) {
+    public ItemDTO createItem(@Valid @RequestBody ItemDTO obj, BindingResult result, HttpServletRequest request) {
         if (result.hasErrors())
             throw new MyHoardException(320, result.getFieldError().getDefaultMessage());
         try {
+            UserDTO user = (UserDTO)request.getAttribute("user");
+            obj.setOwner(user.getUsername());
             itemService.create(obj);
             return obj;
         } catch (Exception ex) {
@@ -92,9 +102,13 @@ public class ItemController {
     @RequestMapping(value = "/items/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public ItemDTO getItem(@PathVariable String id) {
+    public ItemDTO getItem(@PathVariable String id, HttpServletRequest request) {
         try {
-            return itemService.get(Integer.parseInt(id));
+            UserDTO user = (UserDTO)request.getAttribute("user");
+            ItemDTO item = itemService.get(Integer.parseInt(id));
+            if (!user.getUsername().equals(item.getOwner()))
+                throw new MyHoardException(320, "Forbidden");
+            return item;
         } catch (NumberFormatException ex) {
             throw new MyHoardException(320, "Niepoprawne id: " + id);
         } catch (RuntimeException ex) {
@@ -105,10 +119,12 @@ public class ItemController {
     @RequestMapping(value = "/items/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public ItemDTO updateItem(@PathVariable String id, @Valid @RequestBody ItemDTO obj, BindingResult result) {
+    public ItemDTO updateItem(@PathVariable String id, @Valid @RequestBody ItemDTO obj, BindingResult result, HttpServletRequest request) {
         if (obj.getName() != null && result.hasFieldErrors("name") || obj.getCollection() != null && result.hasFieldErrors("collection"))
             throw new MyHoardException(320, result.getFieldError(obj.getName() != null ? "name" : "collection").getDefaultMessage());
         try {
+            UserDTO user = (UserDTO)request.getAttribute("user");
+            obj.setOwner(user.getUsername());
             obj.setId(id);
             itemService.update(obj);
             return obj;
@@ -119,11 +135,17 @@ public class ItemController {
 
     @RequestMapping(value = "/items/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removeItem(@PathVariable String id) {
+    public void removeItem(@PathVariable String id, HttpServletRequest request) {
         try {
+            UserDTO user = (UserDTO)request.getAttribute("user");
+            ItemDTO item = itemService.get(Integer.parseInt(id));
+            if (!user.getUsername().equals(item.getOwner()))
+                throw new MyHoardException(320, "Forbidden");
             itemService.remove(Integer.parseInt(id));
         } catch (NumberFormatException ex) {
             throw new MyHoardException(320, "Niepoprawne id: " + id);
+        } catch (MyHoardException ex) {
+            throw ex;
         } catch (RuntimeException ex) {
             throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }

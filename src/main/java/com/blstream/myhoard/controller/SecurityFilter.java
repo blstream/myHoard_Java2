@@ -56,7 +56,7 @@ public class SecurityFilter implements Filter {
         String accessToken = request.getHeader("Authorization");
         
         if (request.getMethod().equals("POST") && request.getRequestURI().equals(request.getContextPath() + "/users") ||
-            (request.getMethod().equals("POST") && request.getRequestURI().equals(request.getContextPath() + "/oauth/token")) ||
+            (request.getMethod().equals("POST") && request.getRequestURI().startsWith(request.getContextPath() + "/oauth/token")) ||
                 request.getMethod().equals("POST") && request.getRequestURI().equals(request.getContextPath() + "/media")) {           
            
             authorization_needed = false;

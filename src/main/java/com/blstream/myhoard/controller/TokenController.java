@@ -67,11 +67,9 @@ public class TokenController {
             } else
                 toThrow = new MyHoardException(400, "wrong grant_type");
         } catch (Exception ex) {
-            throw new MyHoardException(400, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
+            throw new MyHoardException(400, "Nieznany błąd: " + ex.toString() + (ex.getCause() != null ? " > " + ex.getCause().toString() : ""));
         }
-        if (toThrow != null)
-            throw toThrow;
-        return null;
+        throw toThrow;
     }
 
     public String encode(String tmp) {

@@ -97,9 +97,17 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
             for (TagDS i : remaining)   // pozostałe tagi trzeba utworzyć
                 session.save(i);
             result.addAll(remaining);
-            obj.setTags(result);
+            obj.setTags(Collections.EMPTY_SET);
+            session.save(obj);
+
+            CollectionDS object = new CollectionDS();
+            object.setId(obj.getId());
+            object.setOwner(obj.getOwner());
+            object.setTags(result);
+            update(object);
         }
-        session.save(obj);
+        else
+            session.save(obj);
     }
 
     @Override

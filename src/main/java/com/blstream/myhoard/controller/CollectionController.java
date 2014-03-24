@@ -39,7 +39,6 @@ public class CollectionController {
      * @param sortDir   - w jakim kierunku ("asc" lub "desc"; domyślnie "asc")
      * @return Lista kolekcji.
      */
-     */
     @RequestMapping(method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody

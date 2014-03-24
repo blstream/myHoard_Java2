@@ -43,23 +43,6 @@ public class ItemController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET, params = {"name", "collection"})
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public List<ItemDTO> findItems(@RequestParam(value = "name") String name,
-            @RequestParam(value = "collection") String collection) {
-        if (name.length() < 2 || name.length() > 20)
-            throw new MyHoardException(400, "Zbyt krótka/długa nazwa do wyszukiwania");
-        Map<String, Object> params = new HashMap<>();
-        params.put("name", name);
-        try {
-            params.put("collection", Integer.parseInt(collection));
-        } catch (NumberFormatException ex) {
-            throw new MyHoardException(400, "Niepoprawny identyfikaotr kolekcji: " + collection);
-        }
-        return itemService.getList(params);
-    }
-
     @RequestMapping(value = "/collections/{id}/items", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody

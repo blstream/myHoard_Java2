@@ -62,7 +62,7 @@ public class SessionDAO implements ResourceDAO<SessionDS> {
     }
 
     @Override
-    public SessionDS getByUsername(String username) {
+    public SessionDS getByEmail(String email) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

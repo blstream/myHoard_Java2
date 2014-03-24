@@ -56,7 +56,8 @@ public class SecurityFilter implements Filter {
         String accessToken = request.getHeader("Authorization");
         
         if (request.getMethod().equals("POST") && request.getRequestURI().equals(request.getContextPath() + "/users") ||
-            (request.getMethod().equals("POST") && request.getRequestURI().equals(request.getContextPath() + "/oauth/token"))) {           
+            (request.getMethod().equals("POST") && request.getRequestURI().equals(request.getContextPath() + "/oauth/token")) ||
+                request.getMethod().equals("POST") && request.getRequestURI().equals(request.getContextPath() + "/media")) {           
            
             authorization_needed = false;
         }
@@ -72,7 +73,7 @@ public class SecurityFilter implements Filter {
             SessionDTO sessionDTO = sessionService.getByAccess_token(accessToken);
             if (sessionDTO != null) {
                 long actual = java.util.Calendar.getInstance().getTimeInMillis();
-                if((actual - sessionDTO.getExpires_in().getTime()) > 300000) {
+                if((actual - sessionDTO.getExpires_in().getTime()) > 1800000) { //30 min ze wzgledu na uciazliwosc testow
                     authorization_given = false;
                     String response = "{\"error_message\": \"Invalid token\",\"error_code\": 103}";
                     HttpServletResponse resp = (HttpServletResponse) sr1;

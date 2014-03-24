@@ -60,7 +60,7 @@ public class MediaDAO implements ResourceDAO<MediaDS> {
     }
 
     @Override
-    public MediaDS getByUsername(String username) {
+    public MediaDS getByEmail(String email) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -66,7 +66,7 @@ public class CollectionService implements ResourceService<CollectionDTO> {
     public void create(CollectionDTO obj) {
         try {
             CollectionDS collection = new CollectionDS();
-            collection.toDTO(obj);
+            collection.fromDTO(obj);
             collectionDAO.create(collection);
             obj.setId(Integer.toString(collection.getId()));
             obj.setOwner(collection.getOwner());

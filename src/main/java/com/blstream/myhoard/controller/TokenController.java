@@ -43,10 +43,10 @@ public class TokenController {
     @ResponseBody
     public SessionDTO login(@RequestBody @Valid UserDTO user, BindingResult result) {      
         try {
-            UserDTO saved = ((UserService) userService).getByUsername(user.getUsername());
+            UserDTO saved = ((UserService) userService).getByEmail(user.getEmail());
             user.setPassword(encode(user.getPassword()));
             if (user.getGrant_type() != null) {
-                if (saved.getUsername().equals(user.getUsername()) && saved.getPassword().equals(user.getPassword())) {
+                if (saved.getEmail().equals(user.getEmail()) && saved.getPassword().equals(user.getPassword())) {
                     if(user.getGrant_type().equals("password")) {
                     //TODO Generowanie tokenu, temporary broken access_token
                     SessionDTO created = new SessionDTO("0", encode((java.util.Calendar.getInstance().getTime().toString()+user.getUsername())), java.util.Calendar.getInstance().getTime(), encode("refresh_token" + java.util.Calendar.getInstance().getTime()+user.getUsername()), saved.getId());

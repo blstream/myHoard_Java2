@@ -21,9 +21,9 @@ public class StringValidator implements ConstraintValidator<CheckString, String>
             return true;
         switch (opt) {
             case ITEM_NAME:
-                return t.length() < 2 || (t.length() == 2 && t.trim().length() < 2);
+                return !(t.length() < 2 || (t.length() == 2 && t.trim().length() < 2));
             case COLLECTION_NAME:
-                return "".equals(t) || "".equals(t.trim());
+                return !(t.isEmpty() || t.trim().isEmpty());
             default: return true;
         }
     }

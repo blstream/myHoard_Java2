@@ -54,6 +54,8 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
             criteria.setMaxResults(Integer.parseInt((String)params.get("max_count")));
         if (params.containsKey("start_num"))
             criteria.setFirstResult(Integer.parseInt((String)params.get("start_num")));
+        if(params.containsKey("username"))
+            criteria.add(Restrictions.eq("owner", params.get("username")));
         List<CollectionDS> result = criteria.list();
         StringBuilder builder = new StringBuilder("select count(Item.id) from Collection left join Item on Collection.id = Item.collection where Collection.id in (");
         for (int i = 0; i < result.size(); i++)
@@ -97,8 +99,6 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
             result.addAll(remaining);
             obj.setTags(result);
         }
-        if (obj.getOwner() == null)
-            obj.setOwner("krol.julian");
         session.save(obj);
     }
 
@@ -151,7 +151,7 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
     }
 
     @Override
-    public CollectionDS getByUsername(String username) {
+    public CollectionDS getByEmail(String email) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

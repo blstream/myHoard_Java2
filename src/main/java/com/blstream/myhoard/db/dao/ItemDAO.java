@@ -102,7 +102,7 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
     }
 
     @Override
-    public ItemDS getByUsername(String username) {
+    public ItemDS getByEmail(String email) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

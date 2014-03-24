@@ -62,8 +62,8 @@ public class UserService implements ResourceService<UserDTO> {
         return userDAO.get(id).toUserDTO();
     }
     
-    public UserDTO getByUsername(String username) {
-        return userDAO.getByUsername(username).toUserDTO();
+    public UserDTO getByEmail(String email) {
+        return userDAO.getByEmail(email).toUserDTO();
     }
 
     @Override

@@ -26,5 +26,5 @@ public interface ResourceDAO<T> {
 
     public T getByRefresh_token(String refresh_token);
 
-    public T getByUsername(String username);
+    public T getByEmail(String email);
 }

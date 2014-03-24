@@ -63,10 +63,10 @@ public class UserDAO implements ResourceDAO<UserDS> {
     }
 
     @Override
-    public UserDS getByUsername(String username) {
+    public UserDS getByEmail(String email) {
         Session session = sessionFactory.getCurrentSession();
         return (UserDS) session.createCriteria(UserDS.class)
-                .add(Restrictions.eq("username", username))
+                .add(Restrictions.eq("mail", email))
                 .uniqueResult();
     }
 

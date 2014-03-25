@@ -55,11 +55,10 @@ public class CollectionService implements ResourceService<CollectionDTO> {
 
     @Override
     public CollectionDTO get(int id) {
-        try {
-            return collectionDAO.get(id).toDTO();
-        } catch (RuntimeException ex) {
-            throw new MyHoardException(300, "Element o id(" + id + ") prawdopodobnie nie istnieje.");
-        }
+        CollectionDS obj = collectionDAO.get(id);
+        if (obj == null)
+            return null;
+        return obj.toDTO();
     }
 
     @Override
@@ -92,7 +91,7 @@ public class CollectionService implements ResourceService<CollectionDTO> {
         try {
             collectionDAO.remove(id);
         } catch (RuntimeException ex) {
-            throw new MyHoardException(400, "Element o id(" + id + ") prawdopodobnie nie istnieje.");
+            throw new MyHoardException(400, "Nieznany błąd: " + ex.toString() + (ex.getCause() != null ? " > " + ex.getCause().toString() : ""));
         }
     }
 

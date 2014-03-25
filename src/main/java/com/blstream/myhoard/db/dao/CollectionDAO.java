@@ -10,8 +10,10 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -57,10 +59,15 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
         if(params.containsKey("username"))
             criteria.add(Restrictions.eq("owner", params.get("username")));
         List<CollectionDS> result = criteria.list();
-        StringBuilder builder = new StringBuilder("select count(Item.id) from Collection left join Item on Collection.id = Item.collection where Collection.id in (");
+        StringBuilder builder = new StringBuilder("select count(Item.id) as items_number from Collection left join Item on Collection.id = Item.collection where Collection.id in (");
         for (int i = 0; i < result.size(); i++)
             builder.append('"').append(result.get(i).getId()).append("\",");
-        builder.deleteCharAt(builder.length() - 1).append(") group by Collection.id");
+        builder.deleteCharAt(builder.length() - 1).append(") group by Collection.id order by ");
+        for (String i : (String[])params.get("sort_by"))
+            builder.append("Collection.").append(i).append(',');
+        builder.deleteCharAt(builder.length() - 1);
+        if (params.containsKey("sort_dir"))
+            builder.append(' ').append(params.get("sort_dir"));
         List<Number> count = session.createSQLQuery(builder.toString()).list();
         if ("asc".equals(params.get("sort_dir")))
             for (int i = 0; i < result.size(); i++)
@@ -72,12 +79,13 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
     }
 
     @Override
-    public CollectionDS get(int id) throws IndexOutOfBoundsException {
+    public CollectionDS get(int id) {
         Session session = sessionFactory.getCurrentSession();
         CollectionDS result = (CollectionDS)session.createCriteria(CollectionDS.class)
                 .add(Restrictions.eq("id", id))
                 .uniqueResult();
-        result.setItemsNumber(((Number)session.createQuery("select count(id) from ItemDS where collection = " + result.getId()).uniqueResult()).intValue());
+        if (result != null)
+            result.setItemsNumber(((Number)session.createQuery("select count(id) from ItemDS where collection = " + result.getId()).uniqueResult()).intValue());
         return result;
     }
 

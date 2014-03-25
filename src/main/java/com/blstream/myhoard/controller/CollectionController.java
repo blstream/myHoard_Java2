@@ -137,11 +137,12 @@ public class CollectionController {
         try {
             UserDTO user = (UserDTO)request.getAttribute("user");
             CollectionDTO tmp = collectionService.get(Integer.parseInt(id));
-            if(tmp.getOwner().equals(user.getUsername())) {
+            if (tmp == null)
+                throw new MyHoardException(202, "Not found", HttpServletResponse.SC_NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
+            else if(tmp.getOwner().equals(user.getUsername()))
                 collectionService.remove(Integer.parseInt(id));
-            } else {
-                throw new MyHoardException(103,"Forbidden");
-            }
+            else
+                throw new MyHoardException(104, "Forbidden", HttpServletResponse.SC_FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
         } catch (NumberFormatException ex) {
             throw new MyHoardException(400, "Niepoprawne id: " + id);
         }

@@ -1,6 +1,6 @@
 package com.blstream.myhoard.controller;
 
-import com.blstream.myhoard.biz.exception.ErrorCode;
+import com.blstream.myhoard.biz.exception.Error;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.ItemDTO;
 import com.blstream.myhoard.biz.model.UserDTO;
@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -111,6 +112,8 @@ public class ItemController {
             return item;
         } catch (NumberFormatException ex) {
             throw new MyHoardException(320, "Niepoprawne id: " + id);
+        } catch (MyHoardException ex) {
+            throw ex;
         } catch (RuntimeException ex) {
             throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
@@ -154,8 +157,9 @@ public class ItemController {
     }
 
     @ExceptionHandler(MyHoardException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public @ResponseBody ErrorCode errorHandler(MyHoardException e) {
-        return new ErrorCode(e.getErrorCode(), e.getErrorMsg());
+    @ResponseBody
+    public Error returnCode(MyHoardException exception, HttpServletResponse response) {
+        response.setStatus(exception.getResponseStatus());
+        return exception.toError();
     }
 }

@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.servlet.http.HttpServletResponse;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
@@ -53,10 +54,13 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
 
     @Override
     public ItemDS get(int id) {
-        return (ItemDS)sessionFactory.getCurrentSession()
+        ItemDS object = (ItemDS)sessionFactory.getCurrentSession()
                 .createCriteria(ItemDS.class)
                 .add(Restrictions.eq("id", id))
                 .uniqueResult();
+        if (object == null)
+            throw new MyHoardException(202, "Not found", HttpServletResponse.SC_NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
+        return object;
     }
 
     @Override
@@ -79,12 +83,14 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
     @Override
     public void update(ItemDS obj) {
         ItemDS object = get(obj.getId());
+        if (object == null)
+            throw new MyHoardException(202, "Not found", HttpServletResponse.SC_NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
         object.updateObject(obj);
 
         Session session = sessionFactory.getCurrentSession();
         if (session.createCriteria(CollectionDS.class)
-                .add(Restrictions.eq("owner", obj.getOwner()))
-                .add(Restrictions.eq("id", obj.getCollection()))
+                .add(Restrictions.eq("owner", object.getOwner()))
+                .add(Restrictions.eq("id", object.getCollection()))
                 .list().isEmpty())
             throw new MyHoardException(403, "Próba zapisania elementu do obcej kolekcji");
         if (obj.isMediaAltered()) {

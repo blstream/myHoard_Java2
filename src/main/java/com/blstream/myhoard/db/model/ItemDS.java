@@ -141,7 +141,7 @@ public class ItemDS {
             media = object.media;
             mediaAltered = object.mediaAltered;
         }
-        if (collection != object.collection)
+        if (object.collection != -1)
             collection = object.collection;
     }
 

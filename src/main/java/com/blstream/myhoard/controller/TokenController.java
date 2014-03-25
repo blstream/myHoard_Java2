@@ -1,6 +1,6 @@
 package com.blstream.myhoard.controller;
 
-import com.blstream.myhoard.biz.exception.ErrorCode;
+import com.blstream.myhoard.biz.exception.Error;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.SessionDTO;
 import com.blstream.myhoard.biz.model.UserDTO;
@@ -11,6 +11,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -84,9 +85,9 @@ public class TokenController {
     }
 
     @ExceptionHandler(MyHoardException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ErrorCode returnCode(MyHoardException exception) {
-        return new ErrorCode(exception.getErrorCode(), exception.getErrorMsg());
+    public Error returnCode(MyHoardException exception, HttpServletResponse response) {
+        response.setStatus(exception.getResponseStatus());
+        return exception.toError();
     }
 }

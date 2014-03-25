@@ -16,6 +16,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.http.HttpStatus;
 
 public class ItemDTO {
 
@@ -163,7 +164,7 @@ public class ItemDTO {
                 set,
                 createdDate,
                 modifiedDate,
-                Integer.parseInt(collection),
+                collection == null || collection.isEmpty() ? -1 : Integer.parseInt(collection),
                 owner);
     }
 }

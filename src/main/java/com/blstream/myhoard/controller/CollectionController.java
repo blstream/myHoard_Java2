@@ -1,6 +1,6 @@
 package com.blstream.myhoard.controller;
 
-import com.blstream.myhoard.biz.exception.ErrorCode;
+import com.blstream.myhoard.biz.exception.Error;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.CollectionDTO;
 import com.blstream.myhoard.biz.model.UserDTO;
@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -81,7 +82,8 @@ public class CollectionController {
     @ResponseBody
     public CollectionDTO addCollection(@RequestBody @Valid CollectionDTO collection, BindingResult result,HttpServletRequest request) {
         if (result.hasErrors())
-            throw new MyHoardException(400, result.getFieldError().getDefaultMessage());
+            throw new MyHoardException(201, "Validation error").add(result.getFieldError().getField(), result.getFieldError().getDefaultMessage());
+//            throw new MyHoardException(400, result.getFieldError().getDefaultMessage());
         UserDTO user = (UserDTO)request.getAttribute("user");
         collection.setOwner(user.getUsername());
         collectionService.create(collection);
@@ -95,12 +97,12 @@ public class CollectionController {
         try {
             UserDTO user = (UserDTO)request.getAttribute("user");
             CollectionDTO collection = collectionService.get(Integer.parseInt(id));
-            if(collection.getOwner().equals(user.getUsername()))
+            if (collection.getOwner().equals(user.getUsername()))
                 return collection;
             else
-                throw new MyHoardException(104,"Forbidden");
+                throw new MyHoardException(104, "Forbidden", HttpServletResponse.SC_FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
         } catch (NumberFormatException ex) {
-            throw new MyHoardException(300, "Niepoprawne id: " + id);
+            throw new MyHoardException(201, "Validation error").add("id", "Niepoprawny identyfikator.");
         }
     }
 
@@ -118,14 +120,13 @@ public class CollectionController {
                 collection.setId(id);
                 collectionService.update(collection);
                 return collection;
-            } else {
-                throw new MyHoardException(103,"Forbidden");
-            }
+            } else
+                throw new MyHoardException(104, "Forbidden", HttpServletResponse.SC_FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
         } catch (NumberFormatException ex) {
-            throw new MyHoardException(400, "Niepoprawne id: " + id);
+            throw new MyHoardException(201, "Validation error").add("id", "Niepoprawny identyfikator.");
         } catch (MyHoardException ex) {
             throw ex;
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             throw new MyHoardException(400, "Nieznany błąd: " + ex.toString());
         }
     }
@@ -147,9 +148,9 @@ public class CollectionController {
     }
 
     @ExceptionHandler(MyHoardException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ErrorCode returnCode(MyHoardException exception) {
-        return new ErrorCode(exception.getErrorCode(), exception.getErrorMsg());
+    public Error returnCode(MyHoardException exception, HttpServletResponse response) {
+        response.setStatus(exception.getResponseStatus());
+        return exception.toError();
     }
 }

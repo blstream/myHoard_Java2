@@ -1,6 +1,6 @@
 package com.blstream.myhoard.controller;
 
-import com.blstream.myhoard.biz.exception.ErrorCode;
+import com.blstream.myhoard.biz.exception.Error;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.MediaDTO;
 import com.blstream.myhoard.biz.service.MediaService;
@@ -157,9 +157,9 @@ public class MediaController extends HttpServlet {
     }
 
     @ExceptionHandler(MyHoardException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public @ResponseBody
-    ErrorCode returnCode(MyHoardException exception) {
-        return new ErrorCode(exception.getErrorCode());
+    @ResponseBody
+    public Error returnCode(MyHoardException exception, HttpServletResponse response) {
+        response.setStatus(exception.getResponseStatus());
+        return exception.toError();
     }
 }

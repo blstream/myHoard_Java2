@@ -108,17 +108,25 @@ public class CollectionController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public CollectionDTO updateCollection(@PathVariable String id, @Valid @RequestBody CollectionDTO collection,HttpServletRequest request, BindingResult result) {
+    public CollectionDTO updateCollection(@PathVariable String id, @Valid @RequestBody CollectionDTO collection, BindingResult result, HttpServletRequest request) {
         if (collection.getName() != null && result.hasErrors())
             throw new MyHoardException(320, result.getFieldError().getDefaultMessage());
-        UserDTO user = (UserDTO)request.getAttribute("user");
-        CollectionDTO tmp = collectionService.get(Integer.parseInt(id));
-        if(tmp.getOwner().equals(user.getUsername())) {
-            collection.setId(id);
-            collectionService.update(collection);
-            return collection;
-        } else {
-            throw new MyHoardException(103,"Forbidden");
+        try {
+            UserDTO user = (UserDTO)request.getAttribute("user");
+            CollectionDTO tmp = collectionService.get(Integer.parseInt(id));
+            if(tmp.getOwner().equals(user.getUsername())) {
+                collection.setId(id);
+                collectionService.update(collection);
+                return collection;
+            } else {
+                throw new MyHoardException(103,"Forbidden");
+            }
+        } catch (NumberFormatException ex) {
+            throw new MyHoardException(400, "Niepoprawne id: " + id);
+        } catch (MyHoardException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new MyHoardException(400, "Nieznany błąd: " + ex.toString());
         }
     }
 

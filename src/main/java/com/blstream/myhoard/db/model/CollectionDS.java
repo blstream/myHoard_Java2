@@ -147,7 +147,7 @@ public class CollectionDS {
             name = object.name;
         if (description == null || object.description != null && !description.equals(object.description))
             description = object.description;
-        if (tags == null || !object.tagsAltered) {
+        if (tags == null || object.tagsAltered) {
             tags = object.tags;
             tagsAltered = object.tagsAltered;
         }
@@ -162,7 +162,7 @@ public class CollectionDS {
                 + "\nname        : " + name
                 + "\ndescription : " + description
                 + "\ntags        : " + tags
-                + "\nitemsNumber : " + getItemsNumber()
+                + "\nitemsNumber : " + itemsNumber
                 + "\ncreatedDate : " + created_date
                 + "\nmodifiedDate: " + modified_date;
     }

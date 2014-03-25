@@ -149,26 +149,21 @@ public class ItemDTO {
 
     public ItemDS toItemDS() {
         Set<MediaDS> set = new HashSet<>(media.size());
-//        CollectionDS c = new CollectionDS();
         for (MediaDTO i : media)
             try {
                 set.add(i.toMediaDS());
             } catch (SQLException ex) {
                 throw new MyHoardException(ex.getErrorCode(), ex.getSQLState());
             }
-        if (location == null)
-            location = new Location(Float.NaN, Float.NaN);
-//        c.setId(Integer.parseInt(collection));
         return new ItemDS(Integer.parseInt(id),
                 name,
                 description,
-                location.getLat(),
-                location.getLng(),
+                location == null ? null : location.getLat(),
+                location == null ? null : location.getLng(),
                 set,
                 createdDate,
                 modifiedDate,
                 Integer.parseInt(collection),
-//                c,
                 owner);
     }
 }

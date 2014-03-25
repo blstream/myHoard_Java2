@@ -1,6 +1,7 @@
 package com.blstream.myhoard.db.dao;
 
 import com.blstream.myhoard.biz.exception.MyHoardException;
+import com.blstream.myhoard.db.model.CollectionDS;
 import com.blstream.myhoard.db.model.ItemDS;
 import com.blstream.myhoard.db.model.MediaDS;
 import java.util.ArrayList;
@@ -61,6 +62,11 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
     @Override
     public void create(ItemDS obj) {
         Session session = sessionFactory.getCurrentSession();
+        if (session.createCriteria(CollectionDS.class)
+                .add(Restrictions.eq("owner", obj.getOwner()))
+                .add(Restrictions.eq("id", obj.getCollection()))
+                .list().isEmpty())
+            throw new MyHoardException(403, "Próba zapisania elementu do obcej kolekcji");
         List<Integer> ids = new ArrayList<>();
         for (MediaDS i : obj.getMedia())
             ids.add(i.getId());
@@ -76,6 +82,11 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
         object.updateObject(obj);
 
         Session session = sessionFactory.getCurrentSession();
+        if (session.createCriteria(CollectionDS.class)
+                .add(Restrictions.eq("owner", obj.getOwner()))
+                .add(Restrictions.eq("id", obj.getCollection()))
+                .list().isEmpty())
+            throw new MyHoardException(403, "Próba zapisania elementu do obcej kolekcji");
         if (obj.isMediaAltered()) {
             List<Integer> media = new ArrayList<>();
             for (MediaDS i : obj.getMedia())

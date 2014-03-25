@@ -14,8 +14,8 @@ public class ItemDS {
     private int id;
     private String name;
     private String description;
-    private float latitude = Float.NaN;
-    private float longitude = Float.NaN;
+    private Float latitude;
+    private Float longitude;
     private Set<MediaDS> media = new HashSet<>(0);
     private Date createdDate;
     private Date modifiedDate;
@@ -28,7 +28,7 @@ public class ItemDS {
         modifiedDate = (Date)createdDate.clone();
     }
 
-    public ItemDS(int id, String name, String description, float latitude, float longitude, Set<MediaDS> media, Date createdDate, Date modifiedDate, int collection, String owner) {
+    public ItemDS(int id, String name, String description, Float latitude, Float longitude, Set<MediaDS> media, Date createdDate, Date modifiedDate, int collection, String owner) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -65,19 +65,19 @@ public class ItemDS {
         this.description = description;
     }
 
-    public float getLatitude() {
+    public Float getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(float latitude) {
+    public void setLatitude(Float latitude) {
         this.latitude = latitude;
     }
 
-    public float getLongitude() {
+    public Float getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(float longitude) {
+    public void setLongitude(Float longitude) {
         this.longitude = longitude;
     }
 
@@ -133,9 +133,9 @@ public class ItemDS {
             name = object.name;
         if (description == null || object.description != null && !description.equals(object.description))
             description = object.description;
-        if (latitude != latitude)
+        if (latitude == null)
             latitude = object.latitude;
-        if (longitude != longitude)
+        if (longitude == null)
             longitude = object.longitude;
         if (media == null || !object.mediaAltered) {
             media = object.media;
@@ -156,7 +156,7 @@ public class ItemDS {
         return new ItemDTO(Integer.toString(id),
                 name,
                 description,
-                latitude != latitude || longitude != longitude ? null : new Location(latitude, longitude),
+                latitude == null || longitude == null ? null : new Location(latitude, longitude),
                 set,
                 createdDate,
                 modifiedDate,
@@ -177,7 +177,7 @@ public class ItemDS {
         obj.setId(Integer.toString(id));
         obj.setName(name);
         obj.setDescription(description);
-        obj.setLocation(latitude != latitude || longitude != longitude ? null : new Location(latitude, longitude));
+        obj.setLocation(latitude == null || longitude == null ? null : new Location(latitude, longitude));
         obj.setMedia(set);
         obj.setCreatedDate(createdDate);
         obj.setModifiedDate(modifiedDate);
@@ -200,7 +200,7 @@ public class ItemDS {
         name = obj.getName();
         description = obj.getDescription();
         if (obj.getLocation() == null)
-            latitude = longitude = Float.NaN;
+            latitude = longitude = null;
         else {
             latitude = obj.getLocation().getLat();
             longitude = obj.getLocation().getLng();

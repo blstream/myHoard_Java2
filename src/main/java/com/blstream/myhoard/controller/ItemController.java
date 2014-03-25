@@ -128,6 +128,8 @@ public class ItemController {
             obj.setId(id);
             itemService.update(obj);
             return obj;
+        } catch (MyHoardException ex) {
+            throw ex;
         } catch (Exception ex) {
             throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }

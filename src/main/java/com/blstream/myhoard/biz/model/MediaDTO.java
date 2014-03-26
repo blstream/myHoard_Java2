@@ -76,7 +76,7 @@ public class MediaDTO {
             return new MediaDS(Integer.parseInt(id),
                     file == null ? null : new SerialBlob(file),
                     created_date,
-                    Integer.parseInt(item));
+                    item == null ? null : Integer.parseInt(item));
         } catch (SQLException ex) {
             throw new MyHoardException(400, ex.getSQLState());
         }

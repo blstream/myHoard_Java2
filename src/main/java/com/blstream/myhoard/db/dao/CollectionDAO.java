@@ -59,22 +59,24 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
         if(params.containsKey("username"))
             criteria.add(Restrictions.eq("owner", params.get("username")));
         List<CollectionDS> result = criteria.list();
-        StringBuilder builder = new StringBuilder("select count(Item.id) as items_number from Collection left join Item on Collection.id = Item.collection where Collection.id in (");
-        for (int i = 0; i < result.size(); i++)
-            builder.append('"').append(result.get(i).getId()).append("\",");
-        builder.deleteCharAt(builder.length() - 1).append(") group by Collection.id order by ");
-        for (String i : (String[])params.get("sort_by"))
-            builder.append("Collection.").append(i).append(',');
-        builder.deleteCharAt(builder.length() - 1);
-        if (params.containsKey("sort_dir"))
-            builder.append(' ').append(params.get("sort_dir"));
-        List<Number> count = session.createSQLQuery(builder.toString()).list();
-        if ("asc".equals(params.get("sort_dir")))
+        if(result.size()>0) {
+            StringBuilder builder = new StringBuilder("select count(Item.id) as items_number from Collection left join Item on Collection.id = Item.collection where Collection.id in (");
             for (int i = 0; i < result.size(); i++)
-                result.get(i).setItemsNumber(count.get(i).intValue());
-        else
-            for (int i = 0; i < result.size(); i++)
-                result.get(i).setItemsNumber(count.get(result.size() - i - 1).intValue());
+                builder.append('"').append(result.get(i).getId()).append("\",");
+            builder.deleteCharAt(builder.length() - 1).append(") group by Collection.id order by ");
+            for (String i : (String[])params.get("sort_by"))
+                builder.append("Collection.").append(i).append(',');
+            builder.deleteCharAt(builder.length() - 1);
+            if (params.containsKey("sort_dir"))
+                builder.append(' ').append(params.get("sort_dir"));
+            List<Number> count = session.createSQLQuery(builder.toString()).list();
+            if ("asc".equals(params.get("sort_dir")))
+                for (int i = 0; i < result.size(); i++)
+                    result.get(i).setItemsNumber(count.get(i).intValue());
+            else
+                for (int i = 0; i < result.size(); i++)
+                    result.get(i).setItemsNumber(count.get(result.size() - i - 1).intValue());
+        }
         return result;
     }
 

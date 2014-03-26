@@ -121,7 +121,9 @@ public class MediaController extends HttpServlet {
             List<FileItem> multiparts = new ServletFileUpload(
                                          new DiskFileItemFactory()).parseRequest(request);
             file = multiparts.get(0).getInputStream();
+            MediaDTO m = mediaService.get(Integer.parseInt(id));
             media.setId(id); //poniewaz konstruktor daje id=0;
+            media.setItem(m.getItem());
             media.setFile(IOUtils.toByteArray(file));
             mediaService.update(media);
             return media;

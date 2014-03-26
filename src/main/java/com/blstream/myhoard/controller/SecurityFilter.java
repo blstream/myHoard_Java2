@@ -57,7 +57,7 @@ public class SecurityFilter implements Filter {
         
         if (request.getMethod().equals("POST") && request.getRequestURI().equals(request.getContextPath() + "/users") ||
             (request.getMethod().equals("POST") && request.getRequestURI().startsWith(request.getContextPath() + "/oauth/token")) ||
-                request.getMethod().equals("POST") && request.getRequestURI().equals(request.getContextPath() + "/media")) {           
+                request.getMethod().equals("POST") && request.getRequestURI().startsWith(request.getContextPath() + "/media")) {           
            
             authorization_needed = false;
         }
@@ -70,7 +70,18 @@ public class SecurityFilter implements Filter {
             resp.setContentType("application/json");
             out.close();
         } else if(authorization_needed) {
-            SessionDTO sessionDTO = sessionService.getByAccess_token(accessToken);
+            SessionDTO sessionDTO = null;
+            try{
+                sessionDTO = sessionService.getByAccess_token(accessToken);
+            } catch (NullPointerException ex) {
+                String response = "{\"error_message\": \"Invalid Token\",\"error_code\": 103}";
+                    HttpServletResponse resp = (HttpServletResponse) sr1;
+                    OutputStream  out = resp.getOutputStream();
+                    out.write(response.getBytes());
+                    resp.setStatus(404);
+                    resp.setContentType("application/json");
+                    out.close();
+            }
             if (sessionDTO != null) {
                 long actual = java.util.Calendar.getInstance().getTimeInMillis();
                 if((actual - sessionDTO.getExpires_in().getTime()) > 1800000) { //30 min ze wzgledu na uciazliwosc testow

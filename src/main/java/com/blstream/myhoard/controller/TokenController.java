@@ -67,7 +67,9 @@ public class TokenController {
                     toThrow = new MyHoardException(101, "BadCredentials");
             } else
                 toThrow = new MyHoardException(400, "wrong grant_type");
-        } catch (Exception ex) {
+        } catch (NullPointerException ex) {
+            throw new MyHoardException(202,"Resource not found",404).add("error","Nie znaleziono refresh_tokenu, lub uzytkownika w bazie danych");
+        }catch (Exception ex) {
             throw new MyHoardException(400, "Nieznany błąd: " + ex.toString() + (ex.getCause() != null ? " > " + ex.getCause().toString() : ""));
         }
         throw toThrow;

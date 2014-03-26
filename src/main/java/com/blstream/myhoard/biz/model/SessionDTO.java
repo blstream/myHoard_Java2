@@ -5,6 +5,7 @@ import com.blstream.myhoard.db.model.UserDS;
 import java.util.Date;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
  *
@@ -51,7 +52,7 @@ public class SessionDTO {
     public void setAccess_token(String access_token) {
         this.access_token = access_token;
     }
-
+    @JsonSerialize(using = CustomExpiresInSerializer.class)
     public Date getExpires_in() {
         return expires_in;
     }

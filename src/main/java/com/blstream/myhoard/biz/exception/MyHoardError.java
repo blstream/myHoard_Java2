@@ -4,24 +4,24 @@ import java.util.HashMap;
 import java.util.Map;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class Error {
+public class MyHoardError {
 
     int errorCode = 0;
     String errorMessage = "";
     Map<String, String> errors = new HashMap<>();
 
-    public Error() {}
+    public MyHoardError() {}
 
-    public Error(int errorCode) {
+    public MyHoardError(int errorCode) {
         this.errorCode = errorCode;
     }
 
-    public Error(int errorCode, String errorMessage) {
+    public MyHoardError(int errorCode, String errorMessage) {
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
     }
 
-    public Error(int errorCode, String errorMessage, Map<String, String> errors) {
+    public MyHoardError(int errorCode, String errorMessage, Map<String, String> errors) {
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
         this.errors = errors;

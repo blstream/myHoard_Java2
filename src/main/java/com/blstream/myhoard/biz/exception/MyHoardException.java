@@ -61,8 +61,8 @@ public class MyHoardException extends RuntimeException {
         return this;
     }
 
-    public Error toError() {
-        Error error = new Error();
+    public MyHoardError toError() {
+        MyHoardError error = new MyHoardError();
         error.errorCode = errorCode;
         error.errorMessage = errorMessage;
         error.errors = customErrors;

@@ -104,6 +104,8 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
             remaining.removeAll(result);
             for (MediaDS i : remaining)   // pozostałe media trzeba usunąć
                 session.delete(i);
+            for (MediaDS i : result)
+                i.setItem(obj.getId());
             object.setMedia(result);
         }
         object.setModifiedDate(Calendar.getInstance().getTime());

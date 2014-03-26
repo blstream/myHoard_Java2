@@ -1,6 +1,6 @@
 package com.blstream.myhoard.controller;
 
-import com.blstream.myhoard.biz.exception.Error;
+import com.blstream.myhoard.biz.exception.MyHoardError;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.CollectionDTO;
 import com.blstream.myhoard.biz.model.UserDTO;
@@ -150,7 +150,7 @@ public class CollectionController {
 
     @ExceptionHandler(MyHoardException.class)
     @ResponseBody
-    public Error returnCode(MyHoardException exception, HttpServletResponse response) {
+    public MyHoardError returnCode(MyHoardException exception, HttpServletResponse response) {
         response.setStatus(exception.getResponseStatus());
         return exception.toError();
     }

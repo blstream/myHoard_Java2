@@ -59,7 +59,7 @@ public class MediaDS {
             return new MediaDTO(Integer.toString(id), 
                     file == null ? null : file.getBytes(1, (int) file.length()),
                     createdDate,
-                    Integer.toString(item));
+                    item == null ? null : Integer.toString(item));
         } catch (SQLException ex) {
             throw new MyHoardException(400, ex.getSQLState());
         }

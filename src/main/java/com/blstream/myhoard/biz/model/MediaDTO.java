@@ -20,6 +20,8 @@ public class MediaDTO {
     private byte[] file;
     @JsonIgnore
     private Date created_date;
+    @JsonIgnore
+    private String item;
 
     public MediaDTO() throws IOException {
         // by Integer.parseInt() nie rzucał wyjątku w metodia toMediaDS,
@@ -28,10 +30,11 @@ public class MediaDTO {
         created_date = java.util.Calendar.getInstance().getTime();
     }
 
-    public MediaDTO(String id, byte[] file, Date createdDate) {
+    public MediaDTO(String id, byte[] file, Date createdDate, String item) {
         this.id = id;
         this.file = file;
         this.created_date = createdDate;
+        this.item = item;
     }
 
     public String getId() {
@@ -58,11 +61,22 @@ public class MediaDTO {
         this.created_date = created_date;
     }
 
+    public String getItem() {
+        return item;
+    }
+
+    public void setItem(String item) {
+        this.item = item;
+    }
+
+    
+    
     public MediaDS toMediaDS() {
         try {
             return new MediaDS(Integer.parseInt(id),
                     file == null ? null : new SerialBlob(file),
-                    created_date);
+                    created_date,
+                    Integer.parseInt(item));
         } catch (SQLException ex) {
             throw new MyHoardException(400, ex.getSQLState());
         }

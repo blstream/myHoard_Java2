@@ -15,10 +15,11 @@ public class MediaDS {
 
     public MediaDS() {}
 
-    public MediaDS(int id, Blob file, Date createdDate) {
+    public MediaDS(int id, Blob file, Date createdDate, Integer item) {
         this.id = id;
         this.file = file;
         this.createdDate = createdDate;
+        this.item = item;
     }
 
     public int getId() {
@@ -57,7 +58,8 @@ public class MediaDS {
         try {
             return new MediaDTO(Integer.toString(id), 
                     file == null ? null : file.getBytes(1, (int) file.length()),
-                    createdDate);
+                    createdDate,
+                    Integer.toString(item));
         } catch (SQLException ex) {
             throw new MyHoardException(400, ex.getSQLState());
         }

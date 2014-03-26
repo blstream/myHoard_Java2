@@ -50,11 +50,6 @@ public class MediaDAO implements ResourceDAO<MediaDS> {
 
     @Override
     public void update(MediaDS obj) {
-       Session session = sessionFactory.getCurrentSession();
-       MediaDS result = (MediaDS)session.createCriteria(MediaDS.class)
-                .add(Restrictions.eq("id", obj.getId()))
-                .uniqueResult();
-       obj.setItem(result.getItem());
        sessionFactory.getCurrentSession().update(obj);
     }
 

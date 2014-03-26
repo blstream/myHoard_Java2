@@ -6,9 +6,12 @@ import com.blstream.myhoard.biz.model.MediaDTO;
 import com.blstream.myhoard.biz.model.UserDTO;
 import com.blstream.myhoard.biz.service.MediaService;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -21,6 +24,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.*;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.IOUtils;
 import org.hibernate.HibernateException;
 import org.springframework.web.bind.annotation.RequestParam;
 /**
@@ -99,24 +107,27 @@ public class MediaController extends HttpServlet {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public MediaDTO updateMedia(@PathVariable String id, MultipartFile file, HttpServletRequest request) {
-        if (file.getSize() == 0 || !file.getContentType().contains("image")) {
-            throw new MyHoardException(201, "Niepoprawny plik");
-        }
+    public MediaDTO updateMedia(@PathVariable String id, HttpServletRequest request) {
         try {
             UserDTO user = (UserDTO)request.getAttribute("user");
             Map<String, Object> params = new HashMap<>();
             params.put("id", Integer.parseInt(id));
             params.put("owner", user.getUsername());
             List<MediaDTO> result = mediaService.getList(params);
-            if (result.isEmpty())
-                throw new MyHoardException(202, "Resource not found", HttpServletResponse.SC_NOT_FOUND);
+            //if (result.isEmpty())
+            //    throw new MyHoardException(202, "Resource not found", HttpServletResponse.SC_NOT_FOUND);
             MediaDTO media = new MediaDTO();
+            InputStream file;
+            List<FileItem> multiparts = new ServletFileUpload(
+                                         new DiskFileItemFactory()).parseRequest(request);
+            file = multiparts.get(0).getInputStream();
             media.setId(id); //poniewaz konstruktor daje id=0;
-            media.setFile(file.getBytes());
+            media.setFile(IOUtils.toByteArray(file));
             mediaService.update(media);
             return media;
         } catch (IOException ex) {
+            throw new MyHoardException(400, ex.toString());
+        } catch (FileUploadException ex) {
             throw new MyHoardException(400, ex.toString());
         }
     }

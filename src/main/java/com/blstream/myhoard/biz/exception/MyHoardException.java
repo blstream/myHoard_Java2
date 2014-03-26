@@ -11,6 +11,10 @@ public class MyHoardException extends RuntimeException {
     private final int responseStatus;
     private final Map<String, String> customErrors = new HashMap<>();
 
+    /**
+     * Tworzy wyjątek z podanym kodem błędu, pustym opisem i statusem HTTP 400.
+     * @param errorCode kod błędu
+     */
     public MyHoardException(int errorCode) {
         super(null, null);
         this.errorCode = errorCode;
@@ -18,6 +22,11 @@ public class MyHoardException extends RuntimeException {
         this.responseStatus = HttpServletResponse.SC_BAD_REQUEST;
     }
 
+    /**
+     * Tworzy wyjątek z podanym kodem błędu i opisem oraz statusem HTTP 400.
+     * @param errorCode kod błędu
+     * @param errorMessage opis błędu
+     */
     public MyHoardException(int errorCode, String errorMessage) {
         super(null, null);
         this.errorCode = errorCode;
@@ -25,10 +34,17 @@ public class MyHoardException extends RuntimeException {
         this.responseStatus = HttpServletResponse.SC_BAD_REQUEST;
     }
 
-    public MyHoardException(int errorCode, String errorMsg, int responseStatus) {
+    /**
+     * Tworzy wyjątek z podanym kodem błędu, opisem oraz statusem (znajdującym
+     * się w klasie @ref(HttpServletResponse).
+     * @param errorCode kod błędu
+     * @param errorMessage opis błędu
+     * @param responseStatus status HTTP
+     */
+    public MyHoardException(int errorCode, String errorMessage, int responseStatus) {
         super(null, null);
         this.errorCode = errorCode;
-        this.errorMessage = errorMsg;
+        this.errorMessage = errorMessage;
         this.responseStatus = responseStatus;
     }
 
@@ -36,7 +52,7 @@ public class MyHoardException extends RuntimeException {
      * Metoda powoduje dodanie błędu do mapy. Jeśli dane pole występuje w mapie,
      * stara wartość <i>reason</i> zostanie podmieniona (jednemu polu odpowiada
      * jeden opis błędu).
-     * @param field  nazwa niepoprawnego pola,
+     * @param field nazwa niepoprawnego pola,
      * @param reason powód błędu.
      * @return referencja <i>this</i>, by można było utworzyć łańcuch.
      */

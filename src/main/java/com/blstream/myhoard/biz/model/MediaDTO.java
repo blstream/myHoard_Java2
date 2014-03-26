@@ -1,5 +1,6 @@
 package com.blstream.myhoard.biz.model;
 
+import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.db.model.MediaDS;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -57,10 +58,14 @@ public class MediaDTO {
         this.created_date = created_date;
     }
 
-    public MediaDS toMediaDS() throws SQLException {
-        return new MediaDS(Integer.parseInt(id),
-                file == null ? null : new SerialBlob(file),
-                created_date);
+    public MediaDS toMediaDS() {
+        try {
+            return new MediaDS(Integer.parseInt(id),
+                    file == null ? null : new SerialBlob(file),
+                    created_date);
+        } catch (SQLException ex) {
+            throw new MyHoardException(400, ex.getSQLState());
+        }
     }
 
 

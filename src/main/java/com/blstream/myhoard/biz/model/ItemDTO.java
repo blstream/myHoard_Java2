@@ -151,20 +151,21 @@ public class ItemDTO {
     public ItemDS toItemDS() {
         Set<MediaDS> set = new HashSet<>(media.size());
         for (MediaDTO i : media)
-            try {
-                set.add(i.toMediaDS());
-            } catch (SQLException ex) {
-                throw new MyHoardException(ex.getErrorCode(), ex.getSQLState());
-            }
-        return new ItemDS(Integer.parseInt(id),
-                name,
-                description,
-                location == null ? null : location.getLat(),
-                location == null ? null : location.getLng(),
-                set,
-                createdDate,
-                modifiedDate,
-                collection == null || collection.isEmpty() ? -1 : Integer.parseInt(collection),
-                owner);
+            set.add(i.toMediaDS());
+ 
+        try {
+            return new ItemDS(Integer.parseInt(id),
+                    name,
+                    description,
+                    location == null ? null : location.getLat(),
+                    location == null ? null : location.getLng(),
+                    set,
+                    createdDate,
+                    modifiedDate,
+                    collection == null || collection.isEmpty() ? -1 : Integer.parseInt(collection),
+                    owner);
+        } catch (NumberFormatException ex) {
+            throw new MyHoardException(201, "Validation error").add("collection", "Niepoprawny identyfikator");
+        }
     }
 }

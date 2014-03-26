@@ -148,11 +148,8 @@ public class ItemDS {
     public ItemDTO toDTO() {
         Set<MediaDTO> set = new HashSet<>(media.size());
         for (MediaDS i : media)
-            try {
-                set.add(i.toMediaDTO());
-            } catch (SQLException ex) {
-                throw new MyHoardException(ex.getErrorCode(), ex.getSQLState());
-            }
+            set.add(i.toMediaDTO());
+
         return new ItemDTO(Integer.toString(id),
                 name,
                 description,
@@ -169,11 +166,8 @@ public class ItemDS {
             return;
         Set<MediaDTO> set = new HashSet<>(media.size());
         for (MediaDS i : media)
-            try {
-                set.add(i.toMediaDTO());
-            } catch (SQLException ex) {
-                throw new MyHoardException(ex.getErrorCode(), ex.getSQLState());
-            }
+            set.add(i.toMediaDTO());
+
         obj.setId(Integer.toString(id));
         obj.setName(name);
         obj.setDescription(description);
@@ -191,11 +185,8 @@ public class ItemDS {
         media = new HashSet<>();
         if (obj.getMedia() != null)
             for (MediaDTO i : obj.getMedia())
-                try {
-                    media.add(i.toMediaDS());
-                } catch (SQLException ex) {
-                    throw new MyHoardException(ex.getErrorCode(), ex.getSQLState());
-                }
+                media.add(i.toMediaDS());
+
         id = Integer.parseInt(obj.getId());
         name = obj.getName();
         description = obj.getDescription();
@@ -207,7 +198,11 @@ public class ItemDS {
         }
         createdDate = obj.getCreatedDate();
         modifiedDate = obj.getModifiedDate();
-        collection = Integer.parseInt(obj.getCollection());
+        try {
+            collection = Integer.parseInt(obj.getCollection());
+        } catch (NumberFormatException ex) {
+            throw new MyHoardException(201, "Validation error").add("collection", "Niepoprawny identyfikator");
+        }
         owner = obj.getOwner();
     }
 }

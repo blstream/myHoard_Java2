@@ -1,5 +1,6 @@
 package com.blstream.myhoard.db.model;
 
+import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.MediaDTO;
 import java.sql.Blob;
 import java.sql.SQLException;
@@ -10,7 +11,7 @@ public class MediaDS {
     private int id;
     private Blob file;
     private Date createdDate;
-    private int item;
+    private Integer item;
 
     public MediaDS() {}
 
@@ -44,18 +45,22 @@ public class MediaDS {
         this.createdDate = createdDate;
     }
 
-    public int getItem() {
+    public Integer getItem() {
         return item;
     }
 
-    public void setItem(int item) {
+    public void setItem(Integer item) {
         this.item = item;
     }
 
-    public MediaDTO toMediaDTO() throws SQLException {
-        return new MediaDTO(Integer.toString(id),
-                file == null ? null : file.getBytes(1, (int) file.length()),
-                createdDate);
+    public MediaDTO toMediaDTO() {
+        try {
+            return new MediaDTO(Integer.toString(id), 
+                    file == null ? null : file.getBytes(1, (int) file.length()),
+                    createdDate);
+        } catch (SQLException ex) {
+            throw new MyHoardException(400, ex.getSQLState());
+        }
     }
 
     public int hashCode() {
@@ -67,7 +72,7 @@ public class MediaDS {
             return false;
         else {
             MediaDS m = (MediaDS)o;
-            return id == m.id && file != null && file.equals(m.file) && createdDate != null && createdDate.equals(m.createdDate);
+            return id == m.id;
         }
     }
 }

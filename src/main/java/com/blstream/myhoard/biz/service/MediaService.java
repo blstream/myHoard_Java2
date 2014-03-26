@@ -1,5 +1,6 @@
 package com.blstream.myhoard.biz.service;
 
+import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.MediaDTO;
 import com.blstream.myhoard.db.dao.ResourceDAO;
 import com.blstream.myhoard.db.model.MediaDS;
@@ -9,13 +10,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,43 +30,35 @@ public class MediaService implements ResourceService<MediaDTO> {
 
     @Override
     public List<MediaDTO> getList() {
-        try {
-            List<MediaDTO> result = new ArrayList<>();
-            for (MediaDS i : mediaDAO.getList()) {
-                result.add(i.toMediaDTO());
-            }
-            return result;
-        } catch (SQLException ex) {
-            Logger.getLogger(MediaService.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
+        List<MediaDTO> result = new ArrayList<>();
+        for (MediaDS i : mediaDAO.getList())
+            result.add(i.toMediaDTO());
+        return result;
     }
 
     @Override
     public List<MediaDTO> getList(Map<String, Object> params) {
-        return null;
+        List<MediaDTO> media = new ArrayList<>();
+        for (MediaDS i : mediaDAO.getList(params))
+            media.add(i.toMediaDTO());
+        return media;
     }
 
     @Override
     public MediaDTO get(int id) {
-        try {
-            return mediaDAO.get(id).toMediaDTO();
-        } catch (SQLException ex) {
-            Logger.getLogger(MediaService.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
+        MediaDS media = mediaDAO.get(id);
+        if (media == null)
+            throw new MyHoardException(202, "Resource not found", HttpServletResponse.SC_NOT_FOUND)
+                    .add("id", "Odwołanie do nieistniejącego zasobu");
+        return media.toMediaDTO();
     }
 
     @Override
     public void create(MediaDTO obj) {
         MediaDS media;
-        try {
-            media = obj.toMediaDS();
-            mediaDAO.create(media);
-            obj.setId(Integer.toString(media.getId()));
-        } catch (SQLException ex) {
-            Logger.getLogger(MediaService.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        media = obj.toMediaDS();
+        mediaDAO.create(media);
+        obj.setId(Integer.toString(media.getId()));
     }
 
     @Override
@@ -79,12 +72,11 @@ public class MediaService implements ResourceService<MediaDTO> {
 
     @Override
     public void remove(int id) {
-        mediaDAO.get(id); // jezeli ne istnieje obiekt rzuci to wyjatkiem indexoutofbounds
         mediaDAO.remove(id);
     }
     
-    public byte[] getThumbnail(Integer id,Integer size) {
-        MediaDTO media = get(id);
+    public byte[] getThumbnail(Integer id, Integer size) {
+        MediaDTO media = mediaDAO.get(id).toMediaDTO();
         if (media.getFile() != null) {
             if(size > 0) {
                 try {
@@ -100,7 +92,7 @@ public class MediaService implements ResourceService<MediaDTO> {
                     ImageIO.write(resizedImage, "jpg", b);
                     return b.toByteArray();
                 } catch (IOException ex) {
-                    Logger.getLogger(MediaDTO.class.getName()).log(Level.SEVERE, null, ex);
+                    throw new MyHoardException(201, ex.toString());
                 }
             } else {
                 return media.getFile();

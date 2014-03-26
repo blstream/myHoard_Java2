@@ -77,6 +77,8 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
         // czy można to prościej zrealizować?
         if (!ids.isEmpty() && ((Long)session.createQuery("select count(*) from MediaDS as m where m.item is not null and m.id in (:ids)").setParameterList("ids", ids).iterate().next()).longValue() > 0)
             throw new MyHoardException(2, "Próba przepisania Media do innego elementu.");
+        for (MediaDS i : obj.getMedia())
+            i.setItem(obj.getId());
         session.save(obj);
         List<MediaDS> media = session.createCriteria(MediaDS.class).add(Restrictions.in("id", ids)).list();
         for (MediaDS i : media) {

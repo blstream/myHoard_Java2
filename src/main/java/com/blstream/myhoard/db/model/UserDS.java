@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
 public class UserDS {
 
     private int id;
-    private String mail;
+    private String email;
     private String username;
     private String password;
 
@@ -17,11 +17,11 @@ public class UserDS {
 
     public UserDS(int id, String mail, String username, String password) {
         this.id = id;
-        this.mail = mail;
+        this.email = mail;
         this.username = username;
         if(password!=null) {
             try {
-            MessageDigest md = MessageDigest.getInstance( "SHA1" );
+            MessageDigest md = MessageDigest.getInstance( "SHA-256" );
             md.update( password.getBytes() );
             this.password = new BigInteger( 1, md.digest() ).toString(16);
             }
@@ -38,12 +38,12 @@ public class UserDS {
     public void setId(int id) {
         this.id = id;
     }
-    public String getMail() {
-        return mail;
+    public String getEmail() {
+        return email;
     }
 
-    public void setMail(String mail) {
-        this.mail = mail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getUsername() {
@@ -60,7 +60,7 @@ public class UserDS {
 
     public void setPassword(String password) {
         /*try {
-        MessageDigest md = MessageDigest.getInstance( "SHA1" );
+        MessageDigest md = MessageDigest.getInstance( "SHA256" );
         md.update( password.getBytes() );
         this.password = new BigInteger( 1, md.digest() ).toString(16);
         }
@@ -77,8 +77,8 @@ public class UserDS {
         if (username == null || object.username != null && !username.equals(object.username)) {
             username = object.username;
         }
-        if (mail == null || object.mail != null && !mail.equals(object.mail)) {
-            mail = object.mail;
+        if (email == null || object.email != null && !email.equals(object.email)) {
+            email = object.email;
         }
         if (password == null || object.password != null && !password.equals(object.password)) {
             password = object.password;
@@ -86,15 +86,15 @@ public class UserDS {
     }
     
     public UserDTO toUserDTO() {
-        return new UserDTO(Integer.toString(id),mail, username, password);
+        return new UserDTO(Integer.toString(id), email, username, password);
     }
 
 
     @Override
     public String toString() {
         return ("id: " + this.id +
-                "username: " + this.username +
-                "\nmail: " + this.mail +
+                "\nusername: " + this.username +
+                "\nmail: " + this.email +
                 "\npassword: " + this.password);
     }
     

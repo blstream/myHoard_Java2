@@ -5,17 +5,17 @@
 
 <hibernate-mapping package="com.blstream.myhoard.db.model">
 	<class name="CollectionDS" table="Collection">
-		<id name="id" type="int" column="id">
+		<id name="id" type="int">
 			<generator class="native" />
 		</id>
 		<property name="name" type="string" />
 		<property name="description" type="string" />
-		<set name="tags" table="CollectionTag" lazy="false" cascade="delete">
+		<set name="tags" table="CollectionTag" lazy="false">
 			<key column="collection" />
 			<many-to-many column="tag" class="TagDS" fetch="join" />
 		</set>
 		<property name="created_date" type="timestamp" />
 		<property name="modified_date" type="timestamp" />
-		<property name="owner" column="owner" type="string" />
+		<property name="owner" type="string" />
 	</class>
 </hibernate-mapping>

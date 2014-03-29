@@ -1,10 +1,12 @@
 package com.blstream.myhoard.db.dao;
 
+import com.blstream.myhoard.biz.exception.MyHoardException;
 import java.util.List;
 import org.hibernate.Session;
 import com.blstream.myhoard.db.model.*;
 import java.util.Map;
-
+import javax.servlet.http.HttpServletResponse;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,29 +17,35 @@ public class UserDAO implements ResourceDAO<UserDS> {
     private SessionFactory sessionFactory;
 
     @Override
-    public List<UserDS> getList() {
-        Session session = sessionFactory.getCurrentSession();
-        List<UserDS> result = session.createQuery("from UserDS").list();
+    public List<UserDS> getList(Map<String, Object> params) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserDS.class);
+        if (params.containsKey("email"))
+            criteria.add(Restrictions.eq("email", params.get("email")));
+        else if (params.containsKey("username"))
+            criteria.add(Restrictions.eq("username", params.get("username")));
+        else
+            throw new UnsupportedOperationException("Not supported yet.");
+        List<UserDS> result = criteria.list();
+        if (result.isEmpty())
+            // może lepiej pozamieniać wszystkie wystąpięnia HttpServletResponse.kod_błędu na właściwą liczbę
+            throw new MyHoardException(202, "Resource not found", HttpServletResponse.SC_NOT_FOUND);
         return result;
-    }
-
-    @Override
-    public List<UserDS> getList(Map<String, Object> args) {
-        return null;
     }
 
     @Override
     public UserDS get(int id) {
-        Session session = sessionFactory.getCurrentSession();
-        UserDS result = (UserDS) session.createQuery("from UserDS where id = " + id).uniqueResult();
-        return result;
+        UserDS user = (UserDS)sessionFactory.getCurrentSession()
+                .createCriteria(UserDS.class)
+                .add(Restrictions.eq("id", id)).uniqueResult();
+        if (user == null)
+            throw new MyHoardException(202, "Resource not found", HttpServletResponse.SC_NOT_FOUND);
+        return user;
     }    
 
-    
     @Override
     public void create(UserDS obj) {
         if(obj.getUsername()==null)
-            obj.setUsername(obj.getMail());
+            obj.setUsername(obj.getEmail());
         Session session = sessionFactory.getCurrentSession();
         session.save(obj);
     }
@@ -53,31 +61,11 @@ public class UserDAO implements ResourceDAO<UserDS> {
 
     @Override
     public void remove(int id) {
-        Session session = sessionFactory.getCurrentSession();
-        session.createQuery("delete UserDS where id = " + id).executeUpdate();
+        sessionFactory.getCurrentSession().delete(get(id));
     }
 
     @Override
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
-
-    @Override
-    public UserDS getByEmail(String email) {
-        Session session = sessionFactory.getCurrentSession();
-        return (UserDS) session.createCriteria(UserDS.class)
-                .add(Restrictions.eq("mail", email))
-                .uniqueResult();
-    }
-
-    @Override
-    public UserDS getByAccess_token(String access_token) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public UserDS getByRefresh_token(String refresh_token) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 }

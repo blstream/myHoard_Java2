@@ -4,6 +4,7 @@ import com.blstream.myhoard.biz.model.CollectionDTO;
 import com.blstream.myhoard.biz.model.TagDTO;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class CollectionDS {
@@ -157,13 +158,7 @@ public class CollectionDS {
 
     @Override
     public String toString() {
-        return "id          : " + id
-                + "\nowner       : " + owner
-                + "\nname        : " + name
-                + "\ndescription : " + description
-                + "\ntags        : " + tags
-                + "\nitemsNumber : " + itemsNumber
-                + "\ncreatedDate : " + created_date
-                + "\nmodifiedDate: " + modified_date;
+        return "CollectionDS{" + "id=" + id + ", owner=" + owner + ", name=" + name + ", description=" + description + ", tags=" + tags + ", itemsNumber=" + itemsNumber + ", created_date=" + created_date + ", modified_date=" + modified_date + ", tagsAltered=" + tagsAltered + '}';
     }
+
 }

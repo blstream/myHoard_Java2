@@ -12,14 +12,16 @@ public class MediaDS {
     private Blob file;
     private Date createdDate;
     private Integer item;
+    private String owner;
 
     public MediaDS() {}
 
-    public MediaDS(int id, Blob file, Date createdDate, Integer item) {
+    public MediaDS(int id, Blob file, Date createdDate, Integer item, String owner) {
         this.id = id;
         this.file = file;
         this.createdDate = createdDate;
         this.item = item;
+        this.owner = owner;
     }
 
     public int getId() {
@@ -54,12 +56,21 @@ public class MediaDS {
         this.item = item;
     }
 
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
     public MediaDTO toMediaDTO() {
         try {
             return new MediaDTO(Integer.toString(id), 
                     file == null ? null : file.getBytes(1, (int) file.length()),
                     createdDate,
-                    item == null ? null : Integer.toString(item));
+                    item == null ? null : item.toString(),
+                    owner);
         } catch (SQLException ex) {
             throw new MyHoardException(400, ex.getSQLState());
         }

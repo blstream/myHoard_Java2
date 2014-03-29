@@ -2,12 +2,11 @@ package com.blstream.myhoard.db.dao;
 
 import java.util.List;
 import java.util.Map;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public interface ResourceDAO<T> {
-
-    public List<T> getList();
 
     public List<T> getList(Map<String, Object> params);
 
@@ -21,10 +20,4 @@ public interface ResourceDAO<T> {
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory);
-
-    public T getByAccess_token(String access_token);
-
-    public T getByRefresh_token(String refresh_token);
-
-    public T getByEmail(String email);
 }

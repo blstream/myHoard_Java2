@@ -1,19 +1,16 @@
 package com.blstream.myhoard.db.dao;
 
-import com.blstream.myhoard.biz.exception.MyHoardException;
 import java.util.List;
 import org.hibernate.Session;
 import com.blstream.myhoard.db.model.*;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -27,17 +24,6 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
     @Override
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
-    }
-
-    @Override
-    public List<CollectionDS> getList() {
-        Session session = sessionFactory.getCurrentSession();
-        List<CollectionDS> result = session.createCriteria(CollectionDS.class).list();
-        // sorry, ale musiałem (do tak prymitywnej operacji natywne zapytanie pasuje, skoro nie można zastosować "derived property"
-        List<Number> count = session.createSQLQuery("select count(Item.id) from Collection left join Item on Collection.id = Item.collection group by Collection.id").list();
-        for (int i = 0; i < result.size(); i++)
-            result.get(i).setItemsNumber(count.get(i).intValue());
-        return result;
     }
 
     @Override
@@ -56,26 +42,20 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
             criteria.setMaxResults(Integer.parseInt((String)params.get("max_count")));
         if (params.containsKey("start_num"))
             criteria.setFirstResult(Integer.parseInt((String)params.get("start_num")));
-        if(params.containsKey("username"))
-            criteria.add(Restrictions.eq("owner", params.get("username")));
+        if(params.containsKey("owner"))
+            criteria.add(Restrictions.eq("owner", params.get("owner")));
         List<CollectionDS> result = criteria.list();
-        if(result.size()>0) {
-            StringBuilder builder = new StringBuilder("select count(Item.id) as items_number from Collection left join Item on Collection.id = Item.collection where Collection.id in (");
-            for (int i = 0; i < result.size(); i++)
-                builder.append('"').append(result.get(i).getId()).append("\",");
-            builder.deleteCharAt(builder.length() - 1).append(") group by Collection.id order by ");
-            for (String i : (String[])params.get("sort_by"))
-                builder.append("Collection.").append(i).append(',');
-            builder.deleteCharAt(builder.length() - 1);
-            if (params.containsKey("sort_dir"))
-                builder.append(' ').append(params.get("sort_dir"));
-            List<Number> count = session.createSQLQuery(builder.toString()).list();
-            if ("asc".equals(params.get("sort_dir")))
-                for (int i = 0; i < result.size(); i++)
-                    result.get(i).setItemsNumber(count.get(i).intValue());
-            else
-                for (int i = 0; i < result.size(); i++)
-                    result.get(i).setItemsNumber(count.get(result.size() - i - 1).intValue());
+        if(!result.isEmpty()) {
+            Map<Integer, CollectionDS> map = new HashMap<>();
+            for (CollectionDS i: result)
+                map.put(i.getId(), i);
+            StringBuilder builder = new StringBuilder("select Collection.id, count(Item.id) from Collection left join Item on Collection.id = Item.collection where Collection.id in (");
+            for (CollectionDS i : result)
+                builder.append(i.getId()).append(',');
+            builder.deleteCharAt(builder.length() - 1).append(") group by Collection.id");
+            List<Object[]> count = session.createSQLQuery(builder.toString()).list();
+            for (Object[] i : count)
+                map.get(((Number)i[0]).intValue()).setItemsNumber(((Number)i[1]).intValue());
         }
         return result;
     }
@@ -153,33 +133,9 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
     @Override
     public void remove(int id) {
         Session session = sessionFactory.getCurrentSession();
-        session.delete(session.createCriteria(CollectionDS.class)
-                .add(Restrictions.eq("id", id))
-                .uniqueResult());
-    }
-
-//    @Override
-//    public Criteria getCriteria() {
-//        return sessionFactory.getCurrentSession().createCriteria(CollectionDS.class);
-//    }
-
-//    @Override
-//    public Criteria getCriteria() {
-//        return sessionFactory.getCurrentSession().createCriteria(CollectionDS.class);
-//    }
-
-    @Override
-    public CollectionDS getByAccess_token(String access_token) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public CollectionDS getByEmail(String email) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public CollectionDS getByRefresh_token(String refresh_token) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        CollectionDS collection = get(id);
+        // pozbycie się ewentualnych tagów
+//        session.createSQLQuery("delete from CollectionTag where collection = " + collection.getId()).executeUpdate();
+        session.delete(collection);
     }
 }

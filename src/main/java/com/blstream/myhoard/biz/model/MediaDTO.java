@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import javax.sql.rowset.serial.SerialBlob;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  *
@@ -14,33 +15,37 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  */
 public class MediaDTO {
 
-
     private String id;
     @JsonIgnore
     private byte[] file;
     @JsonIgnore
-    private Date created_date;
+    private Date createdDate;
     @JsonIgnore
     private String item;
+    @JsonIgnore
+    private String owner;
 
     public MediaDTO() throws IOException {
         // by Integer.parseInt() nie rzucał wyjątku w metodia toMediaDS,
         // id zostanie zmienione jak obiekt trafi do bazy danych
         id = "0";
-        created_date = java.util.Calendar.getInstance().getTime();
+        createdDate = java.util.Calendar.getInstance().getTime();
     }
 
-    public MediaDTO(String id, byte[] file, Date createdDate, String item) {
+    public MediaDTO(String id, byte[] file, Date createdDate, String item, String owner) {
         this.id = id;
         this.file = file;
-        this.created_date = createdDate;
+        this.createdDate = createdDate;
         this.item = item;
+        this.owner = owner;
     }
 
+    @JsonProperty("id")
     public String getId() {
         return id;
     }
 
+    @JsonIgnore
     public void setId(String id) {
         this.id = id;
     }
@@ -53,12 +58,14 @@ public class MediaDTO {
         this.file = file;
     }
 
-    public Date getCreated_date() {
-        return created_date;
+    @JsonProperty("created_date")
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreated_date(Date created_date) {
-        this.created_date = created_date;
+    @JsonIgnore
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 
     public String getItem() {
@@ -69,18 +76,23 @@ public class MediaDTO {
         this.item = item;
     }
 
-    
-    
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
     public MediaDS toMediaDS() {
         try {
             return new MediaDS(Integer.parseInt(id),
                     file == null ? null : new SerialBlob(file),
-                    created_date,
-                    item == null ? null : Integer.parseInt(item));
+                    createdDate,
+                    item == null ? null : Integer.parseInt(item),
+                    owner);
         } catch (SQLException ex) {
             throw new MyHoardException(400, ex.getSQLState());
         }
     }
-
-
 }

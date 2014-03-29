@@ -29,14 +29,6 @@ public class MediaService implements ResourceService<MediaDTO> {
     }
 
     @Override
-    public List<MediaDTO> getList() {
-        List<MediaDTO> result = new ArrayList<>();
-        for (MediaDS i : mediaDAO.getList())
-            result.add(i.toMediaDTO());
-        return result;
-    }
-
-    @Override
     public List<MediaDTO> getList(Map<String, Object> params) {
         List<MediaDTO> media = new ArrayList<>();
         for (MediaDS i : mediaDAO.getList(params))
@@ -100,15 +92,4 @@ public class MediaService implements ResourceService<MediaDTO> {
         } 
         return null;
     }
-
-    @Override
-    public MediaDTO getByAccess_token(String access_token) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public MediaDTO getByRefresh_token(String refresh_token) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-   
 }

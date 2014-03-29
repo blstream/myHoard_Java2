@@ -30,13 +30,12 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public List<UserDTO> getUsers() {
-        
-        return userService.getList();
-    }
+//    @RequestMapping(method = RequestMethod.GET)
+//    @ResponseStatus(HttpStatus.OK)
+//    @ResponseBody
+//    public List<UserDTO> getUsers() {
+//        return userService.getList();
+//    }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
@@ -55,8 +54,11 @@ public class UserController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public UserDTO getUser(@PathVariable String id) {
+    public UserDTO getUser(@PathVariable String id, HttpServletRequest request) {
         try {
+            UserDTO user = (UserDTO)request.getAttribute("user");
+            if (!user.getId().equals(id))
+                throw new MyHoardException(104, "Forbidden", HttpServletResponse.SC_FORBIDDEN);
             return userService.get(Integer.parseInt(id));
         } catch (NumberFormatException ex) {
             throw new MyHoardException(300, "Niepoprawne id: " + id);
@@ -69,8 +71,11 @@ public class UserController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public UserDTO updateUser(@PathVariable String id, @RequestBody UserDTO user) {
+    public UserDTO updateUser(@PathVariable String id, @RequestBody UserDTO user, HttpServletRequest request) {
         try {
+            UserDTO currentUser = (UserDTO)request.getAttribute("user");
+            if (!currentUser.getId().equals(id))
+                throw new MyHoardException(104, "Forbidden", HttpServletResponse.SC_FORBIDDEN);
             user.setId(id);
             userService.update(user);
             return user;
@@ -81,8 +86,11 @@ public class UserController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removeCollection(@PathVariable String id) {
+    public void removeUser(@PathVariable String id, HttpServletRequest request) {
         try {
+            UserDTO user = (UserDTO)request.getAttribute("user");
+            if (!user.getId().equals(id))
+                throw new MyHoardException(104, "Forbidden", HttpServletResponse.SC_FORBIDDEN);
             userService.remove(Integer.parseInt(id));
         } catch (NumberFormatException ex) {
             throw new MyHoardException(400, "Niepoprawne id: " + id);

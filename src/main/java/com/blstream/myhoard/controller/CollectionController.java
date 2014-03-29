@@ -35,7 +35,7 @@ public class CollectionController {
     }
 
     /**
-     * Obsługa wypisywania/sortowania kolekcji
+     * Obsługa wypisywania/sortowania kolekcji.
      * @param fieldName - po jakich polach sortować (domyślnie po nazwie)
      * @param sortDir   - w jakim kierunku ("asc" lub "desc"; domyślnie "asc")
      * @return Lista kolekcji.
@@ -44,14 +44,16 @@ public class CollectionController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<CollectionDTO> getCollections(@RequestParam(value = "sort_by", defaultValue = "name") String[] fieldName,
-            @RequestParam(value = "sort_direction", defaultValue = "asc") String sortDir,HttpServletRequest request) {
+            @RequestParam(value = "sort_direction", defaultValue = "asc") String sortDir, HttpServletRequest request) {
         UserDTO user =(UserDTO) request.getAttribute("user");
         Map<String, Object> params = new HashMap<>();
         params.put("sort_by", fieldName);
         params.put("sort_dir", sortDir);
-        params.put("username", user.getUsername());
+        params.put("owner", user.getUsername());
         try {
             return collectionService.getList(params);
+        } catch (MyHoardException ex) {
+            throw ex;
         } catch (Exception ex) {
             throw new MyHoardException(400, "Nieznany błąd: " + ex);
         }
@@ -145,6 +147,10 @@ public class CollectionController {
                 throw new MyHoardException(104, "Forbidden", HttpServletResponse.SC_FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
         } catch (NumberFormatException ex) {
             throw new MyHoardException(400, "Niepoprawne id: " + id);
+        } catch (MyHoardException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new MyHoardException(400, "Nieznany błąd: " + ex.toString());
         }
     }
 

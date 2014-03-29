@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
@@ -24,32 +25,24 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
     private SessionFactory sessionFactory;
 
     @Override
-    public List<ItemDS> getList() {
-        return sessionFactory.getCurrentSession()
-                .createCriteria(ItemDS.class)
-                .list();
-    }
-
-    @Override
     public List<ItemDS> getList(Map<String, Object> params) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ItemDS.class);
         if (params.size() == 1)
-            return sessionFactory.getCurrentSession()
-                    .createCriteria(ItemDS.class)
-                    .add(Restrictions.eq("owner", params.get("owner")))
-                    .list();
+            criteria.add(Restrictions.eq("owner", params.get("owner")));
         else if (params.containsKey("collection") && params.containsKey("owner"))
-            return sessionFactory.getCurrentSession()
-                    .createCriteria(ItemDS.class)
-                    .add(Restrictions.eq("collection", params.get("collection")))
+            criteria.add(Restrictions.eq("collection", params.get("collection")))
                     .add(Restrictions.eq("owner", params.get("owner")))
                     .list();
         else
-            return sessionFactory.getCurrentSession()
-                    .createCriteria(ItemDS.class)
-                    .add(Restrictions.ilike("name", (String)params.get("name"), MatchMode.ANYWHERE))
+            criteria.add(Restrictions.ilike("name", (String)params.get("name"), MatchMode.ANYWHERE))
                     .add(Restrictions.ilike("description", (String)params.get("name"), MatchMode.ANYWHERE))
                     .add(Restrictions.eq("collection", params.get("collection")))
                     .list();
+//        List<ItemDS> result = criteria.list();
+//        if (result.isEmpty())
+//            throw new MyHoardException(202, "Resource not found", 404);
+//        return result;
+        return criteria.list();
     }
 
     @Override
@@ -75,7 +68,7 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
         for (MediaDS i : obj.getMedia())
             ids.add(i.getId());
         // czy można to prościej zrealizować?
-        if (!ids.isEmpty() && ((Long)session.createQuery("select count(*) from MediaDS as m where m.item is not null and m.id in (:ids)").setParameterList("ids", ids).iterate().next()).longValue() > 0)
+        if (!ids.isEmpty() && ((Number)session.createQuery("select count(*) from MediaDS as m where m.item is not null and m.id in (:ids)").setParameterList("ids", ids).iterate().next()).longValue() > 0)
             throw new MyHoardException(2, "Próba przepisania Media do innego elementu.");
         session.save(obj);
         List<MediaDS> media = session.createCriteria(MediaDS.class).add(Restrictions.in("id", ids)).list();
@@ -122,29 +115,13 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
     @Override
     public void remove(int id) {
         Session session = sessionFactory.getCurrentSession();
-        session.delete(session.createCriteria(ItemDS.class)
-                .add(Restrictions.eq("id", id))
-                .uniqueResult());
+        ItemDS item = get(id);
+//        session.createSQLQuery("delete from Media where item = " + item.getId());
+        session.delete(item);
     }
 
     @Override
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
-
-    @Override
-    public ItemDS getByAccess_token(String access_token) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ItemDS getByEmail(String email) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ItemDS getByRefresh_token(String refresh_token) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 }

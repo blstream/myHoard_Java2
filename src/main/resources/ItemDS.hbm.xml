@@ -19,6 +19,6 @@
 		<property name="createdDate" column="created_date" type="timestamp" update="false" />
 		<property name="modifiedDate" column="modified_date" type="timestamp" />
 		<property name="collection" type="int" />
-		<property name="owner" column="owner" type="string" />
+		<property name="owner" type="string" />
 	</class>
 </hibernate-mapping>

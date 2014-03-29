@@ -11,6 +11,8 @@ import com.blstream.myhoard.biz.model.UserDTO;
 import com.blstream.myhoard.biz.service.ResourceService;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -71,8 +73,10 @@ public class SecurityFilter implements Filter {
             out.close();
         } else if(authorization_needed) {
             SessionDTO sessionDTO = null;
-            try{
-                sessionDTO = sessionService.getByAccess_token(accessToken);
+            try {
+                Map<String, Object> params = new HashMap<>();
+                params.put("accessToken", accessToken);
+                sessionDTO = sessionService.getList(params).get(0);
             } catch (NullPointerException ex) {
                 String response = "{\"error_message\": \"Invalid Token\",\"error_code\": 103}";
                     HttpServletResponse resp = (HttpServletResponse) sr1;

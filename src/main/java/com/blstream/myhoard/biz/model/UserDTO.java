@@ -21,9 +21,9 @@ public class UserDTO {
 
     private String password;
 
-    private String grant_type;
+    private String grantType;
 
-    private String refresh_token;
+    private String refreshToken;
 
     public UserDTO() {
         id = "0";
@@ -71,23 +71,23 @@ public class UserDTO {
     }
 
     @JsonIgnore
-    public String getGrant_type() {
-        return grant_type;
+    public String getGrantType() {
+        return grantType;
     }
 
     @JsonProperty("grant_type")
-    public void setGrant_type(String grant_type) {
-        this.grant_type = grant_type;
+    public void setGrantType(String grantType) {
+        this.grantType = grantType;
     }
 
     @JsonIgnore
-    public String getRefresh_token() {
-        return refresh_token;
+    public String getRefreshToken() {
+        return refreshToken;
     }
 
     @JsonProperty("refresh_token")
-    public void setRefresh_token(String refresh_token) {
-        this.refresh_token = refresh_token;
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     public void updateObject(UserDTO object) {

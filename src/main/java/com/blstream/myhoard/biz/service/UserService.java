@@ -1,6 +1,5 @@
 package com.blstream.myhoard.biz.service;
 
-import com.blstream.myhoard.biz.exception.MyHoardException;
 import java.util.ArrayList;
 import java.util.List;
 import com.blstream.myhoard.biz.model.*;
@@ -13,25 +12,23 @@ import org.springframework.stereotype.Service;
 public class UserService implements ResourceService<UserDTO> {
 
     private ResourceDAO<UserDS> userDAO;
-    
+
     public void setUserDAO(ResourceDAO<UserDS> userDAO) {
         this.userDAO = userDAO;
-    }
-    
-    @Override
-    public List<UserDTO> getList() {
-        List<UserDTO> result = new ArrayList<>();
-        for (UserDS i : userDAO.getList()) {
-            result.add(i.toUserDTO());
-        }
-        return result;
     }
 
     @Override
     public List<UserDTO> getList(Map<String, Object> params) {
-        return null;
+        List<UserDTO> result = new ArrayList<>();
+        for (UserDS i : userDAO.getList(params))
+            result.add(i.toUserDTO());
+        return result;
     }
 
+    @Override
+    public UserDTO get(int id) {
+        return userDAO.get(id).toUserDTO();
+    }
 
     @Override
     public void create(UserDTO obj) {
@@ -49,32 +46,6 @@ public class UserService implements ResourceService<UserDTO> {
 
     @Override
     public void remove(int id) {
-        try {
-            userDAO.get(id);	// żeby "nie usuwało" nieistniejącego obiektu
-            userDAO.remove(id);
-        } catch (RuntimeException ex) {
-            throw new MyHoardException(111, "Element o id(" + id + ") prawdopodobnie nie istnieje.");
-        }
+        userDAO.remove(id);
     }
-
-    @Override
-    public UserDTO get(int id) {
-        return userDAO.get(id).toUserDTO();
-    }
-    
-    public UserDTO getByEmail(String email) {
-        return userDAO.getByEmail(email).toUserDTO();
-    }
-
-    @Override
-    public UserDTO getByAccess_token(String access_token) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public UserDTO getByRefresh_token(String refresh_token) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-
 }

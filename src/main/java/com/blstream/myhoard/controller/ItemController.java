@@ -42,6 +42,8 @@ public class ItemController {
             Map<String, Object> params = new HashMap<>();
             params.put("owner", user.getUsername());
             return itemService.getList(params);
+        } catch (MyHoardException ex) {
+            throw ex;
         } catch (Exception ex) {
             throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
@@ -57,6 +59,8 @@ public class ItemController {
             params.put("collection", Integer.parseInt(id));
             params.put("owner", user.getUsername());
             return itemService.getList(params);
+        } catch (MyHoardException ex) {
+            throw ex;
         } catch (Exception ex) {
             throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
@@ -79,6 +83,8 @@ public class ItemController {
             return itemService.getList(params);
         } catch (NumberFormatException ex) {
             throw new MyHoardException(400, "Niepoprawny identyfikaotr kolekcji: " + collection);
+        } catch (MyHoardException ex) {
+            throw ex;
         } catch (Exception ex) {
             throw new MyHoardException(400, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
@@ -95,6 +101,8 @@ public class ItemController {
             obj.setOwner(user.getUsername());
             itemService.create(obj);
             return obj;
+        } catch (MyHoardException ex) {
+            throw ex;
         } catch (Exception ex) {
             throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
@@ -114,7 +122,7 @@ public class ItemController {
             throw new MyHoardException(320, "Niepoprawne id: " + id);
         } catch (MyHoardException ex) {
             throw ex;
-        } catch (RuntimeException ex) {
+        } catch (Exception ex) {
             throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
     }
@@ -127,10 +135,15 @@ public class ItemController {
             throw new MyHoardException(320, result.getFieldError(obj.getName() != null ? "name" : "collection").getDefaultMessage());
         try {
             UserDTO user = (UserDTO)request.getAttribute("user");
+            ItemDTO item = itemService.get(Integer.parseInt(id));
+            if (!user.getUsername().equals(item.getOwner()))
+                throw new MyHoardException(320, "Forbidden");
             obj.setOwner(user.getUsername());
             obj.setId(id);
             itemService.update(obj);
             return obj;
+        } catch (NumberFormatException ex) {
+            throw new MyHoardException(320, "Niepoprawne id: " + id);   // poprawić na Validation error
         } catch (MyHoardException ex) {
             throw ex;
         } catch (Exception ex) {

@@ -5,9 +5,9 @@
 
 <hibernate-mapping package="com.blstream.myhoard.db.model">
 	<class name="TagDS" table="Tag">
-		<id name="id" type="int" column="id">
+		<id name="id" type="int">
 			<generator class="native" />
 		</id>
-		<property name="tag" column="tag" type="string" unique="true" />
+		<property name="tag" type="string" unique="true" />
 	</class>        
 </hibernate-mapping>

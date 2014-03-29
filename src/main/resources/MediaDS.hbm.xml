@@ -5,12 +5,12 @@
 
 <hibernate-mapping package="com.blstream.myhoard.db.model">
 	<class name="MediaDS" table="Media">
-		<id name="id" type="int" column="id">
+		<id name="id" type="int">
 			<generator class="native" />
 		</id>
 		<property name="file" column="file" type="blob" />
 		<property name="createdDate" column="created_date" type="timestamp" update="false" />
 		<property name="item" type="int" />
-		<!--<many-to-one name="item" column="item" class="ItemDS" not-null="false" lazy="false"/>-->
+		<property name="owner" type="string" />
 	</class>        
 </hibernate-mapping>

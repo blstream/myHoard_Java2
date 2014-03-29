@@ -10,8 +10,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.servlet.http.*;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
@@ -58,16 +55,24 @@ public class MediaController extends HttpServlet {
         }
     }
 
-//    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-//    @ResponseStatus(HttpStatus.OK)
-//    @ResponseBody
-//    public byte[] getMedia(@PathVariable String id) {
-//        try {
-//            return mediaService.get(Integer.parseInt(id)).getFile();
-//        } catch (NumberFormatException ex) {
-//            throw new MyHoardException(201, "Validation error").add("id", "Niepoprawny identyfikator");
-//        }
-//    }
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {"image/jpeg", "image/png", "image/gif"})
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public byte[] get(@PathVariable String id, @RequestParam(value = "size", defaultValue = "0") String size,
+            HttpServletRequest request) {
+        try {
+            UserDTO user = (UserDTO)request.getAttribute("user");
+            MediaDTO media = mediaService.get(Integer.parseInt(id));
+            if (!user.getUsername().equals(media.getOwner()))
+                throw new MyHoardException(104, "Forbidden", HttpServletResponse.SC_FORBIDDEN);
+            if ("0".equals(size))
+                return media.getFile();
+            else
+                return mediaService.getThumbnail(Integer.parseInt(id), Integer.parseInt(size));
+        } catch (NumberFormatException ex) {
+            throw new MyHoardException(201, "Validation error").add("id", "Niepoprawny identyfikator");
+        }
+    }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
@@ -90,12 +95,9 @@ public class MediaController extends HttpServlet {
     public void removeMedia(@PathVariable String id, HttpServletRequest request) {
         try {
             UserDTO user = (UserDTO)request.getAttribute("user");
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", Integer.parseInt(id));
-            params.put("owner", user.getUsername());
-            List<MediaDTO> result = mediaService.getList(params);
-            if (result.isEmpty())
-                throw new MyHoardException(202, "Resource not found", HttpServletResponse.SC_NOT_FOUND);
+            MediaDTO media = mediaService.get(Integer.parseInt(id));
+            if (!user.getUsername().equals(media.getOwner()))
+                throw new MyHoardException(104, "Forbidden", HttpServletResponse.SC_FORBIDDEN);
             mediaService.remove(Integer.parseInt(id));
         } catch (NumberFormatException ex) {
             throw new MyHoardException(201, "Validation error").add("id", "Niepoprawny identyfikator");
@@ -110,20 +112,16 @@ public class MediaController extends HttpServlet {
     public MediaDTO updateMedia(@PathVariable String id, HttpServletRequest request) {
         try {
             UserDTO user = (UserDTO)request.getAttribute("user");
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", Integer.parseInt(id));
-            params.put("owner", user.getUsername());
-            List<MediaDTO> result = mediaService.getList(params);
-            //if (result.isEmpty())
-            //    throw new MyHoardException(202, "Resource not found", HttpServletResponse.SC_NOT_FOUND);
-            MediaDTO media = new MediaDTO();
+            MediaDTO media = mediaService.get(Integer.parseInt(id));
+            if (!user.getUsername().equals(media.getOwner()))
+                throw new MyHoardException(104, "Forbidden", HttpServletResponse.SC_FORBIDDEN);
             InputStream file;
             List<FileItem> multiparts = new ServletFileUpload(
                                          new DiskFileItemFactory()).parseRequest(request);
             file = multiparts.get(0).getInputStream();
-            MediaDTO m = mediaService.get(Integer.parseInt(id));
-            media.setId(id); //poniewaz konstruktor daje id=0;
-            media.setItem(m.getItem());
+//            MediaDTO m = mediaService.get(Integer.parseInt(id));
+//            media.setId(id); //poniewaz konstruktor daje id=0;
+//            media.setItem(m.getItem());
             media.setFile(IOUtils.toByteArray(file));
             mediaService.update(media);
             return media;
@@ -134,25 +132,6 @@ public class MediaController extends HttpServlet {
         }
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {"image/jpeg", "image/png", "image/gif"})
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public byte[] getThumbnailSize(@PathVariable String id, @RequestParam(value = "size", defaultValue = "0") String size,
-            HttpServletRequest request, HttpServletResponse response) {
-        try {
-            UserDTO user = (UserDTO)request.getAttribute("user");
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", Integer.parseInt(id));
-            params.put("owner", user.getUsername());
-            List<MediaDTO> result = mediaService.getList(params);
-            if (result.isEmpty())
-                throw new MyHoardException(202, "Resource not found", HttpServletResponse.SC_NOT_FOUND);
-            return mediaService.getThumbnail(Integer.parseInt(id), Integer.parseInt(size));
-        } catch (NumberFormatException ex) {
-            throw new MyHoardException(201, "Validation error").add("id", "Niepoprawny identyfikator");
-        }
-    }
-
     @RequestMapping(value = "/{id}/thumbnailShow", method = RequestMethod.GET, produces = {"image/jpeg", "image/png", "image/gif"})
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -160,6 +139,9 @@ public class MediaController extends HttpServlet {
             HttpServletRequest request, HttpServletResponse response) {
         try {
             UserDTO user = (UserDTO)request.getAttribute("user");
+            MediaDTO media = mediaService.get(Integer.parseInt(id));
+            if (!user.getUsername().equals(media.getOwner()))
+                throw new MyHoardException(104, "Forbidden", HttpServletResponse.SC_FORBIDDEN);
             byte[] imageBytes = mediaService.getThumbnail(Integer.parseInt(id), Integer.parseInt(size));
 
             response.setContentType("image/jpeg");
@@ -176,6 +158,7 @@ public class MediaController extends HttpServlet {
     public MyHoardError returnCode(MyHoardException exception, HttpServletResponse response) {
         response.setStatus(exception.getResponseStatus());
         return exception.toError();
+        // czasem się wysypywało, stąd poniższy kod - może uszczelnienie wyłapywania wyjątków pomoże
 //        response.setHeader("Content-Type", "applcation/json; charset=\"UTF-8\"");
 //        MyHoardError error = exception.toError();
 //        try {

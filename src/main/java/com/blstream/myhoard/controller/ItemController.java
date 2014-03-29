@@ -104,7 +104,10 @@ public class ItemController {
         } catch (MyHoardException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
+            if(ex instanceof MyHoardException)
+                throw ex;
+            else
+                throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
     }
 

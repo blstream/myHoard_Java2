@@ -64,18 +64,29 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
                 .add(Restrictions.eq("id", obj.getCollection()))
                 .list().isEmpty())
             throw new MyHoardException(403, "Próba zapisania elementu do obcej kolekcji");
-        List<Integer> ids = new ArrayList<>();
-        for (MediaDS i : obj.getMedia())
-            ids.add(i.getId());
-        // czy można to prościej zrealizować?
+        
+            List<Integer> ids = new ArrayList<>();
+        if(obj.getMedia().size()!=0) {
+            for (MediaDS i : obj.getMedia())
+                ids.add(i.getId());
+            // czy można to prościej zrealizować?
         if (!ids.isEmpty() && ((Number)session.createQuery("select count(*) from MediaDS as m where m.item is not null and m.id in (:ids)").setParameterList("ids", ids).iterate().next()).longValue() > 0)
-            throw new MyHoardException(2, "Próba przepisania Media do innego elementu.");
-        session.save(obj);
-        List<MediaDS> media = session.createCriteria(MediaDS.class).add(Restrictions.in("id", ids)).list();
-        for (MediaDS i : media) {
-            i.setItem(obj.getId());
-            session.update(i);
+                throw new MyHoardException(2, "Próba przepisania Media do innego elementu.");
         }
+            session.save(obj);
+            if(ids.size()!=0) {
+                List<MediaDS> media = session.createCriteria(MediaDS.class).add(Restrictions.in("id", ids)).list();
+                if(media.size() == 0)
+                    throw new MyHoardException(202,"Media o podanym id nie istnieje",404);
+                else {
+                    for (MediaDS i : media) {
+                        i.setItem(obj.getId());
+                        session.update(i);
+
+                        }
+                }
+            }
+        
     }
 
     @Override

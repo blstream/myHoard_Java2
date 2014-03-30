@@ -7,6 +7,7 @@ import com.blstream.myhoard.validator.ValidationOpt;
 import java.util.HashSet;
 import java.util.Set;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
@@ -20,10 +21,13 @@ public class CollectionDTO {
 
     @NotNull(message = "Nazwa kolekcji jest wymagana")
     @NotEmpty(message = "Nazwa kolekcji jest wymagana")
+    @Size(min = 2, max = 96, message = "Nazwa może zawierać o 2 do 96 znaków")
     @CheckString(message = "Za dużo białych znaków w nazwie", value = ValidationOpt.COLLECTION_NAME)
     private String name;
 
+    @Size(max = 128, message = "Opis może się składać z co najwyżej 128 znaków")
     private String description;
+
     private Set<TagDTO> tags = new HashSet<>(0);
     @JsonIgnore
     private int itemsNumber;

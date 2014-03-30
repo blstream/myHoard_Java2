@@ -3,6 +3,7 @@ package com.blstream.myhoard.biz.exception;
 import java.util.HashMap;
 import java.util.Map;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 public class MyHoardError {
 
@@ -45,6 +46,7 @@ public class MyHoardError {
         this.errorMessage = errorReason;
     }
 
+//    @JsonSerialize(using = CustomErrorsSerializer.class)
     public Map<String, String> getErrors() {
         return errors;
     }

@@ -37,33 +37,23 @@ public class ItemController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<ItemDTO> getItems(HttpServletRequest request) {
-        try {
-            UserDTO user = (UserDTO)request.getAttribute("user");
-            Map<String, Object> params = new HashMap<>();
-            params.put("owner", user.getUsername());
-            return itemService.getList(params);
-        } catch (MyHoardException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
-        }
+        UserDTO user = (UserDTO)request.getAttribute("user");
+        Map<String, Object> params = new HashMap<>();
+        params.put("option", "list");
+        params.put("owner", user.getUsername());
+        return itemService.getList(params);
     }
 
     @RequestMapping(value = "/collections/{id}/items", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<ItemDTO> getItems(@PathVariable("id") String id, HttpServletRequest request) {
-        try {
-            UserDTO user = (UserDTO)request.getAttribute("user");
-            Map<String, Object> params = new HashMap<>();
-            params.put("collection", Integer.parseInt(id));
-            params.put("owner", user.getUsername());
-            return itemService.getList(params);
-        } catch (MyHoardException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
-        }
+        UserDTO user = (UserDTO)request.getAttribute("user");
+        Map<String, Object> params = new HashMap<>();
+        params.put("option", "listfrom");
+        params.put("collection", Integer.parseInt(id));
+        params.put("owner", user.getUsername());
+        return itemService.getList(params);
     }
 
     @RequestMapping(value = "/items", method = RequestMethod.GET, params = {"name", "collection"})
@@ -77,16 +67,13 @@ public class ItemController {
         try {
             UserDTO user = (UserDTO)request.getAttribute("user");
             Map<String, Object> params = new HashMap<>();
+            params.put("option", "find");
             params.put("name", name);
             params.put("collection", Integer.parseInt(collection));
             params.put("owner", user.getUsername());
             return itemService.getList(params);
         } catch (NumberFormatException ex) {
             throw new MyHoardException(400, "Niepoprawny identyfikaotr kolekcji: " + collection);
-        } catch (MyHoardException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new MyHoardException(400, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
     }
 
@@ -96,19 +83,10 @@ public class ItemController {
     public ItemDTO createItem(@Valid @RequestBody ItemDTO obj, BindingResult result, HttpServletRequest request) {
         if (result.hasErrors())
             throw new MyHoardException(320, result.getFieldError().getDefaultMessage());
-        try {
-            UserDTO user = (UserDTO)request.getAttribute("user");
-            obj.setOwner(user.getUsername());
-            itemService.create(obj);
-            return obj;
-        } catch (MyHoardException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            if(ex instanceof MyHoardException)
-                throw ex;
-            else
-                throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
-        }
+        UserDTO user = (UserDTO)request.getAttribute("user");
+        obj.setOwner(user.getUsername());
+        itemService.create(obj);
+        return obj;
     }
 
     @RequestMapping(value = "/items/{id}", method = RequestMethod.GET)
@@ -119,14 +97,10 @@ public class ItemController {
             UserDTO user = (UserDTO)request.getAttribute("user");
             ItemDTO item = itemService.get(Integer.parseInt(id));
             if (!user.getUsername().equals(item.getOwner()))
-                throw new MyHoardException(320, "Forbidden");
+                throw new MyHoardException(104, "Forbidden", 403);
             return item;
         } catch (NumberFormatException ex) {
             throw new MyHoardException(320, "Niepoprawne id: " + id);
-        } catch (MyHoardException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
     }
 
@@ -147,10 +121,6 @@ public class ItemController {
             return obj;
         } catch (NumberFormatException ex) {
             throw new MyHoardException(320, "Niepoprawne id: " + id);   // poprawić na Validation error
-        } catch (MyHoardException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
     }
 
@@ -165,10 +135,6 @@ public class ItemController {
             itemService.remove(Integer.parseInt(id));
         } catch (NumberFormatException ex) {
             throw new MyHoardException(320, "Niepoprawne id: " + id);
-        } catch (MyHoardException ex) {
-            throw ex;
-        } catch (RuntimeException ex) {
-            throw new MyHoardException(320, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
         }
     }
 

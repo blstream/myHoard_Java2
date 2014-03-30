@@ -7,8 +7,10 @@ import com.blstream.myhoard.db.model.*;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -44,10 +46,13 @@ public class UserDAO implements ResourceDAO<UserDS> {
 
     @Override
     public void create(UserDS obj) {
-        if(obj.getUsername()==null)
+        if (obj.getUsername() == null)
             obj.setUsername(obj.getEmail());
-        Session session = sessionFactory.getCurrentSession();
-        session.save(obj);
+        try {
+            sessionFactory.getCurrentSession().save(obj);
+        } catch (HibernateException ex) {
+            throw new MyHoardException(ex);
+        }
     }
 
     @Override

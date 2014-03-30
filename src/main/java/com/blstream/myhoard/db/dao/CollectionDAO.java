@@ -1,5 +1,6 @@
 package com.blstream.myhoard.db.dao;
 
+import com.blstream.myhoard.biz.exception.MyHoardException;
 import java.util.List;
 import org.hibernate.Session;
 import com.blstream.myhoard.db.model.*;
@@ -10,7 +11,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.servlet.http.HttpServletResponse;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -66,62 +69,71 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
         CollectionDS result = (CollectionDS)session.createCriteria(CollectionDS.class)
                 .add(Restrictions.eq("id", id))
                 .uniqueResult();
-        if (result != null)
-            result.setItemsNumber(((Number)session.createQuery("select count(id) from ItemDS where collection = " + result.getId()).uniqueResult()).intValue());
+        if (result == null)
+            throw new MyHoardException(202, "Resource not found", HttpServletResponse.SC_NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
+        result.setItemsNumber(((Number)session.createQuery("select count(id) from ItemDS where collection = " + result.getId()).uniqueResult()).intValue());
         return result;
     }
 
     @Override
     public void create(CollectionDS obj) {
-        Session session = sessionFactory.getCurrentSession();
-        if (obj.isTagsAltered()) {
-            List<String> tags = new ArrayList<>();
-            if (obj.getTags() != null)
-                for (TagDS i : obj.getTags())
-                    tags.add(i.getTag());
-            Set<TagDS> result = new HashSet<>(tags.isEmpty() ? Collections.EMPTY_SET : (List<TagDS>)session.createCriteria(TagDS.class)
-                .add(Restrictions.in("tag", tags))
-                .list());
-            Set<TagDS> remaining = obj.getTags();
-            remaining.removeAll(result);
-            for (TagDS i : remaining)   // pozostałe tagi trzeba utworzyć
-                session.save(i);
-            result.addAll(remaining);
-            obj.setTags(Collections.EMPTY_SET);
-            session.save(obj);
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            if (obj.isTagsAltered()) {
+                List<String> tags = new ArrayList<>();
+                if (obj.getTags() != null)
+                    for (TagDS i : obj.getTags())
+                        tags.add(i.getTag());
+                Set<TagDS> result = new HashSet<>(tags.isEmpty() ? Collections.EMPTY_SET : (List<TagDS>)session.createCriteria(TagDS.class)
+                    .add(Restrictions.in("tag", tags))
+                    .list());
+                Set<TagDS> remaining = obj.getTags();
+                remaining.removeAll(result);
+                for (TagDS i : remaining)   // pozostałe tagi trzeba utworzyć
+                    session.save(i);
+                result.addAll(remaining);
+                obj.setTags(Collections.EMPTY_SET);
+                session.save(obj);
 
-            CollectionDS object = new CollectionDS();
-            object.setId(obj.getId());
-            object.setOwner(obj.getOwner());
-            object.setTags(result);
-            update(object);
+                CollectionDS object = new CollectionDS();
+                object.setId(obj.getId());
+                object.setOwner(obj.getOwner());
+                object.setTags(result);
+                update(object);
+            }
+            else
+                session.save(obj);
+        } catch (HibernateException ex) {
+            throw new MyHoardException(ex);
         }
-        else
-            session.save(obj);
     }
 
     @Override
     public void update(CollectionDS obj) {
         CollectionDS object = get(obj.getId());
         object.updateObject(obj);
-        
-        Session session = sessionFactory.getCurrentSession();
-        if (obj.isTagsAltered()) {
-            List<String> tags = new ArrayList<>();
-            for (TagDS i : obj.getTags())
-                tags.add(i.getTag());
-            Set<TagDS> result = new HashSet<>(tags.isEmpty() ? Collections.EMPTY_SET : (List<TagDS>)session.createCriteria(TagDS.class)
-                .add(Restrictions.in("tag", tags))
-                .list());
-            Set<TagDS> remaining = object.getTags();
-            remaining.removeAll(result);
-            for (TagDS i : remaining)   // pozostałe tagi trzeba utworzyć
-                session.save(i);
-            result.addAll(remaining);
-            object.setTags(result);
+
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            if (obj.isTagsAltered()) {
+                List<String> tags = new ArrayList<>();
+                for (TagDS i : obj.getTags())
+                    tags.add(i.getTag());
+                Set<TagDS> result = new HashSet<>(tags.isEmpty() ? Collections.EMPTY_SET : (List<TagDS>)session.createCriteria(TagDS.class)
+                    .add(Restrictions.in("tag", tags))
+                    .list());
+                Set<TagDS> remaining = object.getTags();
+                remaining.removeAll(result);
+                for (TagDS i : remaining)   // pozostałe tagi trzeba utworzyć
+                    session.save(i);
+                result.addAll(remaining);
+                object.setTags(result);
+            }
+            object.setModified_date(Calendar.getInstance().getTime());
+            session.update(object);
+        } catch (HibernateException ex) {
+            throw new MyHoardException(ex);
         }
-        object.setModified_date(Calendar.getInstance().getTime());
-        session.update(object);
 
         // TODO mapper
         obj.updateObject(object);

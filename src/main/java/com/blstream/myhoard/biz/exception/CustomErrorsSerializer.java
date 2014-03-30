@@ -23,6 +23,7 @@ public class CustomErrorsSerializer extends JsonSerializer<Map<String, String>> 
     @Override
     public void serialize(Map<String, String> t, JsonGenerator jg, SerializerProvider sp) throws IOException, JsonProcessingException {
         if (!t.isEmpty()) {
+            jg.writeObjectFieldStart("errors");
             jg.writeStartArray();
             for (Entry<String, String> e : t.entrySet())
                 jg.writeStringField(e.getKey(), e.getValue());

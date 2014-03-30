@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
@@ -26,23 +27,35 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
 
     @Override
     public List<ItemDS> getList(Map<String, Object> params) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ItemDS.class);
-        if (params.size() == 1)
-            criteria.add(Restrictions.eq("owner", params.get("owner")));
-        else if (params.containsKey("collection") && params.containsKey("owner"))
-            criteria.add(Restrictions.eq("collection", params.get("collection")))
-                    .add(Restrictions.eq("owner", params.get("owner")))
-                    .list();
-        else
-            criteria.add(Restrictions.ilike("name", (String)params.get("name"), MatchMode.ANYWHERE))
-                    .add(Restrictions.ilike("description", (String)params.get("name"), MatchMode.ANYWHERE))
-                    .add(Restrictions.eq("collection", params.get("collection")))
-                    .list();
-//        List<ItemDS> result = criteria.list();
-//        if (result.isEmpty())
-//            throw new MyHoardException(202, "Resource not found", 404);
-//        return result;
-        return criteria.list();
+        try {
+            Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ItemDS.class);
+            switch ((String)params.get("option")) {
+                case "list":
+                    criteria.add(Restrictions.eq("owner", params.get("owner")));
+                    break;
+                case "listfrom":
+                    criteria.add(Restrictions.eq("collection", params.get("collection")))
+                            .add(Restrictions.eq("owner", params.get("owner")));
+                    break;
+                case "find":
+                    criteria.add(Restrictions.conjunction(
+                            Restrictions.eq("collection", params.get("collection")),
+                            Restrictions.disjunction(
+                                    Restrictions.ilike("name", (String)params.get("name"), MatchMode.ANYWHERE),
+                                    Restrictions.ilike("description", (String)params.get("name"), MatchMode.ANYWHERE)
+                            )
+                    ));
+//                    criteria.add(Restrictions.ilike("name", (String)params.get("name"), MatchMode.ANYWHERE))
+//                            .add(Restrictions.ilike("description", (String)params.get("name"), MatchMode.ANYWHERE))
+//                            .add(Restrictions.eq("collection", params.get("collection")));
+                    break;
+                default:
+                    return Collections.EMPTY_LIST;
+            }
+            return criteria.list();
+        } catch (HibernateException ex) {
+            throw new MyHoardException(ex);
+        }
     }
 
     @Override
@@ -58,34 +71,36 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
 
     @Override
     public void create(ItemDS obj) {
-        Session session = sessionFactory.getCurrentSession();
-        if (session.createCriteria(CollectionDS.class)
-                .add(Restrictions.eq("owner", obj.getOwner()))
-                .add(Restrictions.eq("id", obj.getCollection()))
-                .list().isEmpty())
-            throw new MyHoardException(403, "Próba zapisania elementu do obcej kolekcji");
-        
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            if (session.createCriteria(CollectionDS.class)
+                    .add(Restrictions.eq("owner", obj.getOwner()))
+                    .add(Restrictions.eq("id", obj.getCollection()))
+                    .list().isEmpty())
+                throw new MyHoardException(403, "Próba zapisania elementu do obcej kolekcji");
+
             List<Integer> ids = new ArrayList<>();
-        if(obj.getMedia().size()!=0) {
-            for (MediaDS i : obj.getMedia())
-                ids.add(i.getId());
-            // czy można to prościej zrealizować?
-        if (!ids.isEmpty() && ((Number)session.createQuery("select count(*) from MediaDS as m where m.item is not null and m.id in (:ids)").setParameterList("ids", ids).iterate().next()).longValue() > 0)
-                throw new MyHoardException(2, "Próba przepisania Media do innego elementu.");
-        }
+            if(!obj.getMedia().isEmpty()) {
+                for (MediaDS i : obj.getMedia())
+                    ids.add(i.getId());
+                // czy można to prościej zrealizować?
+                if (!ids.isEmpty() && ((Number)session.createQuery("select count(*) from MediaDS as m where m.item is not null and m.id in (:ids)").setParameterList("ids", ids).iterate().next()).longValue() > 0)
+                    throw new MyHoardException(2, "Próba przepisania Media do innego elementu.");
+            }
             session.save(obj);
-            if(ids.size()!=0) {
+            if(!ids.isEmpty()) {
                 List<MediaDS> media = session.createCriteria(MediaDS.class).add(Restrictions.in("id", ids)).list();
-                if(media.size() == 0)
+                if(media.isEmpty())
                     throw new MyHoardException(202,"Media o podanym id nie istnieje",404);
-                else {
+                else
                     for (MediaDS i : media) {
                         i.setItem(obj.getId());
                         session.update(i);
-
-                        }
-                }
+                    }
             }
+        } catch (HibernateException ex) {
+            throw new MyHoardException(ex);
+        }
         
     }
 
@@ -96,29 +111,33 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
             throw new MyHoardException(202, "Not found", HttpServletResponse.SC_NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
         object.updateObject(obj);
 
-        Session session = sessionFactory.getCurrentSession();
-        if (session.createCriteria(CollectionDS.class)
-                .add(Restrictions.eq("owner", object.getOwner()))
-                .add(Restrictions.eq("id", object.getCollection()))
-                .list().isEmpty())
-            throw new MyHoardException(403, "Próba zapisania elementu do obcej kolekcji");
-        if (obj.isMediaAltered()) {
-            List<Integer> media = new ArrayList<>();
-            for (MediaDS i : obj.getMedia())
-                media.add(i.getId());
-            Set<MediaDS> result = new HashSet<>(media.isEmpty() ? Collections.EMPTY_SET : (List<MediaDS>)session.createCriteria(MediaDS.class)
-                .add(Restrictions.in("id", media))
-                .list());
-            Set<MediaDS> remaining = object.getMedia();
-            remaining.removeAll(result);
-            for (MediaDS i : remaining)   // pozostałe media trzeba usunąć
-                session.delete(i);
-            for (MediaDS i : result)
-                i.setItem(obj.getId());
-            object.setMedia(result);
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            if (session.createCriteria(CollectionDS.class)
+                    .add(Restrictions.eq("owner", object.getOwner()))
+                    .add(Restrictions.eq("id", object.getCollection()))
+                    .list().isEmpty())
+                throw new MyHoardException(403, "Próba zapisania elementu do obcej kolekcji");
+            if (obj.isMediaAltered()) {
+                List<Integer> media = new ArrayList<>();
+                for (MediaDS i : obj.getMedia())
+                    media.add(i.getId());
+                Set<MediaDS> result = new HashSet<>(media.isEmpty() ? Collections.EMPTY_SET : (List<MediaDS>)session.createCriteria(MediaDS.class)
+                    .add(Restrictions.in("id", media))
+                    .list());
+                Set<MediaDS> remaining = object.getMedia();
+                remaining.removeAll(result);
+                for (MediaDS i : remaining)   // pozostałe media trzeba usunąć
+                    session.delete(i);
+                for (MediaDS i : result)
+                    i.setItem(obj.getId());
+                object.setMedia(result);
+            }
+            object.setModifiedDate(Calendar.getInstance().getTime());
+            session.update(object);
+        } catch (HibernateException ex) {
+            throw new MyHoardException(ex);
         }
-        object.setModifiedDate(Calendar.getInstance().getTime());
-        session.update(object);
 
         obj.updateObject(object);
     }

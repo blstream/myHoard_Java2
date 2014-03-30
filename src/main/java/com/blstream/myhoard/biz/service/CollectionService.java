@@ -56,35 +56,23 @@ public class CollectionService implements ResourceService<CollectionDTO> {
 
     @Override
     public void create(CollectionDTO obj) {
-        try {
-            CollectionDS collection = new CollectionDS();
-            collection.fromDTO(obj);
-            collectionDAO.create(collection);
-            obj.setId(Integer.toString(collection.getId()));
-            obj.setOwner(collection.getOwner());
-        } catch (RuntimeException ex) {
-            throw new MyHoardException(400, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
-        }
+        CollectionDS collection = new CollectionDS();
+        collection.fromDTO(obj);
+        collectionDAO.create(collection);
+        obj.setId(Integer.toString(collection.getId()));
+        obj.setOwner(collection.getOwner());
     }
 
     @Override
     public void update(CollectionDTO obj) {
-        try {
-            CollectionDS object = new CollectionDS();
-            object.fromDTO(obj);
-            collectionDAO.update(object);
-            obj.fromDS(object);
-        } catch (RuntimeException ex) {
-            throw new MyHoardException(111, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
-        }
+        CollectionDS object = new CollectionDS();
+        object.fromDTO(obj);
+        collectionDAO.update(object);
+        obj.fromDS(object);
     }
 
     @Override
     public void remove(int id) {
-        try {
-            collectionDAO.remove(id);
-        } catch (RuntimeException ex) {
-            throw new MyHoardException(400, "Nieznany błąd: " + ex.toString() + (ex.getCause() != null ? " > " + ex.getCause().toString() : ""));
-        }
+        collectionDAO.remove(id);
     }
 }

@@ -43,12 +43,8 @@ public class UserController {
     public UserDTO addUser(@RequestBody @Valid UserDTO user, BindingResult result) {
         if (result.hasErrors())
             throw new MyHoardException(400, result.getFieldError().getDefaultMessage());
-        try {
-            userService.create(user);
-            return user;
-        } catch (Exception ex) {
-            throw new MyHoardException(400, "Nieznany błąd: " + ex.toString() + " > " + ex.getCause().toString());
-        }
+        userService.create(user);
+        return user;
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

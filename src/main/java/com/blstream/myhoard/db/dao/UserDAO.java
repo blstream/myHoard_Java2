@@ -1,16 +1,15 @@
 package com.blstream.myhoard.db.dao;
 
+import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import java.util.List;
 import org.hibernate.Session;
 import com.blstream.myhoard.db.model.*;
 import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -29,8 +28,7 @@ public class UserDAO implements ResourceDAO<UserDS> {
             throw new UnsupportedOperationException("Not supported yet.");
         List<UserDS> result = criteria.list();
         if (result.isEmpty())
-            // może lepiej pozamieniać wszystkie wystąpięnia HttpServletResponse.kod_błędu na właściwą liczbę
-            throw new MyHoardException(202, "Resource not found", HttpServletResponse.SC_NOT_FOUND);
+            throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
         return result;
     }
 
@@ -40,7 +38,7 @@ public class UserDAO implements ResourceDAO<UserDS> {
                 .createCriteria(UserDS.class)
                 .add(Restrictions.eq("id", id)).uniqueResult();
         if (user == null)
-            throw new MyHoardException(202, "Resource not found", HttpServletResponse.SC_NOT_FOUND);
+            throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
         return user;
     }    
 
@@ -57,16 +55,24 @@ public class UserDAO implements ResourceDAO<UserDS> {
 
     @Override
     public void update(UserDS obj) {
-        UserDS object = get(obj.getId());
-        object.updateObject(obj);
-        Session session = sessionFactory.getCurrentSession();
-        session.update(object);
-        obj.updateObject(object);
+        try {
+            UserDS object = get(obj.getId());
+            object.updateObject(obj);
+            Session session = sessionFactory.getCurrentSession();
+            session.update(object);
+            obj.updateObject(object);
+        } catch (HibernateException ex) {
+            throw new MyHoardException(ex);
+        }
     }
 
     @Override
     public void remove(int id) {
-        sessionFactory.getCurrentSession().delete(get(id));
+        try {
+            sessionFactory.getCurrentSession().delete(get(id));
+        } catch (HibernateException ex) {
+            throw new MyHoardException(ex);
+        }
     }
 
     @Override

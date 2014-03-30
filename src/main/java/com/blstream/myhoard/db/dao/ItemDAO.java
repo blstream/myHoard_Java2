@@ -1,5 +1,6 @@
 package com.blstream.myhoard.db.dao;
 
+import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.db.model.CollectionDS;
 import com.blstream.myhoard.db.model.ItemDS;
@@ -11,7 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.servlet.http.HttpServletResponse;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -45,9 +45,6 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
                                     Restrictions.ilike("description", (String)params.get("name"), MatchMode.ANYWHERE)
                             )
                     ));
-//                    criteria.add(Restrictions.ilike("name", (String)params.get("name"), MatchMode.ANYWHERE))
-//                            .add(Restrictions.ilike("description", (String)params.get("name"), MatchMode.ANYWHERE))
-//                            .add(Restrictions.eq("collection", params.get("collection")));
                     break;
                 default:
                     return Collections.EMPTY_LIST;
@@ -65,7 +62,7 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
                 .add(Restrictions.eq("id", id))
                 .uniqueResult();
         if (object == null)
-            throw new MyHoardException(202, "Not found", HttpServletResponse.SC_NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
+            throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
         return object;
     }
 
@@ -77,7 +74,7 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
                     .add(Restrictions.eq("owner", obj.getOwner()))
                     .add(Restrictions.eq("id", obj.getCollection()))
                     .list().isEmpty())
-                throw new MyHoardException(403, "Próba zapisania elementu do obcej kolekcji");
+                throw new MyHoardException(ErrorCode.FORBIDDEN).add("owner", "Próba zapisania elementu do obcej kolekcji");
 
             List<Integer> ids = new ArrayList<>();
             if(!obj.getMedia().isEmpty()) {
@@ -85,13 +82,13 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
                     ids.add(i.getId());
                 // czy można to prościej zrealizować?
                 if (!ids.isEmpty() && ((Number)session.createQuery("select count(*) from MediaDS as m where m.item is not null and m.id in (:ids)").setParameterList("ids", ids).iterate().next()).longValue() > 0)
-                    throw new MyHoardException(2, "Próba przepisania Media do innego elementu.");
+                    throw new MyHoardException(ErrorCode.FORBIDDEN).add("owner", "Próba przepisania Media do innego elementu.");
             }
             session.save(obj);
             if(!ids.isEmpty()) {
                 List<MediaDS> media = session.createCriteria(MediaDS.class).add(Restrictions.in("id", ids)).list();
                 if(media.isEmpty())
-                    throw new MyHoardException(202,"Media o podanym id nie istnieje",404);
+                    throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
                 else
                     for (MediaDS i : media) {
                         i.setItem(obj.getId());
@@ -108,7 +105,7 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
     public void update(ItemDS obj) {
         ItemDS object = get(obj.getId());
         if (object == null)
-            throw new MyHoardException(202, "Not found", HttpServletResponse.SC_NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
+            throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
         object.updateObject(obj);
 
         try {
@@ -117,7 +114,7 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
                     .add(Restrictions.eq("owner", object.getOwner()))
                     .add(Restrictions.eq("id", object.getCollection()))
                     .list().isEmpty())
-                throw new MyHoardException(403, "Próba zapisania elementu do obcej kolekcji");
+                throw new MyHoardException(ErrorCode.FORBIDDEN).add("owner", "Próba zapisania elementu do obcej kolekcji");
             if (obj.isMediaAltered()) {
                 List<Integer> media = new ArrayList<>();
                 for (MediaDS i : obj.getMedia())

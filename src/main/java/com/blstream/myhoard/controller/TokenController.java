@@ -1,5 +1,6 @@
 package com.blstream.myhoard.controller;
 
+import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardError;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.SessionDTO;
@@ -10,6 +11,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -42,45 +44,43 @@ public class TokenController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public SessionDTO login(@RequestBody @Valid UserDTO user, BindingResult result) {
-        try {
-            Map<String, Object> params = new HashMap<>();
-            if (user.getEmail() != null)
-                params.put("email", user.getEmail());
-            else if (user.getUsername() != null)
-                params.put("username", user.getUsername());
-            UserDTO saved = userService.getList(params).get(0);
-//            UserDTO saved = ((UserService) userService).getByEmail(user.getEmail());
-            user.setPassword(encode(user.getPassword()));
-            if (user.getGrantType() != null) {
-                if ((saved.getEmail().equals(user.getEmail()) || saved.getUsername().equals(user.getUsername())) && saved.getPassword().equals(user.getPassword())) {
-                    if("password".equals(user.getGrantType())) {
+        Map<String, Object> params = new HashMap<>();
+        if (user.getEmail() != null)
+            params.put("email", user.getEmail());
+        else if (user.getUsername() != null)
+            params.put("username", user.getUsername());
+        List<UserDTO> list = userService.getList(params);
+        if (list.isEmpty() || list.size() > 1)
+            throw new MyHoardException(ErrorCode.NOT_FOUND);
+        UserDTO saved = list.get(0);
+        user.setPassword(encode(user.getPassword()));
+        if (user.getGrantType() != null) {
+            if ((saved.getEmail().equals(user.getEmail()) || saved.getUsername().equals(user.getUsername())) && saved.getPassword().equals(user.getPassword())) {
+                SessionDTO created;
+                switch (user.getGrantType()) {
+                    case "password":
                         //TODO Generowanie tokenu, temporary broken access_token
-                        SessionDTO created = new SessionDTO("0", encode((java.util.Calendar.getInstance().getTime().toString()+user.getUsername())), java.util.Calendar.getInstance().getTime(), encode("refresh_token" + java.util.Calendar.getInstance().getTime()+user.getUsername()), saved.getId());
+                        created = new SessionDTO("0", encode((java.util.Calendar.getInstance().getTime().toString()+user.getUsername())), java.util.Calendar.getInstance().getTime(), encode("refresh_token" + java.util.Calendar.getInstance().getTime()+user.getUsername()), saved.getId());
                         sessionService.create(created);
                         return created;
-                    } else {
+                    case "refresh_token":
                         if(user.getRefreshToken() != null) {
                             params.clear();
                             params.put("refreshToken", user.getRefreshToken());
                             if (sessionService.getList(params).isEmpty())
-                                throw new MyHoardException(200, "Błąd odświeżenia tokenu");
-                            SessionDTO created = new SessionDTO("0", encode((java.util.Calendar.getInstance().getTime().toString()+user.getUsername())), java.util.Calendar.getInstance().getTime(), encode("refresh_token" + java.util.Calendar.getInstance().getTime()+user.getUsername()), saved.getId());
+                                throw new MyHoardException(ErrorCode.NOT_FOUND).add("refresh_token", "Not found in database");
+                            created = new SessionDTO("0", encode((java.util.Calendar.getInstance().getTime().toString()+user.getUsername())), java.util.Calendar.getInstance().getTime(), encode("refresh_token" + java.util.Calendar.getInstance().getTime()+user.getUsername()), saved.getId());
                             sessionService.create(created);
                             return created;
                         } else
-                            throw new MyHoardException(400,"no refresh token received");
-                    }
-                } else
-                    throw new MyHoardException(101, "BadCredentials");
+                            throw new MyHoardException(ErrorCode.AUTH_TOKEN_NOT_PROVIDED).add("refresh_token", "Missing field");
+                    default:
+                        throw new MyHoardException(ErrorCode.BAD_REQUEST).add("grant_type", "Wrong value: " + user.getGrantType());
+                }
             } else
-                throw new MyHoardException(400, "wrong grant_type");
-        } catch (NullPointerException ex) {
-            throw new MyHoardException(202,"Resource not found",404).add("error","Nie znaleziono refresh_tokenu, lub uzytkownika w bazie danych");
-        } catch (MyHoardException ex) {
-            throw ex;
-        }catch (Exception ex) {
-            throw new MyHoardException(400, "Nieznany błąd: " + ex.toString() + (ex.getCause() != null ? " > " + ex.getCause().toString() : ""));
-        }
+                throw new MyHoardException(ErrorCode.AUTH_BAD_CREDENTIALS);
+        } else
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("grant_type", "Missing field");
     }
 
     public String encode(String tmp) {

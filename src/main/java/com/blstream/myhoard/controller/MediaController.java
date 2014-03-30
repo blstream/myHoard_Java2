@@ -1,5 +1,6 @@
 package com.blstream.myhoard.controller;
 
+import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardError;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.MediaDTO;
@@ -26,7 +27,6 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
-import org.hibernate.HibernateException;
 import org.springframework.web.bind.annotation.RequestParam;
 /**
  *
@@ -42,17 +42,11 @@ public class MediaController extends HttpServlet {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<MediaDTO> getMedia(HttpServletRequest requeest) {
-        try {
-            UserDTO user = (UserDTO)requeest.getAttribute("user");
-            Map<String, Object> params = new HashMap<>();
-            params.put("owner", user.getUsername());
-            return mediaService.getList(params);
-        } catch (MyHoardException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new MyHoardException(400);
-        }
+    public List<MediaDTO> getMedia(HttpServletRequest request) {
+        UserDTO user = (UserDTO)request.getAttribute("user");
+        Map<String, Object> params = new HashMap<>();
+        params.put("owner", user.getUsername());
+        return mediaService.getList(params);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {"image/jpeg", "image/png", "image/gif"})
@@ -64,29 +58,31 @@ public class MediaController extends HttpServlet {
             UserDTO user = (UserDTO)request.getAttribute("user");
             MediaDTO media = mediaService.get(Integer.parseInt(id));
             if (!user.getUsername().equals(media.getOwner()))
-                throw new MyHoardException(104, "Forbidden", HttpServletResponse.SC_FORBIDDEN);
+                throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
             if ("0".equals(size))
                 return media.getFile();
             else
                 return mediaService.getThumbnail(Integer.parseInt(id), Integer.parseInt(size));
         } catch (NumberFormatException ex) {
-            throw new MyHoardException(201, "Validation error").add("id", "Niepoprawny identyfikator");
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("id", "Niepoprawny identyfikator.");
         }
     }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public @ResponseBody
-    MediaDTO addMedia(MultipartFile file) throws IOException {
+    @ResponseBody
+    public MediaDTO addMedia(MultipartFile file, HttpServletRequest request) {
         if (file.getSize() == 0 || !file.getContentType().contains("image"))
-            throw new MyHoardException(201, "Validation error").add("file", "Niepoprawny plik");
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Niepoprawny plik");
         MediaDTO media = new MediaDTO();
+        UserDTO user = (UserDTO)request.getAttribute("user");
+        media.setOwner(user.getUsername());
         try {
             media.setFile(file.getBytes());
             mediaService.create(media);
             return media;
         } catch (IOException ex) {
-            throw new MyHoardException(400, ex.toString());
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Niepoprawny plik");
         }
     }
 
@@ -97,12 +93,10 @@ public class MediaController extends HttpServlet {
             UserDTO user = (UserDTO)request.getAttribute("user");
             MediaDTO media = mediaService.get(Integer.parseInt(id));
             if (!user.getUsername().equals(media.getOwner()))
-                throw new MyHoardException(104, "Forbidden", HttpServletResponse.SC_FORBIDDEN);
+                throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
             mediaService.remove(Integer.parseInt(id));
         } catch (NumberFormatException ex) {
-            throw new MyHoardException(201, "Validation error").add("id", "Niepoprawny identyfikator");
-        } catch (HibernateException ex) {
-            throw new MyHoardException(400, ex.toString());
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("id", "Niepoprawny identyfikator.");
         }
     }
 
@@ -114,10 +108,9 @@ public class MediaController extends HttpServlet {
             UserDTO user = (UserDTO)request.getAttribute("user");
             MediaDTO media = mediaService.get(Integer.parseInt(id));
             if (!user.getUsername().equals(media.getOwner()))
-                throw new MyHoardException(104, "Forbidden", HttpServletResponse.SC_FORBIDDEN);
+                throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
             InputStream file;
-            List<FileItem> multiparts = new ServletFileUpload(
-                                         new DiskFileItemFactory()).parseRequest(request);
+            List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
             file = multiparts.get(0).getInputStream();
 //            MediaDTO m = mediaService.get(Integer.parseInt(id));
 //            media.setId(id); //poniewaz konstruktor daje id=0;
@@ -126,13 +119,13 @@ public class MediaController extends HttpServlet {
             mediaService.update(media);
             return media;
         } catch (IOException ex) {
-            throw new MyHoardException(400, ex.toString());
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Niepoprawny plik");
         } catch (FileUploadException ex) {
-            throw new MyHoardException(400, ex.toString());
+            throw new MyHoardException(ErrorCode.INTERNAL_SERVER_ERROR).add("file", "Problem z zapisem pliku do bazy");
         }
     }
 
-    @RequestMapping(value = "/{id}/thumbnailShow", method = RequestMethod.GET, produces = {"image/jpeg", "image/png", "image/gif"})
+    @RequestMapping(value = "/{id}/thumbnailShow", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void getThumbnailShowSize(@PathVariable String id, @RequestParam(value = "size", defaultValue = "0") String size,
@@ -141,15 +134,15 @@ public class MediaController extends HttpServlet {
             UserDTO user = (UserDTO)request.getAttribute("user");
             MediaDTO media = mediaService.get(Integer.parseInt(id));
             if (!user.getUsername().equals(media.getOwner()))
-                throw new MyHoardException(104, "Forbidden", HttpServletResponse.SC_FORBIDDEN);
+                throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
             byte[] imageBytes = mediaService.getThumbnail(Integer.parseInt(id), Integer.parseInt(size));
-
             response.setContentType("image/jpeg");
             response.setContentLength(imageBytes.length);
-
             response.getOutputStream().write(imageBytes);
-        } catch (NumberFormatException | IOException ex) {
-            throw new MyHoardException(201, ex.toString());
+        } catch (IOException ex) {
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Niepoprawny plik");
+        } catch (NumberFormatException ex) {
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("id", "Niepoprawny identyfikator.");
         }
     }
 
@@ -158,13 +151,5 @@ public class MediaController extends HttpServlet {
     public MyHoardError returnCode(MyHoardException exception, HttpServletResponse response) {
         response.setStatus(exception.getResponseStatus());
         return exception.toError();
-        // czasem się wysypywało, stąd poniższy kod - może uszczelnienie wyłapywania wyjątków pomoże
-//        response.setHeader("Content-Type", "applcation/json; charset=\"UTF-8\"");
-//        MyHoardError error = exception.toError();
-//        try {
-//            response.getWriter().format("{\n  \"error_code\": %d,\n  \"error_message\": \"%s\"\n}", error.getErrorCode(), error.getErrorReason());
-//        } catch (IOException ex) {
-//            //
-//        }
     }
 }

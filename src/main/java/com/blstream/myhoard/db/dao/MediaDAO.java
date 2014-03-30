@@ -1,11 +1,12 @@
 package com.blstream.myhoard.db.dao;
 
+import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.db.model.MediaDS;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,23 +30,35 @@ public class MediaDAO implements ResourceDAO<MediaDS> {
     public MediaDS get(int id) {
         MediaDS media = (MediaDS)sessionFactory.getCurrentSession().createCriteria(MediaDS.class).add(Restrictions.eq("id", id)).uniqueResult();
         if (media == null)
-            throw new MyHoardException(202, "Resource not found", HttpServletResponse.SC_NOT_FOUND);
+            throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
         return media;
     }
 
     @Override
     public void create(MediaDS obj) {
-        sessionFactory.getCurrentSession().save(obj);
+        try {
+            sessionFactory.getCurrentSession().save(obj);
+        } catch (HibernateException ex) {
+            throw new MyHoardException(ex);
+        }
     }
 
     @Override
     public void update(MediaDS obj) {
-       sessionFactory.getCurrentSession().update(obj);
+        try {
+            sessionFactory.getCurrentSession().update(obj);
+        } catch (HibernateException ex) {
+            throw new MyHoardException(ex);
+        }
     }
 
     @Override
     public void remove(int id) {
-        sessionFactory.getCurrentSession().delete(get(id));
+        try {
+            sessionFactory.getCurrentSession().delete(get(id));
+        } catch (HibernateException ex) {
+            throw new MyHoardException(ex);
+        }
     }
 
     @Override

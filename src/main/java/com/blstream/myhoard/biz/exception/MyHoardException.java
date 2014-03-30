@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
-import org.hibernate.exception.ConstraintViolationException;
 
 public final class MyHoardException extends RuntimeException {
 
@@ -20,6 +19,7 @@ public final class MyHoardException extends RuntimeException {
      * Tworzy wyjątek z podanym kodem błędu, pustym opisem i statusem HTTP 400.
      * @param errorCode kod błędu
      */
+    @Deprecated
     public MyHoardException(int errorCode) {
         super(null, null);
         this.errorCode = errorCode;
@@ -32,6 +32,7 @@ public final class MyHoardException extends RuntimeException {
      * @param errorCode kod błędu
      * @param errorMessage opis błędu
      */
+    @Deprecated
     public MyHoardException(int errorCode, String errorMessage) {
         super(null, null);
         this.errorCode = errorCode;
@@ -46,11 +47,19 @@ public final class MyHoardException extends RuntimeException {
      * @param errorMessage opis błędu
      * @param responseStatus status HTTP
      */
+    @Deprecated
     public MyHoardException(int errorCode, String errorMessage, int responseStatus) {
         super(null, null);
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
         this.responseStatus = responseStatus;
+    }
+
+    public MyHoardException(ErrorCode errorCode) {
+        super(null, null);
+        this.errorCode = errorCode.getErrorCode();
+        this.responseStatus = errorCode.getHttpStatus();
+        this.errorMessage = errorCode.getErrorMessage();
     }
 
     /**

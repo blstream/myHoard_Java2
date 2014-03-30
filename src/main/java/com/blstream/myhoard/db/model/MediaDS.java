@@ -5,6 +5,7 @@ import com.blstream.myhoard.biz.model.MediaDTO;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.Date;
+import org.hibernate.JDBCException;
 
 public class MediaDS {
 
@@ -72,7 +73,7 @@ public class MediaDS {
                     item == null ? null : item.toString(),
                     owner);
         } catch (SQLException ex) {
-            throw new MyHoardException(400, ex.getSQLState());
+            throw new MyHoardException(new JDBCException("Nieznany błąd", ex));
         }
     }
 

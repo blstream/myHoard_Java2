@@ -1,7 +1,6 @@
 package com.blstream.myhoard.biz.model;
 
 import com.blstream.myhoard.db.model.SessionDS;
-import com.blstream.myhoard.db.model.UserDS;
 import java.util.Date;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -15,15 +14,18 @@ public class SessionDTO {
 
     @JsonIgnore
     private String id;
-    
-    private String access_token;
 
-    private Date expires_in;
-    
-    private String refresh_token;
+    @JsonProperty("access_token")
+    private String accessToken;
+
+    @JsonProperty("expires_in")
+    private Date expiresIn;
+
+    @JsonProperty("refresh_token")
+    private String refreshToken;
 
     @JsonIgnore
-    private String user_id;
+    private String userId;
     
     public SessionDTO() {
         id = "0";
@@ -31,10 +33,10 @@ public class SessionDTO {
 
     public SessionDTO(String id, String access_token, Date expires_in, String refresh_token, String user_id) {
         this.id = id;
-        this.access_token = access_token;
-        this.expires_in = expires_in;
-        this.refresh_token = refresh_token;
-        this.user_id = user_id;
+        this.accessToken = access_token;
+        this.expiresIn = expires_in;
+        this.refreshToken = refresh_token;
+        this.userId = user_id;
     }
     
     public String getId() {
@@ -45,39 +47,40 @@ public class SessionDTO {
         this.id = id;
     }
 
-    public String getAccess_token() {
-        return access_token;
+    public String getAccessToken() {
+        return accessToken;
     }
 
-    public void setAccess_token(String access_token) {
-        this.access_token = access_token;
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
+
     @JsonSerialize(using = CustomExpiresInSerializer.class)
-    public Date getExpires_in() {
-        return expires_in;
+    public Date getExpiresIn() {
+        return expiresIn;
     }
 
-    public void setExpires_in(Date expires_in) {
-        this.expires_in = expires_in;
+    public void setExpiresIn(Date expiresIn) {
+        this.expiresIn = expiresIn;
     }
     
-    public String getRefresh_token() {
-        return refresh_token;
+    public String getRefreshToken() {
+        return refreshToken;
     }
     
-    public void setRefresh_token(String refresh_token) {
-        this.refresh_token = refresh_token;
+    public void setRefreshToken(String refresh_token) {
+        this.refreshToken = refresh_token;
     }
 
-    public String getUser_id() {
-        return user_id;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
     
     public SessionDS toSessionDS() {
-        return new SessionDS(Integer.parseInt(id),access_token, expires_in, refresh_token, Integer.parseInt(user_id));
+        return new SessionDS(Integer.parseInt(id),accessToken, expiresIn, refreshToken, Integer.parseInt(userId));
     }
 }

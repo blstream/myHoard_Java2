@@ -1,5 +1,6 @@
 package com.blstream.myhoard.db.dao;
 
+import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import java.util.List;
 import org.hibernate.Session;
@@ -70,7 +71,7 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
                 .add(Restrictions.eq("id", id))
                 .uniqueResult();
         if (result == null)
-            throw new MyHoardException(202, "Resource not found", HttpServletResponse.SC_NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
+            throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
         result.setItemsNumber(((Number)session.createQuery("select count(id) from ItemDS where collection = " + result.getId()).uniqueResult()).intValue());
         return result;
     }

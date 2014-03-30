@@ -1,5 +1,6 @@
 package com.blstream.myhoard.biz.service;
 
+import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.MediaDTO;
 import com.blstream.myhoard.db.dao.ResourceDAO;
@@ -38,28 +39,19 @@ public class MediaService implements ResourceService<MediaDTO> {
 
     @Override
     public MediaDTO get(int id) {
-        MediaDS media = mediaDAO.get(id);
-        if (media == null)
-            throw new MyHoardException(202, "Resource not found", HttpServletResponse.SC_NOT_FOUND)
-                    .add("id", "Odwołanie do nieistniejącego zasobu");
-        return media.toMediaDTO();
+        return mediaDAO.get(id).toMediaDTO();
     }
 
     @Override
     public void create(MediaDTO obj) {
-        MediaDS media;
-        media = obj.toMediaDS();
+        MediaDS media = obj.toMediaDS();
         mediaDAO.create(media);
         obj.setId(Integer.toString(media.getId()));
     }
 
     @Override
     public void update(MediaDTO obj) {
-        try {
-            mediaDAO.update(obj.toMediaDS());
-        } catch (Exception ex) {
-            Logger.getLogger(MediaService.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        mediaDAO.update(obj.toMediaDS());
     }
 
     @Override
@@ -84,7 +76,7 @@ public class MediaService implements ResourceService<MediaDTO> {
                     ImageIO.write(resizedImage, "jpg", b);
                     return b.toByteArray();
                 } catch (IOException ex) {
-                    throw new MyHoardException(201, ex.toString());
+                    throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Niepoprawny plik");
                 }
             } else {
                 return media.getFile();

@@ -1,10 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.blstream.myhoard.controller;
 
+import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.SessionDTO;
 import com.blstream.myhoard.biz.model.UserDTO;
@@ -12,6 +8,7 @@ import com.blstream.myhoard.biz.service.ResourceService;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -21,12 +18,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.codehaus.jackson.map.exc.UnrecognizedPropertyException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- *
- * @author gohilukk
- */
 public class SecurityFilter implements Filter {
 
     @Autowired
@@ -51,71 +45,62 @@ public class SecurityFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest sr, ServletResponse sr1, FilterChain fc) throws IOException, ServletException {
+    public void doFilter(ServletRequest sr, ServletResponse sr1, FilterChain fc) throws IOException {
         authorization_needed = true;
         authorization_given = true;
         request = (HttpServletRequest) sr;
+        HttpServletResponse response = (HttpServletResponse)sr1;
+        response.setContentType("application/json");
         String accessToken = request.getHeader("Authorization");
-        
-        if (request.getMethod().equals("POST") && request.getRequestURI().equals(request.getContextPath() + "/users") ||
-            (request.getMethod().equals("POST") && request.getRequestURI().startsWith(request.getContextPath() + "/oauth/token")) ||
-                request.getMethod().equals("POST") && request.getRequestURI().startsWith(request.getContextPath() + "/media")) {           
-           
+        OutputStream out = response.getOutputStream();
+
+        if (request.getMethod().equals("POST") && (request.getRequestURI().startsWith(request.getContextPath() + "/users") ||
+                request.getRequestURI().startsWith(request.getContextPath() + "/oauth/token"))) {
             authorization_needed = false;
         }
-        if(accessToken == null && authorization_needed) {
-            String response = "{\"error_message\": \"Token not provided\",\"error_code\": 102}";
-            HttpServletResponse resp = (HttpServletResponse) sr1;
-            OutputStream  out = resp.getOutputStream();
-            out.write(response.getBytes());
-            resp.setStatus(401);
-            resp.setContentType("application/json");
-            out.close();
+        if (accessToken == null && authorization_needed) {
+            out.write(new MyHoardException(ErrorCode.AUTH_TOKEN_NOT_PROVIDED).toError().toString().getBytes());
+            response.setStatus(ErrorCode.AUTH_TOKEN_NOT_PROVIDED.getHttpStatus());
         } else if(authorization_needed) {
-            SessionDTO sessionDTO = null;
-            try {
-                Map<String, Object> params = new HashMap<>();
-                params.put("accessToken", accessToken);
-                sessionDTO = sessionService.getList(params).get(0);
-            } catch (NullPointerException ex) {
-                String response = "{\"error_message\": \"Invalid Token\",\"error_code\": 103}";
-                    HttpServletResponse resp = (HttpServletResponse) sr1;
-                    OutputStream  out = resp.getOutputStream();
-                    out.write(response.getBytes());
-                    resp.setStatus(404);
-                    resp.setContentType("application/json");
-                    out.close();
-            }
-            if (sessionDTO != null) {
-                long actual = java.util.Calendar.getInstance().getTimeInMillis();
-                if((actual - sessionDTO.getExpires_in().getTime()) > 1800000) { //30 min ze wzgledu na uciazliwosc testow
-                    authorization_given = false;
-                    String response = "{\"error_message\": \"Invalid token\",\"error_code\": 103}";
-                    HttpServletResponse resp = (HttpServletResponse) sr1;
-                    OutputStream  out = resp.getOutputStream();
-                    out.write(response.getBytes());
-                    resp.setStatus(401);
-                    resp.setContentType("application/json");
-                    out.close();
-                } else {
-                UserDTO user = (UserDTO)userService.get(Integer.parseInt(sessionDTO.getUser_id()));
-                sr.setAttribute("user", user);
-                }
-            } else {
+            Map<String, Object> params = new HashMap<>();
+            params.put("accessToken", accessToken);
+            List<SessionDTO> list = sessionService.getList(params);
+            if (list.isEmpty() || list.size() > 1) {
                 authorization_given = false;
-                String response = "{\"error_message\": \"Invalid token\",\"error_code\": 103}";
-                HttpServletResponse resp = (HttpServletResponse) sr1;
-                OutputStream  out = resp.getOutputStream();
-                out.write(response.getBytes());
-                resp.setStatus(401);
-                resp.setContentType("application/json");
-                out.close();
+                out.write(new MyHoardException(ErrorCode.AUTH_TOKEN_INVALID).toError().toString().getBytes());
+                response.setStatus(ErrorCode.AUTH_TOKEN_INVALID.getHttpStatus());
+            } else {
+                SessionDTO sessionDTO = list.get(0);
+                long actual = java.util.Calendar.getInstance().getTimeInMillis();
+                if((actual - sessionDTO.getExpiresIn().getTime()) > 1800000) { //30 min ze wzgledu na uciazliwosc testow
+                    authorization_given = false;
+                    out.write(new MyHoardException(ErrorCode.AUTH_TOKEN_INVALID).toError().toString().getBytes());
+                    response.setStatus(ErrorCode.AUTH_TOKEN_INVALID.getHttpStatus());
+                } else {
+                    UserDTO user = (UserDTO)userService.get(Integer.parseInt(sessionDTO.getUserId()));
+                    sr.setAttribute("user", user);
+                }
             }
-        
         }
-        if(authorization_given)
-            fc.doFilter(sr, sr1);
+        out.flush();
 
+        try {
+            if (authorization_given)
+                fc.doFilter(sr, sr1);
+        } catch (Throwable ex) {
+            response.setStatus(ErrorCode.BAD_REQUEST.getHttpStatus());
+            Throwable cause = ex;
+            while (cause.getCause() != null)
+                cause = cause.getCause();
+            if (cause instanceof UnrecognizedPropertyException) {
+                UnrecognizedPropertyException exception = (UnrecognizedPropertyException)cause;
+                out.write(new MyHoardException(ErrorCode.BAD_REQUEST).add(exception.getUnrecognizedPropertyName(), "Unrecognized property").toError().toString().getBytes());
+            } else {
+                String message = cause.toString();
+                message = message.substring(message.indexOf(':') + 2);
+                out.write(("{\"error_message\":\"" + message.substring(0, message.indexOf(' ', message.indexOf(' ') + 1)) + "\"}").getBytes());
+            }
+        }
     }
 
     @Override

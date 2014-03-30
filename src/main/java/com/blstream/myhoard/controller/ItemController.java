@@ -1,5 +1,6 @@
 package com.blstream.myhoard.controller;
 
+import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardError;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.ItemDTO;
@@ -63,7 +64,7 @@ public class ItemController {
             @RequestParam(value = "collection") String collection,
             HttpServletRequest request) {
         if (name.length() < 2 || name.length() > 20)
-            throw new MyHoardException(400, "Zbyt krótka/długa nazwa do wyszukiwania");
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("name", "Zbyt krótka/długa nazwa do wyszukiwania");
         try {
             UserDTO user = (UserDTO)request.getAttribute("user");
             Map<String, Object> params = new HashMap<>();
@@ -73,7 +74,7 @@ public class ItemController {
             params.put("owner", user.getUsername());
             return itemService.getList(params);
         } catch (NumberFormatException ex) {
-            throw new MyHoardException(400, "Niepoprawny identyfikaotr kolekcji: " + collection);
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("collection", "Niepoprawny identyfikator");
         }
     }
 
@@ -82,7 +83,7 @@ public class ItemController {
     @ResponseBody
     public ItemDTO createItem(@Valid @RequestBody ItemDTO obj, BindingResult result, HttpServletRequest request) {
         if (result.hasErrors())
-            throw new MyHoardException(320, result.getFieldError().getDefaultMessage());
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add(result.getFieldError().getField(), result.getFieldError().getDefaultMessage());
         UserDTO user = (UserDTO)request.getAttribute("user");
         obj.setOwner(user.getUsername());
         itemService.create(obj);
@@ -97,10 +98,10 @@ public class ItemController {
             UserDTO user = (UserDTO)request.getAttribute("user");
             ItemDTO item = itemService.get(Integer.parseInt(id));
             if (!user.getUsername().equals(item.getOwner()))
-                throw new MyHoardException(104, "Forbidden", 403);
+                throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
             return item;
         } catch (NumberFormatException ex) {
-            throw new MyHoardException(320, "Niepoprawne id: " + id);
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("id", "Niepoprawny identyfikator.");
         }
     }
 
@@ -109,18 +110,20 @@ public class ItemController {
     @ResponseBody
     public ItemDTO updateItem(@PathVariable String id, @Valid @RequestBody ItemDTO obj, BindingResult result, HttpServletRequest request) {
         if (obj.getName() != null && result.hasFieldErrors("name") || obj.getCollection() != null && result.hasFieldErrors("collection"))
-            throw new MyHoardException(320, result.getFieldError(obj.getName() != null ? "name" : "collection").getDefaultMessage());
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add(
+                    obj.getName() != null ? "name" : "collection",
+                    result.getFieldError(obj.getName() != null ? "name" : "collection").getDefaultMessage());
         try {
             UserDTO user = (UserDTO)request.getAttribute("user");
             ItemDTO item = itemService.get(Integer.parseInt(id));
             if (!user.getUsername().equals(item.getOwner()))
-                throw new MyHoardException(320, "Forbidden");
+                throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
             obj.setOwner(user.getUsername());
             obj.setId(id);
             itemService.update(obj);
             return obj;
         } catch (NumberFormatException ex) {
-            throw new MyHoardException(320, "Niepoprawne id: " + id);   // poprawić na Validation error
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("id", "Niepoprawny identyfikator.");
         }
     }
 
@@ -131,10 +134,10 @@ public class ItemController {
             UserDTO user = (UserDTO)request.getAttribute("user");
             ItemDTO item = itemService.get(Integer.parseInt(id));
             if (!user.getUsername().equals(item.getOwner()))
-                throw new MyHoardException(320, "Forbidden");
+                throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
             itemService.remove(Integer.parseInt(id));
         } catch (NumberFormatException ex) {
-            throw new MyHoardException(320, "Niepoprawne id: " + id);
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("id", "Niepoprawny identyfikator.");
         }
     }
 

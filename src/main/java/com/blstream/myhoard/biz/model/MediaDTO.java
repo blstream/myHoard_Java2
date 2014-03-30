@@ -8,6 +8,7 @@ import java.util.Date;
 import javax.sql.rowset.serial.SerialBlob;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.hibernate.JDBCException;
 
 /**
  *
@@ -25,7 +26,7 @@ public class MediaDTO {
     @JsonIgnore
     private String owner;
 
-    public MediaDTO() throws IOException {
+    public MediaDTO() {
         // by Integer.parseInt() nie rzucał wyjątku w metodia toMediaDS,
         // id zostanie zmienione jak obiekt trafi do bazy danych
         id = "0";
@@ -92,7 +93,7 @@ public class MediaDTO {
                     item == null ? null : Integer.parseInt(item),
                     owner);
         } catch (SQLException ex) {
-            throw new MyHoardException(400, ex.getSQLState());
+            throw new MyHoardException(new JDBCException("Nieznany błąd", ex));
         }
     }
 }

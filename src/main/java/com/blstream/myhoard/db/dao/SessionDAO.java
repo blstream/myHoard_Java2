@@ -1,12 +1,12 @@
 package com.blstream.myhoard.db.dao;
 
+import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.db.model.SessionDS;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
 import org.hibernate.Criteria;
-import org.hibernate.Session;
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,14 +37,17 @@ public class SessionDAO implements ResourceDAO<SessionDS> {
                 .add(Restrictions.eq("id", id))
                 .uniqueResult();
         if (session == null)
-            throw new MyHoardException(202, "Resource not found", HttpServletResponse.SC_NOT_FOUND);
+            throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
         return session;
     }
 
     @Override
     public void create(SessionDS obj) {
-        Session session = sessionFactory.getCurrentSession();
-        session.save(obj);
+        try {
+            sessionFactory.getCurrentSession().save(obj);
+        } catch (HibernateException ex) {
+            throw new MyHoardException(ex);
+        }
     }
 
     @Override

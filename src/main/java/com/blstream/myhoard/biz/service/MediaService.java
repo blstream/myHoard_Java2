@@ -14,10 +14,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 
 @Service

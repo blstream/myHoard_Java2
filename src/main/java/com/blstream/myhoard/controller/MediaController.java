@@ -147,9 +147,10 @@ public class MediaController extends HttpServlet {
     }
 
     @ExceptionHandler(MyHoardException.class)
-    @ResponseBody
-    public MyHoardError returnCode(MyHoardException exception, HttpServletResponse response) {
+    public void returnCode(MyHoardException exception, HttpServletResponse response) throws IOException {
+        // @ResponseBody odmawiało posłuszeństwa z niewyjaśnionych powodów
         response.setStatus(exception.getResponseStatus());
-        return exception.toError();
+        response.setContentType("application/json;charset=UTF-8");
+        response.getOutputStream().write(exception.toError().toString().getBytes());
     }
 }

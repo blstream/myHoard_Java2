@@ -89,7 +89,7 @@ public class SecurityFilter implements Filter {
             ((HttpServletResponse)sr1).setStatus(ex.getResponseStatus());
             OutputStream out = sr1.getOutputStream();
             out.write(ex.toError().toString().getBytes());
-        } catch (ServletException ex) {
+        } catch (Throwable ex) {
             ((HttpServletResponse)sr1).setStatus(400);
             OutputStream out = sr1.getOutputStream();
             Throwable cause = ex;

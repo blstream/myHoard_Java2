@@ -81,8 +81,14 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
                 for (MediaDS i : obj.getMedia())
                     ids.add(i.getId());
                 // czy można to prościej zrealizować?
-                if (!ids.isEmpty() && ((Number)session.createQuery("select count(*) from MediaDS as m where m.item is not null and m.id in (:ids)").setParameterList("ids", ids).iterate().next()).longValue() > 0)
-                    throw new MyHoardException(ErrorCode.FORBIDDEN).add("owner", "Próba przepisania Media do innego elementu.");
+                if (!ids.isEmpty()) {
+                    if (((Number)session.createQuery("select count(*) from MediaDS as m where m.item is not null and m.id in (:ids)").setParameterList("ids", ids).iterate().next()).longValue() > 0)
+                        throw new MyHoardException(ErrorCode.FORBIDDEN).add("owner", "Próba przepisania Media do innego elementu");
+                    if (session.createCriteria(MediaDS.class)
+                            .add(Restrictions.eq("owner", obj.getOwner()))
+                            .add(Restrictions.in("id", ids)).list().size() != ids.size())
+                        throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Próba przypisania obcego Media do elementu");
+                }
             }
             session.save(obj);
             if(!ids.isEmpty()) {
@@ -119,6 +125,10 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
                 List<Integer> media = new ArrayList<>();
                 for (MediaDS i : obj.getMedia())
                     media.add(i.getId());
+                if (session.createCriteria(MediaDS.class)
+                            .add(Restrictions.eq("owner", obj.getOwner()))
+                            .add(Restrictions.in("id", media)).list().size() != media.size())
+                        throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Próba przypisania obcego Media do elementu");
                 Set<MediaDS> result = new HashSet<>(media.isEmpty() ? Collections.EMPTY_SET : (List<MediaDS>)session.createCriteria(MediaDS.class)
                     .add(Restrictions.in("id", media))
                     .list());

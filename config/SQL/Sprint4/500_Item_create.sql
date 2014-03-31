@@ -1,16 +1,17 @@
 CREATE TABLE IF NOT EXISTS Item (
 	id INT AUTO_INCREMENT,
-	name TINYTEXT CHARSET utf8 COLLATE utf8_polish_ci NOT NULL,
-	description TEXTi CHARSET utf8 COLLATE utf8_polish_ci,
+	name VARCHAR(150) CHARSET utf8 COLLATE utf8_polish_ci NOT NULL,
+	description TEXT CHARSET utf8 COLLATE utf8_polish_ci,
 	latitude FLOAT,
 	longitude FLOAT,
 	created_date TIMESTAMP NOT NULL,
 	modified_date TIMESTAMP NOT NULL,
 	collection INT NOT NULL,
-	owner TINYTEXT NOT NULL,
+	owner VARCHAR(254) NOT NULL,
 
-	UNIQUE(name, owner),
+	UNIQUE(name, collection),
 	PRIMARY KEY(id),
 	FOREIGN KEY(collection) REFERENCES Collection(id) ON UPDATE CASCADE ON DELETE CASCADE,
 	FOREIGN KEY(owner) REFERENCES User(username) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+

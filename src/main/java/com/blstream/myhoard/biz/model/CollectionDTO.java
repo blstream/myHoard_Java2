@@ -21,11 +21,11 @@ public class CollectionDTO {
 
     @NotNull(message = "Nazwa kolekcji jest wymagana")
     @NotEmpty(message = "Nazwa kolekcji jest wymagana")
-    @Size(min = 2, max = 96, message = "Nazwa może zawierać o 2 do 96 znaków")
-    @CheckString(message = "Za dużo białych znaków w nazwie", value = ValidationOpt.COLLECTION_NAME)
+    @Size(min = 2, max = 64, message = "Nazwa może zawierać od 2 do 64 znaków")
+    @CheckString(message = "Problem z białymi znakami w nazwie", value = ValidationOpt.COLLECTION_NAME)
     private String name;
 
-    @Size(max = 128, message = "Opis może się składać z co najwyżej 128 znaków")
+    @Size(max = 1024, message = "Opis może się składać z co najwyżej 1024 znaków")
     private String description;
 
     private Set<TagDTO> tags = new HashSet<>(0);
@@ -138,14 +138,6 @@ public class CollectionDTO {
     public boolean isTagsAltered() {
         return tagsAltered;
     }
-
-//    public CollectionDS toCollectionDS() {
-//        Set<TagDS> set = new HashSet<>();
-//        if (tags != null)
-//            for (TagDTO i : tags)
-//                set.add(i.toTagDS());
-//        return new CollectionDS(Integer.parseInt(id), owner, name, description, set, itemsNumber, createdDate, modifiedDate, emptySet);
-//    }
 
     public void toDS(CollectionDS obj) {
         Set<TagDS> set = new HashSet<>();

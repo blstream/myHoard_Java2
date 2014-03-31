@@ -5,7 +5,6 @@ import com.blstream.myhoard.db.model.ItemDS;
 import com.blstream.myhoard.db.model.MediaDS;
 import com.blstream.myhoard.validator.CheckString;
 import com.blstream.myhoard.validator.ValidationOpt;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,7 +15,6 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.http.HttpStatus;
 
 public class ItemDTO {
 
@@ -24,10 +22,13 @@ public class ItemDTO {
 
     @NotNull(message = "Nazwa elementu jest wymagana")
     @NotEmpty(message = "Nazwa elementu jest wymagana")
-    @CheckString(message = "Za dużo białych znaków", value = ValidationOpt.ITEM_NAME)
+    @Size(max = 150, message = "Nazwa może zawierać co najwyżej 150 znaków")
+    @CheckString(message = "Problem z białymi znakami w nazwie", value = ValidationOpt.ITEM_NAME)
     private String name;
 
+    @Size(max = 1024, message = "Opis może się składać z co najwyżej 1024 znaków")
     private String description;
+
     private Location location;
     private Set<MediaDTO> media = new HashSet<>(0);
     @JsonIgnore

@@ -1,5 +1,6 @@
 package com.blstream.myhoard.validator;
 
+import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -12,7 +13,7 @@ public class StringValidator implements ConstraintValidator<CheckString, String>
     public void initialize(CheckString a) {
         opt = a.value();
         if (opt.equals(ValidationOpt.NO_ACTION))
-            throw new MyHoardException(1, "Wybrano opcję NO_ACTION w walidatorze");
+            throw new MyHoardException(ErrorCode.INTERNAL_SERVER_ERROR).add("validator", "Selected action 'NO_ACTION'");
     }
 
     @Override
@@ -23,7 +24,7 @@ public class StringValidator implements ConstraintValidator<CheckString, String>
             case ITEM_NAME:
                 return !(t.length() < 2 || t.length() > 100 || (t.length() == 2 && t.trim().length() < 2));
             case COLLECTION_NAME:
-                return !(t.isEmpty() || t.trim().length() < 2);
+                return !(t.isEmpty() || t.trim().length() < 2 || t.charAt(0) == ' ' || t.charAt(t.length() - 1) == ' ');
             default: return true;
         }
     }

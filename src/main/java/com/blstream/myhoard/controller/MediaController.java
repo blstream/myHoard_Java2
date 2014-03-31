@@ -111,10 +111,9 @@ public class MediaController extends HttpServlet {
                 throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
             InputStream file;
             List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
+            if (multiparts.get(0).getSize() == 0 || !multiparts.get(0).getContentType().contains("image"))
+                throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Niepoprawny plik");
             file = multiparts.get(0).getInputStream();
-//            MediaDTO m = mediaService.get(Integer.parseInt(id));
-//            media.setId(id); //poniewaz konstruktor daje id=0;
-//            media.setItem(m.getItem());
             media.setFile(IOUtils.toByteArray(file));
             mediaService.update(media);
             return media;

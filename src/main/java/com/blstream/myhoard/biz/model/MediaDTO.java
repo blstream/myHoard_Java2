@@ -59,12 +59,10 @@ public class MediaDTO {
         this.file = file;
     }
 
-    @JsonProperty("created_date")
     public Date getCreatedDate() {
         return createdDate;
     }
 
-    @JsonIgnore
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }

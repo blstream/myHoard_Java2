@@ -27,14 +27,16 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 /**
  *
  * @author gohilukk
  */
 @Controller
 @RequestMapping(value = "/media")
-public class MediaController extends HttpServlet {
+public class MediaController {
 
     @Autowired
     private MediaService mediaService;
@@ -71,11 +73,19 @@ public class MediaController extends HttpServlet {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public MediaDTO addMedia(MultipartFile file, HttpServletRequest request) {
-        if (file.getSize() == 0 || !file.getContentType().contains("image"))
-            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Niepoprawny plik");
+    public MediaDTO addMedia(MultipartHttpServletRequest request) {
+        MultiValueMap<String, MultipartFile> map = request.getMultiFileMap();
+        if (map.isEmpty() || !map.values().iterator().next().iterator().hasNext())
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Brak pliku");
+        if (map.size() != 1)
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Można wrzucać tylko 1 plik na raz");
         MediaDTO media = new MediaDTO();
         UserDTO user = (UserDTO)request.getAttribute("user");
+        MultipartFile file = map.values().iterator().next().iterator().next();
+        if (file.getContentType() == null || !file.getContentType().startsWith("image/"))
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Niepoprawny plik (to nie jest zdjęcie");
+        if (file.getSize() == 0)
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Próba zapisania pustego pliku");
         media.setOwner(user.getUsername());
         try {
             media.setFile(file.getBytes());

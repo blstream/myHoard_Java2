@@ -38,11 +38,11 @@ public class SessionService implements ResourceService<SessionDTO> {
 
     @Override
     public void update(SessionDTO obj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        sessionDAO.update(obj.toSessionDS());
     }
 
     @Override
     public void remove(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        sessionDAO.remove(id);
     }
 }

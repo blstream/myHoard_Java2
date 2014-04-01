@@ -20,12 +20,14 @@ public class UserDAO implements ResourceDAO<UserDS> {
     @Override
     public List<UserDS> getList(Map<String, Object> params) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserDS.class);
-        if (params.containsKey("email"))
-            criteria.add(Restrictions.eq("email", params.get("email")));
-        else if (params.containsKey("username"))
-            criteria.add(Restrictions.eq("username", params.get("username")));
-        else
-            throw new UnsupportedOperationException("Not supported yet.");
+//        if (!params.isEmpty()) {
+            if (params.containsKey("email"))
+                criteria.add(Restrictions.eq("email", params.get("email")));
+            else if (params.containsKey("username"))
+                criteria.add(Restrictions.eq("username", params.get("username")));
+            else 
+                throw new UnsupportedOperationException("Not supported yet.");
+//        }
         List<UserDS> result = criteria.list();
         if (result.isEmpty())
             throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");

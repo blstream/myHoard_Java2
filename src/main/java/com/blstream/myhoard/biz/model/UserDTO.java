@@ -1,9 +1,11 @@
 package com.blstream.myhoard.biz.model;
 
 import com.blstream.myhoard.db.model.UserDS;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.hibernate.validator.constraints.Email;
 
 /**
  *
@@ -14,11 +16,16 @@ public class UserDTO {
     @JsonIgnore
     private String id;
 
-    @Email
+    @NotNull(message = "Adres e-mail jest wymagany")
+    @Pattern(message = "Niepoprawny e-mail",
+            regexp = "^[a-zA-Z0-9_]+(\\.[a-zA-Z0-9_]+)*@[a-zA-Z]+(\\.[a-zA-Z]+)+(\\.[a-zA-Z]+)*$")
     private String email;
 
+    @Pattern(regexp = "^[a-zA-Z0-9_]+", message = "Nazwa użytkownika może zawierać jedynie litery, cyfry oraz znak _")
     private String username;
 
+    @NotNull(message = "Hasło jest wymagane")
+    @Size(min = 4, message = "Hasło musi zawierać co najmniej 4 znaki")
     private String password;
 
     private String grantType;

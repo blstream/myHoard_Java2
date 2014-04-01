@@ -1,10 +1,7 @@
 package com.blstream.myhoard.db.model;
 
-import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.UserDTO;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import com.blstream.myhoard.controller.TokenController;
 
 public class UserDS {
 
@@ -19,16 +16,8 @@ public class UserDS {
         this.id = id;
         this.email = mail;
         this.username = username;
-        if(password!=null) {
-            try {
-            MessageDigest md = MessageDigest.getInstance( "SHA-256" );
-            md.update( password.getBytes() );
-            this.password = new BigInteger( 1, md.digest() ).toString(16);
-            }
-            catch (NoSuchAlgorithmException e) {
-            throw new MyHoardException(400);
-            }
-        }
+        if (password != null)
+            this.password = TokenController.encode(password);
     }
 
     public int getId() {
@@ -59,14 +48,6 @@ public class UserDS {
     }
 
     public void setPassword(String password) {
-        /*try {
-        MessageDigest md = MessageDigest.getInstance( "SHA256" );
-        md.update( password.getBytes() );
-        this.password = new BigInteger( 1, md.digest() ).toString(16);
-        }
-        catch (NoSuchAlgorithmException e) {
-        throw new MyHoardException(400,"Błąd SHA");
-        }*/
         this.password = password;
     }
 
@@ -88,7 +69,6 @@ public class UserDS {
     public UserDTO toUserDTO() {
         return new UserDTO(Integer.toString(id), email, username, password);
     }
-
 
     @Override
     public String toString() {

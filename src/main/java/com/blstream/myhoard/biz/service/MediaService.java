@@ -62,16 +62,20 @@ public class MediaService implements ResourceService<MediaDTO> {
             if(size > 0) {
                 try {
                     InputStream in = new ByteArrayInputStream(media.getFile());
-                    BufferedImage originalImage = ImageIO.read(in);
-                    int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
-                    BufferedImage resizedImage = new BufferedImage(size, size, type);
-                    Graphics2D g = resizedImage.createGraphics();
-                    g.drawImage(originalImage, 0, 0, size, size, null);
-                    g.dispose();
+                    BufferedImage image = ImageIO.read(in);
+                    int width = image.getWidth();
+                    int height = image.getHeight();
 
-                    ByteArrayOutputStream b = new ByteArrayOutputStream();
-                    ImageIO.write(resizedImage, "jpg", b);
-                    return b.toByteArray();
+                    if (size < width && size < height) {        
+                        int x = width/2 - size/2;
+                        int y = height/2 - size/2;
+                        image = image.getSubimage(x-1, y-1, size, size);
+                        ByteArrayOutputStream b = new ByteArrayOutputStream();
+                        ImageIO.write(image, "jpg", b);
+                        return b.toByteArray();
+                    } else {
+                        return media.getFile();
+                    }
                 } catch (IOException ex) {
                     throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Niepoprawny plik");
                 }

@@ -6,7 +6,6 @@ import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.SessionDTO;
 import com.blstream.myhoard.biz.model.UserDTO;
 import com.blstream.myhoard.biz.service.ResourceService;
-import com.blstream.myhoard.biz.service.UserService;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -83,14 +82,14 @@ public class TokenController {
             throw new MyHoardException(ErrorCode.BAD_REQUEST).add("grant_type", "Missing field");
     }
 
-    public String encode(String tmp) {
+    public static String encode(String tmp) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(tmp.getBytes());
             String pass = new BigInteger(1, md.digest()).toString(16);
             return pass;
         } catch (NoSuchAlgorithmException e) {
-            throw new MyHoardException(400);
+            throw new MyHoardException(ErrorCode.INTERNAL_SERVER_ERROR).add("reason", "No such algorithm exception");
         }
     }
 

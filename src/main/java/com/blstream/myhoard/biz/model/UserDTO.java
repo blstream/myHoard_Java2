@@ -13,7 +13,6 @@ import org.codehaus.jackson.annotate.JsonProperty;
  */
 public class UserDTO {
 
-    @JsonIgnore
     private String id;
 
     @NotNull(message = "Adres e-mail jest wymagany")
@@ -42,11 +41,12 @@ public class UserDTO {
         this.username = username;
         this.password = password;
     }
-
+    
+    @JsonProperty("id")
     public String getId() {
         return id;
     }
-
+    @JsonIgnore
     public void setId(String id) {
         this.id = id;
     }

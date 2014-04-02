@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import javax.servlet.http.HttpServletResponse;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
@@ -31,6 +30,11 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
     }
 
     @Override
+    public int getTotalCount(String owner) {
+        return ((Number)sessionFactory.getCurrentSession().createQuery("select count(*) from CollectionDS where owner = '" + owner + "'").uniqueResult()).intValue();
+    }
+
+    @Override
     public List<CollectionDS> getList(Map<String, Object> params) {
         Session session = sessionFactory.getCurrentSession();
         Criteria criteria = session.createCriteria(CollectionDS.class);
@@ -43,9 +47,9 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
                     criteria.addOrder(Order.desc(i));
         }
         if (params.containsKey("max_count"))
-            criteria.setMaxResults(Integer.parseInt((String)params.get("max_count")));
+            criteria.setMaxResults((Integer)params.get("max_count"));
         if (params.containsKey("start_num"))
-            criteria.setFirstResult(Integer.parseInt((String)params.get("start_num")));
+            criteria.setFirstResult((Integer)params.get("start_num"));
         if(params.containsKey("owner"))
             criteria.add(Restrictions.eq("owner", params.get("owner")));
         List<CollectionDS> result = criteria.list();

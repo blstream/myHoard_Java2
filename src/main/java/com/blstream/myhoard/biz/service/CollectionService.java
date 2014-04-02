@@ -1,5 +1,6 @@
 package com.blstream.myhoard.biz.service;
 
+import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,9 +8,6 @@ import com.blstream.myhoard.biz.model.*;
 import com.blstream.myhoard.db.dao.*;
 import com.blstream.myhoard.db.model.CollectionDS;
 import java.util.Map;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,22 +20,27 @@ public class CollectionService implements ResourceService<CollectionDTO> {
     }
 
     @Override
+    public int getTotalCount(String owner) {
+        return collectionDAO.getTotalCount(owner);
+    }
+
+    @Override
     public List<CollectionDTO> getList(Map<String, Object> params) {
         if (params.containsKey("sort_dir") && !"asc".equals(params.get("sort_dir")) && !"desc".equals(params.get("sort_dir")))
-            throw new MyHoardException(400, "Nieprawidłowy porządek : " + params.get("sort_dir"));
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("sort_dir", "Nieprawidłowy porządek: " + params.get("sort_dir"));
 
         try {
-            if (params.containsKey("max_count") && Integer.parseInt((String)params.get("max_count")) <= 0)
-                throw new MyHoardException(400, "Nieprawidłowa warotść max_count: " + params.get("max_count"));
+            if (params.containsKey("max_count") && ((Integer)params.get("max_count")) <= 0)
+                throw new MyHoardException(ErrorCode.BAD_REQUEST).add("max_count", "Nieprawidłowa wartość: " + params.get("max_count"));
         } catch (NumberFormatException ex) {
-            throw new MyHoardException(400, params.get("max_count") + " nie jest poprawną liczbą");
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("max_count", "Nieprawidłowa wartość: " + params.get("max_count"));
         }
 
         try {
-            if (params.containsKey("start_num") && Integer.parseInt((String)params.get("start_num")) <= 0)
-                throw new MyHoardException(400, "Nieprawidłowa warotść max_count: " + params.get("start_num"));
+            if (params.containsKey("start_num") && ((Integer)params.get("start_num")) < 0)
+                throw new MyHoardException(ErrorCode.BAD_REQUEST).add("start_num", "Nieprawidłowa wartość: " + params.get("start_num"));
         } catch (NumberFormatException ex) {
-            throw new MyHoardException(400, params.get("start_num") + " nie jest poprawną liczbą");
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("start_num", "Nieprawidłowa wartość: " + params.get("max_count"));
         }
 
         List<CollectionDTO> list = new ArrayList<>();

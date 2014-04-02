@@ -18,6 +18,11 @@ public class UserService implements ResourceService<UserDTO> {
     }
 
     @Override
+    public int getTotalCount(String owner) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     public List<UserDTO> getList(Map<String, Object> params) {
         List<UserDTO> result = new ArrayList<>();
         for (UserDS i : userDAO.getList(params))

@@ -2,11 +2,12 @@ package com.blstream.myhoard.db.dao;
 
 import java.util.List;
 import java.util.Map;
-import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public interface ResourceDAO<T> {
+
+    public int getTotalCount(String owner);
 
     public List<T> getList(Map<String, Object> params);
 

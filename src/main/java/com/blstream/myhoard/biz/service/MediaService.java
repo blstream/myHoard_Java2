@@ -27,6 +27,11 @@ public class MediaService implements ResourceService<MediaDTO> {
     }
 
     @Override
+    public int getTotalCount(String owner) {
+        return mediaDAO.getTotalCount(owner);
+    }
+
+    @Override
     public List<MediaDTO> getList(Map<String, Object> params) {
         List<MediaDTO> media = new ArrayList<>();
         for (MediaDS i : mediaDAO.getList(params))

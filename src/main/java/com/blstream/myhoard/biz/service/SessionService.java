@@ -18,6 +18,11 @@ public class SessionService implements ResourceService<SessionDTO> {
     }
 
     @Override
+    public int getTotalCount(String owner) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     public List<SessionDTO> getList(Map<String, Object> params) {
         List<SessionDTO> result = new ArrayList<>();
         for (SessionDS i : sessionDAO.getList(params))

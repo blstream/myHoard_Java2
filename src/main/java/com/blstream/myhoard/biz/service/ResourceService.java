@@ -5,6 +5,8 @@ import java.util.Map;
 
 public interface ResourceService<T> {
 
+    public int getTotalCount(String owner);
+
     public List<T> getList(Map<String, Object> params);
 
     public T get(int id);

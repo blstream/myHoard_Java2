@@ -18,6 +18,11 @@ public class ItemService implements ResourceService<ItemDTO> {
     }
 
     @Override
+    public int getTotalCount(String owner) {
+        return itemDAO.getTotalCount(owner);
+    }
+
+    @Override
     public List<ItemDTO> getList(Map<String, Object> params) {
         List<ItemDTO> result = new ArrayList<>();
         for (ItemDS i : itemDAO.getList(params))

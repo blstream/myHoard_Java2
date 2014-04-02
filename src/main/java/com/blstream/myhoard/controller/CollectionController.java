@@ -61,18 +61,23 @@ public class CollectionController {
      * @param startNum - od którego elementu zacząć
      * @return Wynik stronicowania.
      */
-    @RequestMapping(method = RequestMethod.GET, params = {"max_count", "start_num"})
+    @RequestMapping(method = RequestMethod.GET, params = {"max_count"})
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public SortResult listCollections(@RequestParam(value = "max_count", defaultValue = "2147483647") Integer maxCount,
-            @RequestParam(value = "start_num", defaultValue = "0") String startNum) {
+    public SortResult listCollections(@RequestParam(value = "max_count", defaultValue = "2147483647") String maxCount,
+            @RequestParam(value = "start_num", defaultValue = "0") String startNum, HttpServletRequest request) {
+        UserDTO user =(UserDTO) request.getAttribute("user");
         Map<String, Object> params = new HashMap<>();
         SortResult result = new SortResult();
-        params.put("max_count", maxCount);
-        params.put("start_num", startNum);
+        try {
+            params.put("max_count", Integer.parseInt(maxCount));
+            params.put("start_num", Integer.parseInt(startNum));
+        } catch (NumberFormatException ex) {
+            throw new MyHoardException(ErrorCode.BAD_REQUEST);
+        }
+        params.put("owner", user.getUsername());
         result.setCollections(collectionService.getList(params));
-        // TODO
-        result.setTotalCount(result.getCollections().size());
+        result.setTotalCount(collectionService.getTotalCount(user.getUsername()));
         return result;
     }
 

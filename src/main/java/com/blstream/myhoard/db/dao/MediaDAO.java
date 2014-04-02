@@ -17,6 +17,11 @@ public class MediaDAO implements ResourceDAO<MediaDS> {
     private SessionFactory sessionFactory;
 
     @Override
+    public int getTotalCount(String owner) {
+        return ((Number)sessionFactory.getCurrentSession().createQuery("select count(*) from MediaDS where owner = '" + owner + "'").uniqueResult()).intValue();
+    }
+
+    @Override
     public List<MediaDS> getList(Map<String, Object> params) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MediaDS.class);
         if (params.containsKey("owner"))

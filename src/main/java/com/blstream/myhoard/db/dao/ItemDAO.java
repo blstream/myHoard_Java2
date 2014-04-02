@@ -26,6 +26,11 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
     private SessionFactory sessionFactory;
 
     @Override
+    public int getTotalCount(String owner) {
+        return ((Number)sessionFactory.getCurrentSession().createQuery("select count(*) from ItemDS where owner = '" + owner + "'").uniqueResult()).intValue();
+    }
+
+    @Override
     public List<ItemDS> getList(Map<String, Object> params) {
         try {
             Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ItemDS.class);

@@ -5,6 +5,8 @@ import com.blstream.myhoard.biz.exception.MyHoardError;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.UserDTO;
 import com.blstream.myhoard.biz.service.ResourceService;
+import java.util.Collections;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -30,12 +32,12 @@ public class UserController {
         this.userService = userService;
     }
 
-//    @RequestMapping(method = RequestMethod.GET)
-//    @ResponseStatus(HttpStatus.OK)
-//    @ResponseBody
-//    public List<UserDTO> getUsers() {
-//        return userService.getList(Collections.EMPTY_MAP);
-//    }
+    @RequestMapping(method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<UserDTO> getUsers() {
+        return userService.getList(Collections.EMPTY_MAP);
+    }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)

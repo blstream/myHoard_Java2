@@ -104,6 +104,13 @@
                 <property name="userService" ref="userService" />
         </bean>
         
+	<bean id="mediaController" class="com.blstream.myhoard.controller.MediaController">
+		<property name="mediaValidator" ref="mediaValidator" />
+	</bean>
+  
+	<bean id="mediaValidator" class="com.blstream.myhoard.validator.MediaValidator">
+		<property name="mediaService" ref="mediaService" />
+	</bean>                              
 	<mvc:annotation-driven />
 
 	<tx:annotation-driven transaction-manager="txManager"/>

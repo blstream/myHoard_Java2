@@ -6,6 +6,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
  *
@@ -42,7 +43,7 @@ public class UserDTO {
         this.password = password;
     }
     
-    @JsonProperty("id")
+    @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     public String getId() {
         return id;
     }

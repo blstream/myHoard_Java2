@@ -6,6 +6,7 @@ import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.SessionDTO;
 import com.blstream.myhoard.biz.model.UserDTO;
 import com.blstream.myhoard.biz.service.ResourceService;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -94,9 +95,13 @@ public class TokenController {
     }
 
     @ExceptionHandler(MyHoardException.class)
-    @ResponseBody
-    public MyHoardError returnCode(MyHoardException exception, HttpServletResponse response) {
+//    @ResponseBody
+    public void returnCode(MyHoardException exception, HttpServletResponse response) throws IOException {
+        // @ResponseBody odmawiało posłuszeństwa z niewyjaśnionych powodów
         response.setStatus(exception.getResponseStatus());
-        return exception.toError();
+        response.setContentType("application/json;charset=UTF-8");
+        response.getOutputStream().write(exception.toError().toString().getBytes());
+//        response.setStatus(exception.getResponseStatus());
+//        return exception.toError();
     }
 }

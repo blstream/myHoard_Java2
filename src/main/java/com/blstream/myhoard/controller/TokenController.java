@@ -13,6 +13,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -60,7 +61,8 @@ public class TokenController {
                 switch (user.getGrantType()) {
                     case "password":
                         //TODO Generowanie tokenu, temporary broken access_token
-                        created = new SessionDTO("0", encode((java.util.Calendar.getInstance().getTime().toString()+user.getUsername())), java.util.Calendar.getInstance().getTime(), encode("refresh_token" + java.util.Calendar.getInstance().getTime()+user.getUsername()), saved.getId());
+                        Random random = new Random();
+                        created = new SessionDTO("0", encode((java.util.Calendar.getInstance().getTime().toString()+user.getUsername()+random.nextInt())), java.util.Calendar.getInstance().getTime(), encode("refresh_token" + java.util.Calendar.getInstance().getTime()+user.getUsername()), saved.getId());
                         sessionService.create(created);
                         return created;
                     case "refresh_token":

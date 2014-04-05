@@ -91,7 +91,7 @@ public class UserController {
             throw exception;
         }
         user.setId(id);
-        user.updateObject(currentUser);
+        currentUser.updateObject(user);
         userService.update(user);
         return user;
     }

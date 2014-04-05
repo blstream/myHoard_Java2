@@ -40,6 +40,7 @@ public class UserService implements ResourceService<UserDTO> {
         UserDS user = obj.toUserDS();
         userDAO.create(user);
         obj.updateObject(user.toUserDTO());
+        obj.setId(null);
     }
 
     @Override
@@ -47,6 +48,7 @@ public class UserService implements ResourceService<UserDTO> {
         UserDS object = obj.toUserDS();
         userDAO.update(object);
         obj.updateObject(object.toUserDTO());
+        obj.setId(null);
     }
 
     @Override

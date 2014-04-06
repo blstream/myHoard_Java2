@@ -103,7 +103,7 @@ public class SecurityFilter implements Filter {
                 out.write(new MyHoardException(ErrorCode.BAD_REQUEST).add(exception.getContentType().toString(), "Content type not supported").toError().toString().getBytes());
             } else {
                 String message = cause.toString();
-                message = message.substring(message.indexOf(':') + 2);
+                message = message.substring(message.indexOf(':') + 1);
                 out.write(("{\"error_message\":\"" + message.replace("\"", "&quot;") + "\"}").getBytes());
             }
         }

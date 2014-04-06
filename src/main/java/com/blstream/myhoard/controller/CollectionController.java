@@ -122,6 +122,7 @@ public class CollectionController {
             CollectionDTO tmp = collectionService.get(Integer.parseInt(id));
             if (tmp.getOwner().equals(user)) {
                 collection.setId(id);
+                collection.setOwner(user);
                 collectionService.update(collection);
                 return collection;
             } else

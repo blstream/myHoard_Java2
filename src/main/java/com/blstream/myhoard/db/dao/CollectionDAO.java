@@ -42,9 +42,11 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
             if ("asc".equals(params.get("sort_dir")))
                 for (String i : (String[])params.get("sort_by"))
                     criteria.addOrder(Order.asc(i));
-            else
+            else if ("desc".equals(params.get("dort_dir")))
                 for (String i : (String[])params.get("sort_by"))
                     criteria.addOrder(Order.desc(i));
+            else
+                throw new MyHoardException(ErrorCode.BAD_REQUEST).add("sort_dir", "Niepoprawny kierunek sortowania");
         }
         if (params.containsKey("max_count"))
             criteria.setMaxResults((Integer)params.get("max_count"));

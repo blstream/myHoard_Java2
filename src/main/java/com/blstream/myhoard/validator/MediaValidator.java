@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
@@ -54,6 +55,12 @@ public class MediaValidator {
             throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Można wrzucać tylko 1 plik na raz");
         }
         MultipartFile file = map.values().iterator().next().iterator().next();
+        try {
+            if (ImageIO.read(file.getInputStream()) == null)
+                throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Uszkodzony plik");
+        } catch (IOException ex) {
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Uszkodzony plik");
+        }
         if (file.getContentType() == null || !file.getContentType().startsWith("image/")) {
             throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Niepoprawny plik, to nie jest zdjęcie");
         }

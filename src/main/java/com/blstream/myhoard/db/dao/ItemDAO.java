@@ -17,6 +17,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +54,16 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
                     break;
                 default:
                     return Collections.EMPTY_LIST;
+            }
+            if (params.containsKey("sort_dir")) {
+                if ("asc".equals(params.get("sort_dir")))
+                    for (String i : (String[])params.get("sort_by"))
+                        criteria.addOrder(Order.asc(i));
+                else if ("desc".equals(params.get("dort_dir")))
+                    for (String i : (String[])params.get("sort_by"))
+                        criteria.addOrder(Order.desc(i));
+                else
+                    throw new MyHoardException(ErrorCode.BAD_REQUEST).add("sort_dir", "Niepoprawny kierunek sortowania");
             }
             return criteria.list();
         } catch (HibernateException ex) {
@@ -145,7 +156,7 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
                     i.setItem(obj.getId());
                 object.setMedia(result);
             }
-            object.setModifiedDate(Calendar.getInstance().getTime());
+            object.setModified_date(Calendar.getInstance().getTime());
             session.update(object);
         } catch (HibernateException ex) {
             throw new MyHoardException(ex);

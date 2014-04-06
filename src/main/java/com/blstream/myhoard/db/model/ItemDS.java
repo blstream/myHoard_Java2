@@ -17,15 +17,15 @@ public class ItemDS {
     private Float latitude;
     private Float longitude;
     private Set<MediaDS> media = new HashSet<>(0);
-    private Date createdDate;
-    private Date modifiedDate;
+    private Date created_date;
+    private Date modified_date;
     private int collection;
     private UserDS owner;
     private boolean mediaAltered = true;
 
     public ItemDS() {
-        createdDate = java.util.Calendar.getInstance().getTime();
-        modifiedDate = (Date)createdDate.clone();
+        created_date = java.util.Calendar.getInstance().getTime();
+        modified_date = (Date)created_date.clone();
     }
 
     public ItemDS(int id, String name, String description, Float latitude, Float longitude, Set<MediaDS> media, Date createdDate, Date modifiedDate, int collection, UserDS owner) {
@@ -35,8 +35,8 @@ public class ItemDS {
         this.latitude = latitude;
         this.longitude = longitude;
         this.media = media;
-        this.createdDate = createdDate;
-        this.modifiedDate = modifiedDate;
+        this.created_date = createdDate;
+        this.modified_date = modifiedDate;
         this.collection = collection;
         this.owner = owner;
     }
@@ -90,20 +90,20 @@ public class ItemDS {
         mediaAltered = true;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
+    public Date getCreated_date() {
+        return created_date;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
+    public void setCreated_date(Date created_date) {
+        this.created_date = created_date;
     }
 
-    public Date getModifiedDate() {
-        return modifiedDate;
+    public Date getModified_date() {
+        return modified_date;
     }
 
-    public void setModifiedDate(Date modifiedDate) {
-        this.modifiedDate = modifiedDate;
+    public void setModified_date(Date modified_date) {
+        this.modified_date = modified_date;
     }
 
     public int getCollection() {
@@ -155,8 +155,8 @@ public class ItemDS {
                 description,
                 latitude == null || longitude == null ? null : new Location(latitude, longitude),
                 set,
-                createdDate,
-                modifiedDate,
+                created_date,
+                modified_date,
                 Integer.toString(collection),
                 owner.toUserDTO());
     }
@@ -173,8 +173,8 @@ public class ItemDS {
         obj.setDescription(description);
         obj.setLocation(latitude == null || longitude == null ? null : new Location(latitude, longitude));
         obj.setMedia(set);
-        obj.setCreatedDate(createdDate);
-        obj.setModifiedDate(modifiedDate);
+        obj.setCreatedDate(created_date);
+        obj.setModifiedDate(modified_date);
         obj.setCollection(Integer.toString(collection));
         obj.setOwner(owner.toUserDTO());
     }
@@ -196,8 +196,8 @@ public class ItemDS {
             latitude = obj.getLocation().getLat();
             longitude = obj.getLocation().getLng();
         }
-        createdDate = obj.getCreatedDate();
-        modifiedDate = obj.getModifiedDate();
+        created_date = obj.getCreatedDate();
+        modified_date = obj.getModifiedDate();
         try {
             collection = Integer.parseInt(obj.getCollection());
         } catch (NumberFormatException ex) {

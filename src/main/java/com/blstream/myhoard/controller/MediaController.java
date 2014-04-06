@@ -48,7 +48,7 @@ public class MediaController {
     public List<MediaDTO> getMedia(HttpServletRequest request) {
         UserDTO user = (UserDTO) request.getAttribute("user");
         Map<String, Object> params = new HashMap<>();
-        params.put("owner", user.getId());
+        params.put("owner", Integer.parseInt(user.getId()));
         return mediaService.getList(params);
     }
     

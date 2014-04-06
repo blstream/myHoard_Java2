@@ -41,7 +41,7 @@ public class MediaValidator {
     public void validateGet(HttpServletRequest request, String id) {
         UserDTO user = (UserDTO) request.getAttribute("user");
         MediaDTO media = mediaService.get(Integer.parseInt(id));
-        if (!user.getUsername().equals(media.getOwner())) {
+        if (!user.getId().equals(media.getOwner())) {
             throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
         }
     }
@@ -73,27 +73,40 @@ public class MediaValidator {
         try {
             UserDTO user = (UserDTO) request.getAttribute("user");
             MediaDTO media = mediaService.get(Integer.parseInt(id));
-            if (!user.getUsername().equals(media.getOwner())) {
+            if (!user.getId().equals(media.getOwner())) {
                 throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
             }
             List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
+            if (multiparts.isEmpty())
+                throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Brak pliku");
+            if (multiparts.size() != 1)
+                throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Można aktualizować tylko 1 plik na raz");
+            FileItem file = multiparts.get(0);
             if (multiparts.get(0).getSize() == 0 || !multiparts.get(0).getContentType().contains("image")) {
                 throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Niepoprawny plik");
             }
-            InputStream file = multiparts.get(0).getInputStream();
-            return IOUtils.toByteArray(file);
-        } catch (FileUploadException ex) {
-            Logger.getLogger(MediaValidator.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(MediaValidator.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                if (ImageIO.read(file.getInputStream()) == null)
+                    throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Uszkodzony plik");
+            } catch (IOException ex) {
+                throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Uszkodzony plik");
+            }
+            if (file.getContentType() == null || !file.getContentType().startsWith("image/")) {
+                throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Niepoprawny plik, to nie jest zdjęcie");
+            }
+            if (file.getSize() == 0) {
+                throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Próba zapisania pustego pliku");
+            }
+            return IOUtils.toByteArray(file.getInputStream());
+        } catch (FileUploadException | IOException ex) {
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("file", "Uszkodzony plik");
         }
-        return null;
     }
 
     public void validateDelete(HttpServletRequest request, String id) {
         UserDTO user = (UserDTO) request.getAttribute("user");
         MediaDTO media = mediaService.get(Integer.parseInt(id));
-        if (!user.getUsername().equals(media.getOwner())) {
+        if (!user.getId().equals(media.getOwner())) {
             throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
         }
     }

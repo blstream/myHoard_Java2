@@ -75,7 +75,7 @@ public class CollectionController {
         } catch (NumberFormatException ex) {
             throw new MyHoardException(ErrorCode.BAD_REQUEST);
         }
-        params.put("owner", user);
+        params.put("owner", user.toUserDS());
         result.setCollections(collectionService.getList(params));
         result.setTotalCount(collectionService.getTotalCount(user.getUsername()));
         return result;

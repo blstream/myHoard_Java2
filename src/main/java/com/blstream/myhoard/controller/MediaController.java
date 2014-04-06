@@ -1,14 +1,12 @@
 package com.blstream.myhoard.controller;
 
 import com.blstream.myhoard.biz.exception.ErrorCode;
-import com.blstream.myhoard.biz.exception.MyHoardError;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.MediaDTO;
 import com.blstream.myhoard.biz.model.UserDTO;
 import com.blstream.myhoard.biz.service.MediaService;
 import com.blstream.myhoard.validator.MediaValidator;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,11 +21,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.*;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.io.IOUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -55,7 +48,7 @@ public class MediaController {
     public List<MediaDTO> getMedia(HttpServletRequest request) {
         UserDTO user = (UserDTO) request.getAttribute("user");
         Map<String, Object> params = new HashMap<>();
-        params.put("owner", user.getUsername());
+        params.put("owner", user.getId());
         return mediaService.getList(params);
     }
     
@@ -79,7 +72,7 @@ public class MediaController {
             MultiValueMap<String, MultipartFile> map = request.getMultiFileMap();
             MultipartFile file = map.values().iterator().next().iterator().next();
             media.setFile(file.getBytes());
-            media.setOwner(user.getUsername());
+            media.setOwner(user.getId());
             mediaService.create(media);
             return media;
         } catch (IOException ex) {
@@ -113,7 +106,7 @@ public class MediaController {
         try {
             UserDTO user = (UserDTO) request.getAttribute("user");
             MediaDTO media = mediaService.get(Integer.parseInt(id));
-            if (!user.getUsername().equals(media.getOwner())) {
+            if (!user.getId().equals(media.getOwner())) {
                 throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
             }
             byte[] imageBytes = mediaService.getThumbnail(Integer.parseInt(id), Integer.parseInt(size));

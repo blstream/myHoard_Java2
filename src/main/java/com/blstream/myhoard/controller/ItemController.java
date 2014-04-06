@@ -41,7 +41,7 @@ public class ItemController {
         UserDTO user = (UserDTO)request.getAttribute("user");
         Map<String, Object> params = new HashMap<>();
         params.put("option", "list");
-        params.put("owner", user.getUsername());
+        params.put("owner", user.toUserDS());
         return itemService.getList(params);
     }
 
@@ -53,7 +53,7 @@ public class ItemController {
         Map<String, Object> params = new HashMap<>();
         params.put("option", "listfrom");
         params.put("collection", Integer.parseInt(id));
-        params.put("owner", user.getUsername());
+        params.put("owner", user.toUserDS());
         return itemService.getList(params);
     }
 
@@ -71,7 +71,7 @@ public class ItemController {
             params.put("option", "find");
             params.put("name", name);
             params.put("collection", Integer.parseInt(collection));
-            params.put("owner", user.getUsername());
+            params.put("owner", user.toUserDS());
             return itemService.getList(params);
         } catch (NumberFormatException ex) {
             throw new MyHoardException(ErrorCode.BAD_REQUEST).add("collection", "Niepoprawny identyfikator");
@@ -85,7 +85,7 @@ public class ItemController {
         if (result.hasErrors())
             throw new MyHoardException(ErrorCode.BAD_REQUEST).add(result.getFieldError().getField(), result.getFieldError().getDefaultMessage());
         UserDTO user = (UserDTO)request.getAttribute("user");
-        obj.setOwner(user.getUsername());
+        obj.setOwner(user);
         itemService.create(obj);
         return obj;
     }
@@ -97,7 +97,7 @@ public class ItemController {
         try {
             UserDTO user = (UserDTO)request.getAttribute("user");
             ItemDTO item = itemService.get(Integer.parseInt(id));
-            if (!user.getUsername().equals(item.getOwner()))
+            if (!user.equals(item.getOwner()))
                 throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
             return item;
         } catch (NumberFormatException ex) {
@@ -116,9 +116,9 @@ public class ItemController {
         try {
             UserDTO user = (UserDTO)request.getAttribute("user");
             ItemDTO item = itemService.get(Integer.parseInt(id));
-            if (!user.getUsername().equals(item.getOwner()))
+            if (!user.equals(item.getOwner()))
                 throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
-            obj.setOwner(user.getUsername());
+            obj.setOwner(user);
             obj.setId(id);
             itemService.update(obj);
             return obj;
@@ -133,7 +133,7 @@ public class ItemController {
         try {
             UserDTO user = (UserDTO)request.getAttribute("user");
             ItemDTO item = itemService.get(Integer.parseInt(id));
-            if (!user.getUsername().equals(item.getOwner()))
+            if (!user.equals(item.getOwner()))
                 throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
             itemService.remove(Integer.parseInt(id));
         } catch (NumberFormatException ex) {

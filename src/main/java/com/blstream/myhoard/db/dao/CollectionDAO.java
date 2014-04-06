@@ -2,7 +2,6 @@ package com.blstream.myhoard.db.dao;
 
 import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardException;
-import com.blstream.myhoard.biz.model.UserDTO;
 import java.util.List;
 import org.hibernate.Session;
 import com.blstream.myhoard.db.model.*;

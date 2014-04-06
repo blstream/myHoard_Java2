@@ -2,7 +2,6 @@ package com.blstream.myhoard.biz.model;
 
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.db.model.MediaDS;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
 import javax.sql.rowset.serial.SerialBlob;
@@ -89,7 +88,7 @@ public class MediaDTO {
                     file == null ? null : new SerialBlob(file),
                     createdDate,
                     item == null ? null : Integer.parseInt(item),
-                    owner);
+                    Integer.parseInt(owner));
         } catch (SQLException ex) {
             throw new MyHoardException(new JDBCException("Nieznany błąd", ex));
         }

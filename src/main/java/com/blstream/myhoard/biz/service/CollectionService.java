@@ -63,7 +63,7 @@ public class CollectionService implements ResourceService<CollectionDTO> {
         collection.fromDTO(obj);
         collectionDAO.create(collection);
         obj.setId(Integer.toString(collection.getId()));
-        obj.setOwner(collection.getOwner());
+//        obj.setOwner(collection.getOwner().toUserDTO());
     }
 
     @Override

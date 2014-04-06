@@ -51,7 +51,7 @@ public class CollectionController {
         Map<String, Object> params = new HashMap<>();
         params.put("sort_by", fieldName);
         params.put("sort_dir", sortDir);
-        params.put("owner", user.getUsername());
+        params.put("owner", user.toUserDS());
         return collectionService.getList(params);
     }
 
@@ -75,7 +75,7 @@ public class CollectionController {
         } catch (NumberFormatException ex) {
             throw new MyHoardException(ErrorCode.BAD_REQUEST);
         }
-        params.put("owner", user.getUsername());
+        params.put("owner", user);
         result.setCollections(collectionService.getList(params));
         result.setTotalCount(collectionService.getTotalCount(user.getUsername()));
         return result;
@@ -88,7 +88,7 @@ public class CollectionController {
         if (result.hasErrors())
             throw new MyHoardException(ErrorCode.BAD_REQUEST).add(result.getFieldError().getField(), result.getFieldError().getDefaultMessage());
         UserDTO user = (UserDTO)request.getAttribute("user");
-        collection.setOwner(user.getUsername());
+        collection.setOwner(user);
         collectionService.create(collection);
         return collection;
     }
@@ -100,7 +100,7 @@ public class CollectionController {
         try {
             UserDTO user = (UserDTO)request.getAttribute("user");
             CollectionDTO collection = collectionService.get(Integer.parseInt(id));
-            if (collection.getOwner().equals(user.getUsername()))
+            if (collection.getOwner().equals(user))
                 return collection;
             else
                 throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
@@ -120,7 +120,7 @@ public class CollectionController {
         try {
             UserDTO user = (UserDTO)request.getAttribute("user");
             CollectionDTO tmp = collectionService.get(Integer.parseInt(id));
-            if (tmp.getOwner().equals(user.getUsername())) {
+            if (tmp.getOwner().equals(user)) {
                 collection.setId(id);
                 collectionService.update(collection);
                 return collection;
@@ -137,7 +137,7 @@ public class CollectionController {
         try {
             UserDTO user = (UserDTO)request.getAttribute("user");
             CollectionDTO tmp = collectionService.get(Integer.parseInt(id));
-            if (tmp.getOwner().equals(user.getUsername()))
+            if (tmp.getOwner().equals(user))
                 collectionService.remove(Integer.parseInt(id));
             else
                 throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");

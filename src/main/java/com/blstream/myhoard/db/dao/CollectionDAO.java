@@ -2,6 +2,7 @@ package com.blstream.myhoard.db.dao;
 
 import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardException;
+import com.blstream.myhoard.biz.model.UserDTO;
 import java.util.List;
 import org.hibernate.Session;
 import com.blstream.myhoard.db.model.*;
@@ -149,10 +150,6 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
 
     @Override
     public void remove(int id) {
-        Session session = sessionFactory.getCurrentSession();
-        CollectionDS collection = get(id);
-        // pozbycie się ewentualnych tagów
-//        session.createSQLQuery("delete from CollectionTag where collection = " + collection.getId()).executeUpdate();
-        session.delete(collection);
+        sessionFactory.getCurrentSession().delete(get(id));
     }
 }

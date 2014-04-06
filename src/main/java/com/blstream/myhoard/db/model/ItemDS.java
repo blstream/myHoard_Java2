@@ -1,10 +1,10 @@
 package com.blstream.myhoard.db.model;
 
+import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.ItemDTO;
 import com.blstream.myhoard.biz.model.Location;
 import com.blstream.myhoard.biz.model.MediaDTO;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,7 +20,7 @@ public class ItemDS {
     private Date createdDate;
     private Date modifiedDate;
     private int collection;
-    private String owner;
+    private UserDS owner;
     private boolean mediaAltered = true;
 
     public ItemDS() {
@@ -28,7 +28,7 @@ public class ItemDS {
         modifiedDate = (Date)createdDate.clone();
     }
 
-    public ItemDS(int id, String name, String description, Float latitude, Float longitude, Set<MediaDS> media, Date createdDate, Date modifiedDate, int collection, String owner) {
+    public ItemDS(int id, String name, String description, Float latitude, Float longitude, Set<MediaDS> media, Date createdDate, Date modifiedDate, int collection, UserDS owner) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -114,11 +114,11 @@ public class ItemDS {
         this.collection = collection;
     }
 
-    public String getOwner() {
+    public UserDS getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(UserDS owner) {
         this.owner = owner;
     }
 
@@ -158,7 +158,7 @@ public class ItemDS {
                 createdDate,
                 modifiedDate,
                 Integer.toString(collection),
-                owner);
+                owner.toUserDTO());
     }
 
     public void toDTO(ItemDTO obj) {
@@ -176,7 +176,7 @@ public class ItemDS {
         obj.setCreatedDate(createdDate);
         obj.setModifiedDate(modifiedDate);
         obj.setCollection(Integer.toString(collection));
-        obj.setOwner(owner);
+        obj.setOwner(owner.toUserDTO());
     }
 
     public void fromDTO(ItemDTO obj) {
@@ -201,8 +201,8 @@ public class ItemDS {
         try {
             collection = Integer.parseInt(obj.getCollection());
         } catch (NumberFormatException ex) {
-            throw new MyHoardException(201, "Validation error").add("collection", "Niepoprawny identyfikator");
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("collection", "Niepoprawny identyfikator");
         }
-        owner = obj.getOwner();
+        owner = obj.getOwner().toUserDS();
     }
 }

@@ -1,5 +1,6 @@
 package com.blstream.myhoard.biz.model;
 
+import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.db.model.ItemDS;
 import com.blstream.myhoard.db.model.MediaDS;
@@ -40,7 +41,7 @@ public class ItemDTO {
     @NotEmpty(message = "Element musi być przypisany do kolekcji")
     private String collection;
     @JsonIgnore
-    private String owner;
+    private UserDTO owner;
 
     @JsonIgnore
     private boolean mediaAltered = false;
@@ -50,7 +51,7 @@ public class ItemDTO {
         modifiedDate = (Date)createdDate.clone();
     }
 
-    public ItemDTO(String id, String name, String description, Location location, Set<MediaDTO> media, Date createdDate, Date modifiedDate, String collection, String owner) {
+    public ItemDTO(String id, String name, String description, Location location, Set<MediaDTO> media, Date createdDate, Date modifiedDate, String collection, UserDTO owner) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -136,12 +137,13 @@ public class ItemDTO {
     }
 
     @JsonProperty(value = "owner")
-    public String getOwner() {
+    @JsonSerialize(using = CustomOwnerSerializer.class)
+    public UserDTO getOwner() {
         return owner;
     }
 
     @JsonIgnore
-    public void setOwner(String owner) {
+    public void setOwner(UserDTO owner) {
         this.owner = owner;
     }
 
@@ -164,9 +166,9 @@ public class ItemDTO {
                     createdDate,
                     modifiedDate,
                     collection == null || collection.isEmpty() ? -1 : Integer.parseInt(collection),
-                    owner);
+                    owner.toUserDS());
         } catch (NumberFormatException ex) {
-            throw new MyHoardException(201, "Validation error").add("collection", "Niepoprawny identyfikator");
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("collection", "Niepoprawny identyfikator");
         }
     }
 }

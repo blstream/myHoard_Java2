@@ -35,7 +35,7 @@ public class CollectionDTO {
     private Date createdDate;
     @JsonIgnore
     private Date modifiedDate;
-    private String owner;
+    private UserDTO owner;
 
     @JsonIgnore
     private boolean tagsAltered = false;
@@ -45,7 +45,7 @@ public class CollectionDTO {
         modifiedDate = (Date) createdDate.clone();
     }
 
-    public CollectionDTO(String id, String owner, String name, String description, Set<TagDTO> tags, int itemsNumber, Date createdDate, Date modifiedDate) {
+    public CollectionDTO(String id, UserDTO owner, String name, String description, Set<TagDTO> tags, int itemsNumber, Date createdDate, Date modifiedDate) {
         this.id = id;
         this.owner = owner;
         this.name = name;
@@ -67,12 +67,13 @@ public class CollectionDTO {
     }
 
     @JsonProperty(value = "owner")
-    public String getOwner() {
+    @JsonSerialize(using = CustomOwnerSerializer.class)
+    public UserDTO getOwner() {
         return owner;
     }
 
     @JsonIgnore
-    public void setOwner(String owner) {
+    public void setOwner(UserDTO owner) {
         this.owner = owner;
     }
 
@@ -145,7 +146,7 @@ public class CollectionDTO {
             for (TagDTO i : tags)
                 set.add(i.toTagDS());
         obj.setId(Integer.parseInt(id));
-        obj.setOwner(owner);
+        obj.setOwner(owner.toUserDS());
         obj.setName(name);
         obj.setDescription(description);
         obj.setTags(set);
@@ -160,7 +161,7 @@ public class CollectionDTO {
             for (TagDS i : obj.getTags())
                 tags.add(i.toTagTO());
         id = Integer.toString(obj.getId());
-        owner = obj.getOwner();
+        owner = obj.getOwner().toUserDTO();
         name = obj.getName();
         description = obj.getDescription();
         itemsNumber = obj.getItemsNumber();
@@ -189,6 +190,6 @@ public class CollectionDTO {
     @Override
     public String toString() {
         return String.format("id: %d, owner: %s, name: %s, description: %s, tags: %s, itemsNumber: %d, createdDate: %s, modifiedDate: %s\n",
-                id, owner, name, description, tags, itemsNumber, createdDate, modifiedDate);
+                id, owner.getUsername(), name, description, tags, itemsNumber, createdDate, modifiedDate);
     }
 }

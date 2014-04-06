@@ -116,4 +116,11 @@ public class UserDTO {
     public UserDS toUserDS() {
         return new UserDS(Integer.parseInt(id), email, username, password);
     }
+
+    public boolean equals(Object obj) {
+        if (obj == null || !(obj instanceof UserDTO))
+            return false;
+        UserDTO user = (UserDTO)obj;
+        return id.equals(user.id);
+    }
 }

@@ -13,11 +13,11 @@ public class MediaDS {
     private Blob file;
     private Date createdDate;
     private Integer item;
-    private String owner;
+    private int owner;
 
     public MediaDS() {}
 
-    public MediaDS(int id, Blob file, Date createdDate, Integer item, String owner) {
+    public MediaDS(int id, Blob file, Date createdDate, Integer item, int owner) {
         this.id = id;
         this.file = file;
         this.createdDate = createdDate;
@@ -57,11 +57,11 @@ public class MediaDS {
         this.item = item;
     }
 
-    public String getOwner() {
+    public int getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(int owner) {
         this.owner = owner;
     }
 
@@ -71,7 +71,7 @@ public class MediaDS {
                     file == null ? null : file.getBytes(1, (int) file.length()),
                     createdDate,
                     item == null ? null : item.toString(),
-                    owner);
+                    Integer.toString(owner));
         } catch (SQLException ex) {
             throw new MyHoardException(new JDBCException("Nieznany błąd", ex));
         }
@@ -84,9 +84,7 @@ public class MediaDS {
     public boolean equals(Object o) {
         if (o == null || !(o instanceof MediaDS))
             return false;
-        else {
-            MediaDS m = (MediaDS)o;
-            return id == m.id;
-        }
+        MediaDS m = (MediaDS)o;
+        return id == m.id;
     }
 }

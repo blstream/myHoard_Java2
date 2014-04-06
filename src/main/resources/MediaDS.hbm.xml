@@ -11,6 +11,6 @@
 		<property name="file" column="file" type="blob" />
 		<property name="createdDate" column="created_date" type="timestamp" update="false" />
 		<property name="item" type="int" />
-		<property name="owner" type="string" />
+		<property name="owner" type="int" />
 	</class>        
 </hibernate-mapping>

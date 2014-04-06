@@ -4,19 +4,18 @@ import com.blstream.myhoard.biz.model.CollectionDTO;
 import com.blstream.myhoard.biz.model.TagDTO;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 public class CollectionDS {
 
     private int id;
-    private String owner;
     private String name;
     private String description;
     private Set<TagDS> tags = new HashSet<>(0);
     private int itemsNumber;
     private Date created_date;
     private Date modified_date;
+    private UserDS owner;
     private boolean tagsAltered = false;
 
     public CollectionDS() {
@@ -32,11 +31,11 @@ public class CollectionDS {
         this.id = id;
     }
 
-    public String getOwner() {
+    public UserDS getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(UserDS owner) {
         this.owner = owner;
     }
 
@@ -100,7 +99,7 @@ public class CollectionDS {
                 set.add(i.toTagTO());
             
         return new CollectionDTO(Integer.toString(id),
-                owner,
+                owner.toUserDTO(),
                 name,
                 description,
                 set,
@@ -115,7 +114,7 @@ public class CollectionDS {
             for (TagDS i : tags)
                 set.add(i.toTagTO());
         obj.setId(Integer.toString(id));
-        obj.setOwner(owner);
+        obj.setOwner(owner.toUserDTO());
         obj.setName(name);
         obj.setDescription(description);
         obj.setTags(set);
@@ -130,7 +129,7 @@ public class CollectionDS {
             for (TagDTO i : obj.getTags())
                 tags.add(i.toTagDS());
         id = Integer.parseInt(obj.getId());
-        owner = obj.getOwner();
+        owner = obj.getOwner().toUserDS();
         name = obj.getName();
         description = obj.getDescription();
         itemsNumber = obj.getItemsNumber();
@@ -158,7 +157,7 @@ public class CollectionDS {
 
     @Override
     public String toString() {
-        return "CollectionDS{" + "id=" + id + ", owner=" + owner + ", name=" + name + ", description=" + description + ", tags=" + tags + ", itemsNumber=" + itemsNumber + ", created_date=" + created_date + ", modified_date=" + modified_date + ", tagsAltered=" + tagsAltered + '}';
+        return "CollectionDS{" + "id=" + id + ", owner=" + owner.getUsername() + ", name=" + name + ", description=" + description + ", tags=" + tags + ", itemsNumber=" + itemsNumber + ", created_date=" + created_date + ", modified_date=" + modified_date + ", tagsAltered=" + tagsAltered + '}';
     }
 
 }

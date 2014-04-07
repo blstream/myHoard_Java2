@@ -151,6 +151,7 @@ public class CollectionController {
     @ResponseBody
     public MyHoardError returnCode(MyHoardException exception, HttpServletResponse response) {
         response.setStatus(exception.getResponseStatus());
+        response.setContentType("application/json;charset=UTF-8");
         return exception.toError();
     }
 }

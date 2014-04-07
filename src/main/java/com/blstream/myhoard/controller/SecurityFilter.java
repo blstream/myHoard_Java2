@@ -87,10 +87,12 @@ public class SecurityFilter implements Filter {
                 fc.doFilter(sr, sr1);
         } catch (MyHoardException ex) {
             ((HttpServletResponse)sr1).setStatus(ex.getResponseStatus());
+            ((HttpServletResponse)sr1).setHeader("Content-Type", "application/json;charset=UTF-8");
             OutputStream out = sr1.getOutputStream();
             out.write(ex.toError().toString().getBytes());
         } catch (Throwable ex) {
             ((HttpServletResponse)sr1).setStatus(400);
+            ((HttpServletResponse)sr1).setHeader("Content-Type", "application/json;charset=UTF-8");
             OutputStream out = sr1.getOutputStream();
             Throwable cause = ex;
             while (cause.getCause() != null)

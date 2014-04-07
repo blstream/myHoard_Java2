@@ -77,7 +77,7 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
                 .add(Restrictions.eq("id", id))
                 .uniqueResult();
         if (result == null)
-            throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
+            throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącej kolekcji");
         result.setItemsNumber(((Number)session.createQuery("select count(id) from ItemDS where collection = " + result.getId()).uniqueResult()).intValue());
         return result;
     }

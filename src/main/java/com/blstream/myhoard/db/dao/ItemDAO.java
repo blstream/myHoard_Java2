@@ -78,7 +78,7 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
                 .add(Restrictions.eq("id", id))
                 .uniqueResult();
         if (object == null)
-            throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
+            throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego elementu");
         return object;
     }
 
@@ -110,7 +110,7 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
             if(!ids.isEmpty()) {
                 List<MediaDS> media = session.createCriteria(MediaDS.class).add(Restrictions.in("id", ids)).list();
                 if(media.isEmpty())
-                    throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
+                    throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego medium");
                 else
                     for (MediaDS i : media) {
                         i.setItem(obj.getId());
@@ -127,7 +127,7 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
     public void update(ItemDS obj) {
         ItemDS object = get(obj.getId());
         if (object == null)
-            throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
+            throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego elementu");
         object.updateObject(obj);
 
         try {

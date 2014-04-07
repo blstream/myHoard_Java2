@@ -35,7 +35,7 @@ public class MediaDAO implements ResourceDAO<MediaDS> {
     public MediaDS get(int id) {
         MediaDS media = (MediaDS)sessionFactory.getCurrentSession().createCriteria(MediaDS.class).add(Restrictions.eq("id", id)).uniqueResult();
         if (media == null)
-            throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
+            throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego medium");
         return media;
     }
 

@@ -30,7 +30,7 @@ public class UserDAO implements ResourceDAO<UserDS> {
     }
         List<UserDS> result = criteria.list();
         if (result.isEmpty())
-            throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
+            throw new MyHoardException(ErrorCode.NOT_FOUND).add(params.containsKey("email") ? "email" : "username", "Odwołanie do nieistniejącego użytkownika");
         return result;
     }
 
@@ -40,7 +40,7 @@ public class UserDAO implements ResourceDAO<UserDS> {
                 .createCriteria(UserDS.class)
                 .add(Restrictions.eq("id", id)).uniqueResult();
         if (user == null)
-            throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
+            throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego użytkownika");
         return user;
     }    
 

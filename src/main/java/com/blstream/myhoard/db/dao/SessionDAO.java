@@ -37,7 +37,7 @@ public class SessionDAO implements ResourceDAO<SessionDS> {
                 .add(Restrictions.eq("id", id))
                 .uniqueResult();
         if (session == null)
-            throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego zasobu");
+            throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącej sesji");
         return session;
     }
 

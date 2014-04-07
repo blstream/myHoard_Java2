@@ -33,8 +33,10 @@ public class UserDAO implements ResourceDAO<UserDS> {
         Logger.getRootLogger().log(Priority.INFO, criteria.toString());
         List<UserDS> result = criteria.list();
         Logger.getRootLogger().log(Priority.INFO, result.toString());
-        if (result.isEmpty())
+        if (result.isEmpty()) {
+            Logger.getRootLogger().log(Priority.INFO, "Pełna baza:\n" + sessionFactory.getCurrentSession().createCriteria(UserDS.class).list());
             throw new MyHoardException(ErrorCode.NOT_FOUND).add(params.containsKey("email") ? "email" : "username", "Odwołanie do nieistniejącego użytkownika");
+        }
         return result;
     }
 

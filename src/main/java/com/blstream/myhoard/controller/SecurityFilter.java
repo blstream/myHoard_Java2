@@ -89,7 +89,7 @@ public class SecurityFilter implements Filter {
             ((HttpServletResponse)sr1).setStatus(ex.getResponseStatus());
             ((HttpServletResponse)sr1).setHeader("Content-Type", "application/json;charset=UTF-8");
             OutputStream out = sr1.getOutputStream();
-            out.write(ex.toError().toString().getBytes());
+            out.write(ex.toError().toString().getBytes("UTF-8"));
         } catch (Throwable ex) {
             ((HttpServletResponse)sr1).setStatus(400);
             ((HttpServletResponse)sr1).setHeader("Content-Type", "application/json;charset=UTF-8");
@@ -106,7 +106,7 @@ public class SecurityFilter implements Filter {
             } else {
                 String message = cause.toString();
                 message = message.substring(message.indexOf(':') + 1);
-                out.write(("{\"error_message\":\"" + message.replace("\"", "&quot;") + "\"}").getBytes());
+                out.write(("{\"error_message\":\"" + message.replace("\"", "&quot;") + "\"}").getBytes("UTF-8"));
             }
         }
     }

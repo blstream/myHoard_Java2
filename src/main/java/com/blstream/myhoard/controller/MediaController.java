@@ -125,6 +125,6 @@ public class MediaController {
         // @ResponseBody odmawiało posłuszeństwa z niewyjaśnionych powodów
         response.setStatus(exception.getResponseStatus());
         response.setContentType("application/json;charset=UTF-8");
-        response.getOutputStream().write(exception.toError().toString().getBytes());
+        response.getOutputStream().write(exception.toError().toString().getBytes("UTF-8"));
     }
 }

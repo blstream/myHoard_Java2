@@ -6,6 +6,8 @@ import java.util.List;
 import org.hibernate.Session;
 import com.blstream.myhoard.db.model.*;
 import java.util.Map;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
@@ -27,8 +29,10 @@ public class UserDAO implements ResourceDAO<UserDS> {
                 criteria.add(Restrictions.eq("username", params.get("username")));
             else 
                 throw new UnsupportedOperationException("Not supported yet.");
-    }
+        }
+        Logger.getRootLogger().log(Priority.INFO, criteria.toString());
         List<UserDS> result = criteria.list();
+        Logger.getRootLogger().log(Priority.INFO, result.toString());
         if (result.isEmpty())
             throw new MyHoardException(ErrorCode.NOT_FOUND).add(params.containsKey("email") ? "email" : "username", "Odwołanie do nieistniejącego użytkownika");
         return result;

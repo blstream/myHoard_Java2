@@ -101,7 +101,7 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
                     if (((Number)session.createQuery("select count(*) from MediaDS as m where m.item is not null and m.id in (:ids)").setParameterList("ids", ids).iterate().next()).longValue() > 0)
                         throw new MyHoardException(ErrorCode.FORBIDDEN).add("owner", "Próba przepisania Media do innego elementu");
                     if (session.createCriteria(MediaDS.class)
-                            .add(Restrictions.eq("owner", obj.getOwner()))
+                            .add(Restrictions.eq("owner", obj.getOwner().getId()))
                             .add(Restrictions.in("id", ids)).list().size() != ids.size())
                         throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Próba przypisania obcego Media do elementu");
                 }
@@ -142,7 +142,7 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
                 for (MediaDS i : obj.getMedia())
                     media.add(i.getId());
                 if (session.createCriteria(MediaDS.class)
-                            .add(Restrictions.eq("owner", obj.getOwner()))
+                            .add(Restrictions.eq("owner", obj.getOwner().getId()))
                             .add(Restrictions.in("id", media)).list().size() != media.size())
                         throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Próba przypisania obcego Media do elementu");
                 Set<MediaDS> result = new HashSet<>(media.isEmpty() ? Collections.EMPTY_SET : (List<MediaDS>)session.createCriteria(MediaDS.class)

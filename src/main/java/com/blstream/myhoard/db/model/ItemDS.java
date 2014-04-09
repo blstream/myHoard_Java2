@@ -21,7 +21,7 @@ public class ItemDS {
     private Date modified_date;
     private int collection;
     private UserDS owner;
-    private boolean mediaAltered = true;
+    private boolean mediaAltered = false;
 
     public ItemDS() {
         created_date = java.util.Calendar.getInstance().getTime();

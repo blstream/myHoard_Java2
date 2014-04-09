@@ -137,7 +137,7 @@ public class ItemDS {
             latitude = object.latitude;
         if (longitude == null)
             longitude = object.longitude;
-        if (media == null || !object.mediaAltered) {
+        if (media == null || object.mediaAltered) {
             media = object.media;
             mediaAltered = object.mediaAltered;
         }

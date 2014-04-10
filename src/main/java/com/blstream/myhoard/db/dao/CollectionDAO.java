@@ -42,7 +42,7 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
             if ("asc".equals(params.get("sort_dir")))
                 for (String i : (String[])params.get("sort_by"))
                     criteria.addOrder(Order.asc(i));
-            else if ("desc".equals(params.get("dort_dir")))
+            else if ("desc".equals(params.get("sort_dir")))
                 for (String i : (String[])params.get("sort_by"))
                     criteria.addOrder(Order.desc(i));
             else

@@ -19,6 +19,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -89,34 +90,22 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
             if (session.createCriteria(CollectionDS.class)
                     .add(Restrictions.eq("owner", obj.getOwner()))
                     .add(Restrictions.eq("id", obj.getCollection()))
-                    .list().isEmpty())
+                    .uniqueResult() == null)
                 throw new MyHoardException(ErrorCode.FORBIDDEN).add("owner", "Próba zapisania elementu do obcej kolekcji");
 
-            List<Integer> ids = new ArrayList<>();
-            if(!obj.getMedia().isEmpty()) {
+            if (!obj.getMedia().isEmpty()) {
+                List<Integer> media_ids = new ArrayList<>();
+                Set<MediaDS> media;
                 for (MediaDS i : obj.getMedia())
-                    ids.add(i.getId());
-                // czy można to prościej zrealizować?
-                if (!ids.isEmpty()) {
-                    if (((Number)session.createQuery("select count(*) from MediaDS as m where m.item is not null and m.id in (:ids)").setParameterList("ids", ids).iterate().next()).longValue() > 0)
-                        throw new MyHoardException(ErrorCode.FORBIDDEN).add("owner", "Próba przepisania Media do innego elementu");
-                    if (session.createCriteria(MediaDS.class)
+                    media_ids.add(i.getId());
+                if ((media = new HashSet<>(session.createCriteria(MediaDS.class)
                             .add(Restrictions.eq("owner", obj.getOwner().getId()))
-                            .add(Restrictions.in("id", ids)).list().size() != ids.size())
-                        throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Próba przypisania obcego Media do elementu");
-                }
+                            .add(Restrictions.in("id", media_ids)).list()))
+                        .size() != media_ids.size())    // czy wszystkie media są moje?
+                    throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Próba przypisania obcego Media do elementu");
+                obj.setMedia(media);
             }
             session.save(obj);
-            if(!ids.isEmpty()) {
-                List<MediaDS> media = session.createCriteria(MediaDS.class).add(Restrictions.in("id", ids)).list();
-                if(media.isEmpty())
-                    throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego medium");
-                else
-                    for (MediaDS i : media) {
-                        i.setItem(obj.getId());
-                        session.update(i);
-                    }
-            }
         } catch (HibernateException ex) {
             throw new MyHoardException(ex);
         }
@@ -126,8 +115,6 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
     @Override
     public void update(ItemDS obj) {
         ItemDS object = get(obj.getId());
-        if (object == null)
-            throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Odwołanie do nieistniejącego elementu");
         object.updateObject(obj);
 
         try {
@@ -135,29 +122,34 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
             if (session.createCriteria(CollectionDS.class)
                     .add(Restrictions.eq("owner", object.getOwner()))
                     .add(Restrictions.eq("id", object.getCollection()))
-                    .list().isEmpty())
+                    .uniqueResult() == null)
                 throw new MyHoardException(ErrorCode.FORBIDDEN).add("owner", "Próba zapisania elementu do obcej kolekcji");
+
+            List<Integer> media_ids = new ArrayList<>();
+            Set<MediaDS> result, remaining = null;
             if (obj.isMediaAltered()) {
-                List<Integer> media = new ArrayList<>();
                 for (MediaDS i : obj.getMedia())
-                    media.add(i.getId());
-                if (session.createCriteria(MediaDS.class)
+                    media_ids.add(i.getId());
+                if ((result = new HashSet<>(session.createCriteria(MediaDS.class)
                             .add(Restrictions.eq("owner", obj.getOwner().getId()))
-                            .add(Restrictions.in("id", media)).list().size() != media.size())
+                            .add(Restrictions.in("id", media_ids)).list()))
+                        .size() != media_ids.size())
                         throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Próba przypisania obcego Media do elementu");
-                Set<MediaDS> result = new HashSet<>(media.isEmpty() ? Collections.EMPTY_SET : (List<MediaDS>)session.createCriteria(MediaDS.class)
-                    .add(Restrictions.in("id", media))
-                    .list());
-                Set<MediaDS> remaining = object.getMedia();
+
+                remaining = object.getMedia();
                 remaining.removeAll(result);
-                for (MediaDS i : remaining)   // pozostałe media trzeba usunąć
-                    session.delete(i);
-                for (MediaDS i : result)
-                    i.setItem(obj.getId());
                 object.setMedia(result);
             }
             object.setModified_date(Calendar.getInstance().getTime());
             session.update(object);
+            // TODO usuwanie mediów
+//            if (remaining != null)
+//                for (MediaDS i : remaining) // pozostałe media mogą wymagać usunięcia
+//                    try {
+//                        session.delete(i);
+//                    } catch (ConstraintViolationException ex) {
+//                        // któryś element ma jeszcze przypisany
+//                    }
         } catch (HibernateException ex) {
             throw new MyHoardException(ex);
         }
@@ -169,8 +161,11 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
     public void remove(int id) {
         Session session = sessionFactory.getCurrentSession();
         ItemDS item = get(id);
-//        session.createSQLQuery("delete from Media where item = " + item.getId());
+        List<Number> media_ids = session.createSQLQuery("SELECT id FROM Media LEFT JOIN ItemMedia ON Media.id = ItemMedia.media WHERE owner = " + item.getOwner().getId() + " GROUP BY id HAVING COUNT(media) <= 1").list();
         session.delete(item);
+        if (!media_ids.isEmpty())
+            for (MediaDS i : (List<MediaDS>)session.createCriteria(MediaDS.class).add(Restrictions.in("id", media_ids)).list())
+                session.delete(i);
     }
 
     @Override

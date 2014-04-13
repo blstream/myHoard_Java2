@@ -21,8 +21,6 @@ public class MediaDTO {
     @JsonIgnore
     private Date createdDate;
     @JsonIgnore
-    private String item;
-    @JsonIgnore
     private String owner;
 
     public MediaDTO() {
@@ -32,11 +30,10 @@ public class MediaDTO {
         createdDate = java.util.Calendar.getInstance().getTime();
     }
 
-    public MediaDTO(String id, byte[] file, Date createdDate, String item, String owner) {
+    public MediaDTO(String id, byte[] file, Date createdDate, String owner) {
         this.id = id;
         this.file = file;
         this.createdDate = createdDate;
-        this.item = item;
         this.owner = owner;
     }
 
@@ -66,14 +63,6 @@ public class MediaDTO {
         this.createdDate = createdDate;
     }
 
-    public String getItem() {
-        return item;
-    }
-
-    public void setItem(String item) {
-        this.item = item;
-    }
-
     public String getOwner() {
         return owner;
     }
@@ -87,7 +76,6 @@ public class MediaDTO {
             return new MediaDS(Integer.parseInt(id),
                     file == null ? null : new SerialBlob(file),
                     createdDate,
-                    item == null ? null : Integer.parseInt(item),
                     Integer.parseInt(owner));
         } catch (SQLException ex) {
             throw new MyHoardException(new JDBCException("Nieznany błąd", ex));

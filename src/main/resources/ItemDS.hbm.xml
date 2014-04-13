@@ -12,9 +12,9 @@
 		<property name="description" type="string" />
 		<property name="latitude" type="float" />
 		<property name="longitude" type="float" />
-		<set name="media" lazy="false" inverse="true">
-			<key column="item" on-delete="cascade" />
-			<one-to-many class="MediaDS" />
+		<set name="media" table="ItemMedia" lazy="false">
+			<key column="item" />
+			<many-to-many column="media" class="MediaDS" fetch="join" />
 		</set>
 		<property name="created_date" type="timestamp" update="false" />
 		<property name="modified_date" type="timestamp" />

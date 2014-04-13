@@ -4,6 +4,7 @@ import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardError;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.ItemDTO;
+import com.blstream.myhoard.biz.model.MediaDTO;
 import com.blstream.myhoard.biz.model.UserDTO;
 import com.blstream.myhoard.biz.service.ResourceService;
 import java.util.HashMap;
@@ -89,6 +90,8 @@ public class ItemController {
             throw new MyHoardException(ErrorCode.BAD_REQUEST).add(result.getFieldError().getField(), result.getFieldError().getDefaultMessage());
         UserDTO user = (UserDTO)request.getAttribute("user");
         obj.setOwner(user);
+        for (MediaDTO i : obj.getMedia())
+            i.setOwner(user.getId());
         itemService.create(obj);
         return obj;
     }
@@ -101,7 +104,7 @@ public class ItemController {
             UserDTO user = (UserDTO)request.getAttribute("user");
             ItemDTO item = itemService.get(Integer.parseInt(id));
             if (!user.equals(item.getOwner()))
-                throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
+                throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do pobrania elementu");
             return item;
         } catch (NumberFormatException ex) {
             throw new MyHoardException(ErrorCode.BAD_REQUEST).add("id", "Niepoprawny identyfikator.");
@@ -120,9 +123,11 @@ public class ItemController {
             UserDTO user = (UserDTO)request.getAttribute("user");
             ItemDTO item = itemService.get(Integer.parseInt(id));
             if (!user.equals(item.getOwner()))
-                throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
+                throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do modyfikacji elementu");
             obj.setOwner(user);
             obj.setId(id);
+            for (MediaDTO i : obj.getMedia())
+                i.setOwner(user.getId());
             itemService.update(obj);
             return obj;
         } catch (NumberFormatException ex) {
@@ -137,7 +142,7 @@ public class ItemController {
             UserDTO user = (UserDTO)request.getAttribute("user");
             ItemDTO item = itemService.get(Integer.parseInt(id));
             if (!user.equals(item.getOwner()))
-                throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
+                throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do usunięcia elementu");
             itemService.remove(Integer.parseInt(id));
         } catch (NumberFormatException ex) {
             throw new MyHoardException(ErrorCode.BAD_REQUEST).add("id", "Niepoprawny identyfikator.");

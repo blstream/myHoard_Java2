@@ -37,9 +37,12 @@ public class ItemController {
     @RequestMapping(value = "/items", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<ItemDTO> getItems(HttpServletRequest request) {
+    public List<ItemDTO> getItems(@RequestParam(value = "sort_by", defaultValue = "name") String[] fieldName,
+            @RequestParam(value = "sort_direction", defaultValue = "asc") String sortDir, HttpServletRequest request) {
         UserDTO user = (UserDTO)request.getAttribute("user");
         Map<String, Object> params = new HashMap<>();
+        params.put("sort_by", fieldName);
+        params.put("sort_dir", sortDir);
         params.put("option", "list");
         params.put("owner", user.toUserDS());
         return itemService.getList(params);

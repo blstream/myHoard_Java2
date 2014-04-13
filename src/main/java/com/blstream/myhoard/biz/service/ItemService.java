@@ -1,5 +1,7 @@
 package com.blstream.myhoard.biz.service;
 
+import com.blstream.myhoard.biz.exception.ErrorCode;
+import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.ItemDTO;
 import com.blstream.myhoard.db.dao.ResourceDAO;
 import com.blstream.myhoard.db.model.ItemDS;
@@ -24,6 +26,9 @@ public class ItemService implements ResourceService<ItemDTO> {
 
     @Override
     public List<ItemDTO> getList(Map<String, Object> params) {
+        if (params.containsKey("sort_dir") && !"asc".equals(params.get("sort_dir")) && !"desc".equals(params.get("sort_dir")))
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("sort_dir", "Nieprawidłowy porządek: " + params.get("sort_dir"));
+                
         List<ItemDTO> result = new ArrayList<>();
         for (ItemDS i : itemDAO.getList(params))
             result.add(i.toDTO());

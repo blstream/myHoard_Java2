@@ -125,7 +125,7 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
                 throw new MyHoardException(ErrorCode.FORBIDDEN).add("owner", "Próba zapisania elementu do obcej kolekcji");
 
             List<Integer> media_ids = new ArrayList<>();
-            Set<MediaDS> result = Collections.EMPTY_SET, remaining;
+            Set<MediaDS> result;
             if (obj.isMediaAltered()) {
                 for (MediaDS i : obj.getMedia())
                     media_ids.add(i.getId());

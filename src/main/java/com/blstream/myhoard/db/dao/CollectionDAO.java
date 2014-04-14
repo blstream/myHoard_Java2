@@ -153,8 +153,8 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
     public void remove(int id) {
         Session session = sessionFactory.getCurrentSession();
         CollectionDS collection = get(id);
-        List<Number> media_ids = session.createSQLQuery("SELECT id FROM Media LEFT JOIN ItemMedia ON Media.id = ItemMedia.media WHERE owner = " + collection.getOwner().getId() + " GROUP BY id HAVING COUNT(media) <= 1").list();
         session.delete(collection);
+        List<Number> media_ids = session.createSQLQuery("SELECT id FROM Media LEFT JOIN ItemMedia ON Media.id = ItemMedia.media WHERE owner = " + collection.getOwner().getId() + " GROUP BY id HAVING COUNT(media) = 0").list();
         if (!media_ids.isEmpty())
             for (MediaDS i : (List<MediaDS>)session.createCriteria(MediaDS.class).add(Restrictions.in("id", media_ids)).list())
                 session.delete(i);

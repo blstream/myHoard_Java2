@@ -96,6 +96,29 @@ public class UserController {
         return user;
     }
 
+    @RequestMapping(value = "/current", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public UserDTO updateCurrentUser(@RequestBody @Valid UserDTO user, BindingResult result, HttpServletRequest request) {
+        UserDTO currentUser = (UserDTO)request.getAttribute("user");
+        if (user.getUsername() != null && result.hasFieldErrors("username")
+                || user.getEmail() != null && result.hasFieldErrors("email")
+                || user.getPassword()!= null && result.hasFieldErrors("password")) {
+            MyHoardException exception = new MyHoardException(ErrorCode.BAD_REQUEST);
+            if (user.getUsername() != null && result.hasFieldErrors("username"))
+                exception.add("username", result.getFieldError("username").getDefaultMessage());
+            if (result.hasFieldErrors("email"))
+                exception.add("email", "Niepoprawny adres e-mail: " + user.getEmail());
+            if (result.hasFieldErrors("password"))
+                exception.add("password", result.getFieldError("password").getDefaultMessage());
+            throw exception;
+        }
+        user.setId(currentUser.getId());
+        currentUser.updateObject(user);
+        userService.update(user);
+        return user;
+    }
+    
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeUser(@PathVariable String id, HttpServletRequest request) {

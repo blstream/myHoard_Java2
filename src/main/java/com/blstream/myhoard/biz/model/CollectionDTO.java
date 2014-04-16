@@ -21,11 +21,11 @@ public class CollectionDTO {
 
     @NotNull(message = "Nazwa kolekcji jest wymagana")
     @NotEmpty(message = "Nazwa kolekcji jest wymagana")
-    @Size(min = 2, max = 64, message = "Nazwa może zawierać od 2 do 64 znaków")
+    @Size(min = 2, max = 64, message = "Nazwa musi zawierać od 2 do 64 znaków")
     @CheckString(message = "Problem z białymi znakami w nazwie", value = ValidationOpt.COLLECTION_NAME)
     private String name;
 
-    @Size(max = 1024, message = "Opis może się składać z co najwyżej 1024 znaków")
+    @Size(max = 900, message = "Opis może się składać z co najwyżej 900 znaków")
     private String description;
 
     private Set<TagDTO> tags = new HashSet<>(0);

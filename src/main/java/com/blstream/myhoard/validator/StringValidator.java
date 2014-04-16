@@ -22,7 +22,7 @@ public class StringValidator implements ConstraintValidator<CheckString, String>
             return true;
         switch (opt) {
             case ITEM_NAME:
-                return !(t.length() < 2 || t.length() > 100 || (t.length() == 2 && t.trim().length() < 2));
+                return !(t.isEmpty() || t.trim().length() < 2 || t.trim().length() > 100 || t.charAt(0) == ' ' || t.charAt(t.length() - 1) == ' ');
             case COLLECTION_NAME:
                 return !(t.isEmpty() || t.trim().length() < 2 || t.charAt(0) == ' ' || t.charAt(t.length() - 1) == ' ');
             default: return true;

@@ -4,6 +4,7 @@ import com.blstream.myhoard.biz.exception.ErrorCode;
 import com.blstream.myhoard.biz.exception.MyHoardError;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.ItemDTO;
+import com.blstream.myhoard.biz.model.MediaDTO;
 import com.blstream.myhoard.biz.model.UserDTO;
 import com.blstream.myhoard.biz.service.ResourceService;
 import java.util.HashMap;
@@ -89,6 +90,8 @@ public class ItemController {
             throw new MyHoardException(ErrorCode.BAD_REQUEST).add(result.getFieldError().getField(), result.getFieldError().getDefaultMessage());
         UserDTO user = (UserDTO)request.getAttribute("user");
         obj.setOwner(user);
+        for (MediaDTO media : obj.getMedia())
+            media.setOwner(user.getId());
         itemService.create(obj);
         return obj;
     }
@@ -116,6 +119,8 @@ public class ItemController {
             throw new MyHoardException(ErrorCode.BAD_REQUEST).add(
                     obj.getName() != null ? "name" : "collection",
                     result.getFieldError(obj.getName() != null ? "name" : "collection").getDefaultMessage());
+        else if (result.hasFieldErrors("location"))
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("location", result.getFieldError("location").getDefaultMessage());
         try {
             UserDTO user = (UserDTO)request.getAttribute("user");
             ItemDTO item = itemService.get(Integer.parseInt(id));
@@ -123,6 +128,8 @@ public class ItemController {
                 throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");
             obj.setOwner(user);
             obj.setId(id);
+            for (MediaDTO media : obj.getMedia())
+                media.setOwner(user.getId());
             itemService.update(obj);
             return obj;
         } catch (NumberFormatException ex) {

@@ -6,6 +6,7 @@ public class Location {
     private float lng;
 
     public Location() {
+        lat = lng = 0;
     }
 
     public Location(float lat, float lng) {

@@ -5,6 +5,7 @@ import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.db.model.ItemDS;
 import com.blstream.myhoard.db.model.MediaDS;
 import com.blstream.myhoard.validator.CheckString;
+import com.blstream.myhoard.validator.GeographicLocation;
 import com.blstream.myhoard.validator.ValidationOpt;
 import java.util.Date;
 import java.util.HashSet;
@@ -24,13 +25,15 @@ public class ItemDTO {
     @NotNull(message = "Nazwa elementu jest wymagana")
     @NotEmpty(message = "Nazwa elementu jest wymagana")
     @Size(max = 150, message = "Nazwa może zawierać co najwyżej 150 znaków")
-    @CheckString(message = "Problem z białymi znakami w nazwie", value = ValidationOpt.ITEM_NAME)
+    @CheckString(message = "Niepoprawna nazwa (zła długość lub zawiera białe znaki)", value = ValidationOpt.ITEM_NAME)
     private String name;
 
     @Size(max = 1024, message = "Opis może się składać z co najwyżej 1024 znaków")
     private String description;
 
+    @GeographicLocation
     private Location location;
+
     private Set<MediaDTO> media = new HashSet<>(0);
     @JsonIgnore
     private Date createdDate;

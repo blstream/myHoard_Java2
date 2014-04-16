@@ -93,8 +93,13 @@ public class ItemController {
             throw new MyHoardException(ErrorCode.BAD_REQUEST).add(result.getFieldError().getField(), result.getFieldError().getDefaultMessage());
         UserDTO user = (UserDTO)request.getAttribute("user");
         obj.setOwner(user);
+<<<<<<< HEAD
         for (MediaDTO i : obj.getMedia())
             i.setOwner(user.getId());
+=======
+        for (MediaDTO media : obj.getMedia())
+            media.setOwner(user.getId());
+>>>>>>> 54cc325ddb4d86ffa02d00e756ac1ba62df43e5b
         itemService.create(obj);
         return obj;
     }
@@ -131,8 +136,13 @@ public class ItemController {
                 throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do modyfikacji elementu");
             obj.setOwner(user);
             obj.setId(id);
+<<<<<<< HEAD
             for (MediaDTO i : obj.getMedia())
                 i.setOwner(user.getId());
+=======
+            for (MediaDTO media : obj.getMedia())
+                media.setOwner(user.getId());
+>>>>>>> 54cc325ddb4d86ffa02d00e756ac1ba62df43e5b
             itemService.update(obj);
             return obj;
         } catch (NumberFormatException ex) {

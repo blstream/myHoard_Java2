@@ -18,7 +18,7 @@ public class UserDTO {
 
     @NotNull(message = "Adres e-mail jest wymagany")
     @Pattern(message = "Niepoprawny e-mail",
-            regexp = "^[a-zA-Z0-9_]+(\\.[a-zA-Z0-9_]+)*@[a-zA-Z]+(\\.[a-zA-Z]+)+(\\.[a-zA-Z]+)*$")
+            regexp = "^[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)*@[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)+(\\.[a-zA-Z0-9]+)*$")
     private String email;
 
     @Pattern(regexp = "^[a-zA-Z0-9_]+", message = "Nazwa użytkownika może zawierać jedynie litery, cyfry oraz znak _")

@@ -111,6 +111,9 @@
 	<bean id="mediaValidator" class="com.blstream.myhoard.validator.MediaValidator">
 		<property name="mediaService" ref="mediaService" />
 	</bean>                              
+        
+        <bean id="businessProfiler" class="com.blstream.myhoard.aop.BusinessProfiler" />
+        
 	<mvc:annotation-driven />
 
 	<tx:annotation-driven transaction-manager="txManager"/>

@@ -15,6 +15,7 @@ import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +55,11 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
             criteria.setFirstResult((Integer)params.get("start_num"));
         if(params.containsKey("owner"))
             criteria.add(Restrictions.eq("owner", params.get("owner")));
+        if(params.containsKey("name"))
+            criteria.add(Restrictions.disjunction(
+                Restrictions.ilike("name", (String)params.get("name"),MatchMode.ANYWHERE),
+                Restrictions.ilike("description", (String)params.get("name"),MatchMode.ANYWHERE)
+            ));
         List<CollectionDS> result = criteria.list();
         if(!result.isEmpty()) {
             Map<Integer, CollectionDS> map = new HashMap<>();

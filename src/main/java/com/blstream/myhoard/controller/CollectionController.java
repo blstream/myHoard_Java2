@@ -81,6 +81,22 @@ public class CollectionController {
         return result;
     }
 
+    @RequestMapping(method = RequestMethod.GET, params = {"name"})
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<CollectionDTO> findCollections(@RequestParam(value = "name") String name,
+            HttpServletRequest request) {
+        if (name.length() < 2 || name.length() > 20)
+            throw new MyHoardException(ErrorCode.BAD_REQUEST).add("name", "Zbyt krótka/długa nazwa do wyszukiwania");
+        
+            UserDTO user = (UserDTO)request.getAttribute("user");
+            Map<String, Object> params = new HashMap<>();
+            params.put("name", name);
+            params.put("owner", user.toUserDS());
+            return collectionService.getList(params);
+        
+    }
+    
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody

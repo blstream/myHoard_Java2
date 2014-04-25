@@ -54,12 +54,18 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
             criteria.setMaxResults((Integer)params.get("max_count"));
         if (params.containsKey("start_num"))
             criteria.setFirstResult((Integer)params.get("start_num"));
-        if(params.containsKey("owner"))
-            criteria.add(Restrictions.eq("owner", params.get("owner")));
         if(params.containsKey("name"))
             criteria.add(Restrictions.disjunction(
                 Restrictions.ilike("name", (String)params.get("name"),MatchMode.ANYWHERE),
                 Restrictions.ilike("description", (String)params.get("name"),MatchMode.ANYWHERE)
+            ));
+        if(params.containsKey("owner"))
+            criteria.add(Restrictions.or(
+                    Restrictions.eq("owner", params.get("owner")),
+                    Restrictions.conjunction(
+                       Restrictions.eq("isPublic",Boolean.TRUE),
+                       Restrictions.ne("owner", params.get("owner"))
+                     )
             ));
         List<CollectionDS> result = criteria.list();
         if(!result.isEmpty()) {

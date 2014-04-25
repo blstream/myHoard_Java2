@@ -18,6 +18,7 @@ public class CollectionDS {
     private Date created_date_client;
     private Date modified_date_client;
     private UserDS owner;
+    private boolean isPublic;
     private boolean tagsAltered = false;
 
     public CollectionDS() {
@@ -33,6 +34,14 @@ public class CollectionDS {
         this.id = id;
     }
 
+    public boolean getIsPublic() {
+        return isPublic;
+    }
+    
+    public void setIsPublic(boolean isPublic) {
+        this.isPublic = isPublic;
+    }
+    
     public UserDS getOwner() {
         return owner;
     }
@@ -122,6 +131,7 @@ public class CollectionDS {
                 description,
                 set,
                 itemsNumber,
+                isPublic,
                 created_date_client,
                 modified_date_client);
     }
@@ -136,6 +146,7 @@ public class CollectionDS {
         obj.setName(name);
         obj.setDescription(description);
         obj.setTags(set);
+        obj.setIsPublic(isPublic);
         obj.setItemsNumber(itemsNumber);
         obj.setCreatedDate(created_date_client);
         obj.setModifiedDate(modified_date_client);
@@ -151,8 +162,10 @@ public class CollectionDS {
         name = obj.getName();
         description = obj.getDescription();
         itemsNumber = obj.getItemsNumber();
-        created_date_client = (Date)obj.getCreatedDate().clone();
+        isPublic = obj.getIsPublic();
         modified_date_client = (Date)obj.getModifiedDate().clone();
+        created_date = (Date)obj.getCreatedDate().clone();
+        modified_date = (Date)obj.getModifiedDate().clone();
         tagsAltered = obj.isTagsAltered();
     }
 
@@ -169,6 +182,8 @@ public class CollectionDS {
             tags = object.tags;
             tagsAltered = object.tagsAltered;
         }
+        if (isPublic != object.isPublic)
+            isPublic = object.isPublic;
         if (itemsNumber == 0)
             itemsNumber = object.itemsNumber;
         if (object.created_date_client != null)

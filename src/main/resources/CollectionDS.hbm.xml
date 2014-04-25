@@ -14,6 +14,7 @@
 			<key column="collection" />
 			<many-to-many column="tag" class="TagDS" fetch="join" />
 		</set>
+                <property name="isPublic" type="numeric_boolean" />
 		<property name="created_date" type="timestamp" update="false" />
 		<property name="modified_date" type="timestamp" />
 		<many-to-one name="owner" class="UserDS" lazy="false" fetch="join" not-null="true" />

@@ -36,6 +36,7 @@ public class CollectionDTO {
     @JsonIgnore
     private Date modifiedDate;
     private UserDTO owner;
+    private boolean isPublic;
 
     @JsonIgnore
     private boolean tagsAltered = false;
@@ -45,7 +46,7 @@ public class CollectionDTO {
         modifiedDate = (Date) createdDate.clone();
     }
 
-    public CollectionDTO(String id, UserDTO owner, String name, String description, Set<TagDTO> tags, int itemsNumber, Date createdDate, Date modifiedDate) {
+    public CollectionDTO(String id, UserDTO owner, String name, String description, Set<TagDTO> tags, int itemsNumber, boolean isPublic, Date createdDate, Date modifiedDate) {
         this.id = id;
         this.owner = owner;
         this.name = name;
@@ -54,6 +55,7 @@ public class CollectionDTO {
         this.itemsNumber = itemsNumber;
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
+        this.isPublic = isPublic;
     }
 
     @JsonProperty(value = "id")
@@ -66,6 +68,16 @@ public class CollectionDTO {
         this.id = id;
     }
 
+    @JsonProperty(value = "public")
+    public boolean getIsPublic() {
+        return isPublic;
+    }
+    
+    @JsonProperty(value = "public")
+    public void setIsPublic(boolean isPublic) {
+        this.isPublic = isPublic;
+    }
+    
     @JsonProperty(value = "owner")
     @JsonSerialize(using = CustomOwnerSerializer.class)
     public UserDTO getOwner() {
@@ -165,6 +177,7 @@ public class CollectionDTO {
         name = obj.getName();
         description = obj.getDescription();
         itemsNumber = obj.getItemsNumber();
+        isPublic = obj.getIsPublic();
         createdDate = (Date)obj.getCreated_date().clone();
         modifiedDate = (Date)obj.getModified_date().clone();
         tagsAltered = obj.isTagsAltered();
@@ -183,6 +196,8 @@ public class CollectionDTO {
             tags = object.tags;
             tagsAltered = object.tagsAltered;
         }
+        if (object.isPublic != isPublic)
+            isPublic = object.isPublic;
         if (itemsNumber == 0)
             itemsNumber = object.itemsNumber;
     }

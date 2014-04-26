@@ -20,7 +20,7 @@ public class CustomOwnerSerializer extends JsonSerializer<UserDTO> {
 
     @Override
     public void serialize(UserDTO t, JsonGenerator jg, SerializerProvider sp) throws IOException, JsonProcessingException {
-        jg.writeString(t.getUsername());
+        jg.writeString(t.getId());
     }
     
 }

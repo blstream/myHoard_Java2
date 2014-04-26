@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.blstream.myhoard.db.model">
+	<class name="CommentDS" table="Comment">
+		<id name="id" type="int">
+			<generator class="native" />
+		</id>
+		<property name="content" type="string" />
+		<property name="created_date" type="timestamp" update="false" />
+                <property name="collection" type="int" />
+		<many-to-one name="owner" class="UserDS" lazy="false" fetch="join" not-null="true" />
+	</class>
+</hibernate-mapping>

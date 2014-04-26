@@ -42,6 +42,7 @@
 				<value>TagDS.hbm.xml</value>
 				<value>UserDS.hbm.xml</value>
 				<value>SessionDS.hbm.xml</value>
+                                <value>CommentDS.hbm.xml</value>
 			</list>
 		</property>
 	</bean>
@@ -65,6 +66,9 @@
         <bean id="sessionDAO" class="com.blstream.myhoard.db.dao.SessionDAO">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
+       	<bean id="commentDAO" class="com.blstream.myhoard.db.dao.CommentDAO">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean> 
 
 	<bean id="collectionService" class="com.blstream.myhoard.biz.service.CollectionService">
 		<property name="collectionDAO" ref="collectionDAO" />
@@ -113,6 +117,16 @@
 	</bean>                              
         
         <bean id="businessProfiler" class="com.blstream.myhoard.aop.BusinessProfiler" />
+        
+	<bean id="commentController" class="com.blstream.myhoard.controller.CommentController">
+		<property name="commentService" ref="commentService" />
+	</bean>
+        
+
+        
+        <bean id="commentService" class="com.blstream.myhoard.biz.service.CommentService">
+		<property name="commentDAO" ref="commentDAO" />
+	</bean>
         
 	<mvc:annotation-driven />
 

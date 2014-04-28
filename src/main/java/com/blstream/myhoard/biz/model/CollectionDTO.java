@@ -31,9 +31,9 @@ public class CollectionDTO {
     private Set<TagDTO> tags = new HashSet<>(0);
     @JsonIgnore
     private int itemsNumber;
-    @JsonIgnore
+//    @JsonIgnore
     private Date createdDate;
-    @JsonIgnore
+//    @JsonIgnore
     private Date modifiedDate;
     private UserDTO owner;
 
@@ -41,8 +41,8 @@ public class CollectionDTO {
     private boolean tagsAltered = false;
 
     public CollectionDTO() {
-        createdDate = java.util.Calendar.getInstance().getTime();
-        modifiedDate = (Date) createdDate.clone();
+//        createdDate = java.util.Calendar.getInstance().getTime();
+//        modifiedDate = (Date) createdDate.clone();
     }
 
     public CollectionDTO(String id, UserDTO owner, String name, String description, Set<TagDTO> tags, int itemsNumber, Date createdDate, Date modifiedDate) {
@@ -120,7 +120,8 @@ public class CollectionDTO {
         return createdDate;
     }
 
-    @JsonIgnore
+//    @JsonIgnore
+    @JsonProperty(value = "created_date")
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
@@ -131,7 +132,8 @@ public class CollectionDTO {
         return modifiedDate;
     }
 
-    @JsonIgnore
+//    @JsonIgnore
+    @JsonProperty(value = "modified_date")
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
@@ -151,8 +153,8 @@ public class CollectionDTO {
         obj.setDescription(description);
         obj.setTags(set);
         obj.setItemsNumber(itemsNumber);
-        obj.setCreated_date(createdDate);
-        obj.setModified_date(modifiedDate);
+        obj.setCreated_date_client(createdDate);
+        obj.setModified_date_client(modifiedDate);
     }
 
     public void fromDS(CollectionDS obj) {
@@ -165,27 +167,27 @@ public class CollectionDTO {
         name = obj.getName();
         description = obj.getDescription();
         itemsNumber = obj.getItemsNumber();
-        createdDate = (Date)obj.getCreated_date().clone();
-        modifiedDate = (Date)obj.getModified_date().clone();
+        createdDate = (Date)obj.getCreated_date_client().clone();
+        modifiedDate = (Date)obj.getModified_date_client().clone();
         tagsAltered = obj.isTagsAltered();
     }
 
-    public void updateObject(CollectionDTO object) {
-        if (this == object || object == null)
-            return;
-        if (owner == null || object.owner != null && !owner.equals(object.owner))
-            owner = object.owner;
-        if (name == null || !name.equals(object.name))
-            name = object.name;
-        if (description == null || !description.equals(object.description))
-            description = object.description;
-        if (tags == null || !object.tagsAltered) {
-            tags = object.tags;
-            tagsAltered = object.tagsAltered;
-        }
-        if (itemsNumber == 0)
-            itemsNumber = object.itemsNumber;
-    }
+//    public void updateObject(CollectionDTO object) {
+//        if (this == object || object == null)
+//            return;
+//        if (owner == null || object.owner != null && !owner.equals(object.owner))
+//            owner = object.owner;
+//        if (name == null || !name.equals(object.name))
+//            name = object.name;
+//        if (description == null || !description.equals(object.description))
+//            description = object.description;
+//        if (tags == null || !object.tagsAltered) {
+//            tags = object.tags;
+//            tagsAltered = object.tagsAltered;
+//        }
+//        if (itemsNumber == 0)
+//            itemsNumber = object.itemsNumber;
+//    }
 
     @Override
     public String toString() {

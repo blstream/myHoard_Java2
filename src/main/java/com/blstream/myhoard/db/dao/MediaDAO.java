@@ -18,7 +18,7 @@ public class MediaDAO implements ResourceDAO<MediaDS> {
 
     @Override
     public int getTotalCount(String owner) {
-        return ((Number)sessionFactory.getCurrentSession().createQuery("select count(*) from MediaDS where owner = '" + owner + "'").uniqueResult()).intValue();
+        return ((Number)sessionFactory.getCurrentSession().createQuery("select count(*) from MediaDS where owner = " + owner).uniqueResult()).intValue();
     }
 
     @Override

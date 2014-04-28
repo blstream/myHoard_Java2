@@ -33,13 +33,17 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 @RequestMapping(value = "/media")
 public class MediaController {
     
-    @Autowired
+//    @Autowired
     private MediaService mediaService;
     
     private MediaValidator mediaValidator;
     
     public void setMediaValidator(MediaValidator mediaValidator) {
         this.mediaValidator = mediaValidator;
+    }
+
+    public void setMediaService(MediaService mediaService) {
+        this.mediaService = mediaService;
     }
     
     @RequestMapping(method = RequestMethod.GET)

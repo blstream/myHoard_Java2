@@ -16,6 +16,8 @@
 		</set>
 		<property name="created_date" type="timestamp" update="false" />
 		<property name="modified_date" type="timestamp" />
+		<property name="created_date_client" type="timestamp" />
+		<property name="modified_date_client" type="timestamp" />
 		<many-to-one name="owner" class="UserDS" lazy="false" fetch="join" not-null="true" />
 	</class>
 </hibernate-mapping>

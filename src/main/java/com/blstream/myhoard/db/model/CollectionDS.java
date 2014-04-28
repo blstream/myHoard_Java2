@@ -15,6 +15,8 @@ public class CollectionDS {
     private int itemsNumber;
     private Date created_date;
     private Date modified_date;
+    private Date created_date_client;
+    private Date modified_date_client;
     private UserDS owner;
     private boolean tagsAltered = false;
 
@@ -80,6 +82,22 @@ public class CollectionDS {
         this.created_date = created_date;
     }
 
+    public Date getCreated_date_client() {
+        return created_date_client;
+    }
+
+    public void setCreated_date_client(Date created_date_client) {
+        this.created_date_client = created_date_client;
+    }
+
+    public Date getModified_date_client() {
+        return modified_date_client;
+    }
+
+    public void setModified_date_client(Date modified_date_client) {
+        this.modified_date_client = modified_date_client;
+    }
+
     public Date getModified_date() {
         return modified_date;
     }
@@ -104,8 +122,8 @@ public class CollectionDS {
                 description,
                 set,
                 itemsNumber,
-                created_date,
-                modified_date);
+                created_date_client,
+                modified_date_client);
     }
 
     public void toDTO(CollectionDTO obj) {
@@ -119,8 +137,8 @@ public class CollectionDS {
         obj.setDescription(description);
         obj.setTags(set);
         obj.setItemsNumber(itemsNumber);
-        obj.setCreatedDate(created_date);
-        obj.setModifiedDate(modified_date);
+        obj.setCreatedDate(created_date_client);
+        obj.setModifiedDate(modified_date_client);
     }
 
     public void fromDTO(CollectionDTO obj) {
@@ -133,8 +151,8 @@ public class CollectionDS {
         name = obj.getName();
         description = obj.getDescription();
         itemsNumber = obj.getItemsNumber();
-        created_date = (Date)obj.getCreatedDate().clone();
-        modified_date = (Date)obj.getModifiedDate().clone();
+        created_date_client = (Date)obj.getCreatedDate().clone();
+        modified_date_client = (Date)obj.getModifiedDate().clone();
         tagsAltered = obj.isTagsAltered();
     }
 
@@ -153,6 +171,10 @@ public class CollectionDS {
         }
         if (itemsNumber == 0)
             itemsNumber = object.itemsNumber;
+        if (object.created_date_client != null)
+            created_date_client = object.created_date_client;
+        if (object.modified_date_client != null)
+            modified_date_client = object.modified_date_client;
     }
 
     @Override

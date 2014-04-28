@@ -51,10 +51,7 @@ public class CollectionService implements ResourceService<CollectionDTO> {
 
     @Override
     public CollectionDTO get(int id) {
-        CollectionDS obj = collectionDAO.get(id);
-        if (obj == null)
-            return null;
-        return obj.toDTO();
+        return collectionDAO.get(id).toDTO();
     }
 
     @Override

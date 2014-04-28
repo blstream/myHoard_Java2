@@ -35,9 +35,9 @@ public class ItemDTO {
     private Location location;
 
     private Set<MediaDTO> media = new HashSet<>(0);
-    @JsonIgnore
+//    @JsonIgnore
     private Date createdDate;
-    @JsonIgnore
+//    @JsonIgnore
     private Date modifiedDate;
 
     @NotNull(message = "Element musi być przypisany do kolekcji")
@@ -50,8 +50,8 @@ public class ItemDTO {
     private boolean mediaAltered = false;
 
     public ItemDTO() {
-        createdDate = java.util.Calendar.getInstance().getTime();
-        modifiedDate = (Date)createdDate.clone();
+//        createdDate = java.util.Calendar.getInstance().getTime();
+//        modifiedDate = (Date)createdDate.clone();
     }
 
     public ItemDTO(String id, String name, String description, Location location, Set<MediaDTO> media, Date createdDate, Date modifiedDate, String collection, UserDTO owner) {
@@ -115,7 +115,8 @@ public class ItemDTO {
         return createdDate;
     }
 
-    @JsonIgnore
+//    @JsonIgnore
+    @JsonProperty(value = "created_date")
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
@@ -126,7 +127,8 @@ public class ItemDTO {
         return modifiedDate;
     }
 
-    @JsonIgnore
+//    @JsonIgnore
+    @JsonProperty(value = "modified_date")
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }

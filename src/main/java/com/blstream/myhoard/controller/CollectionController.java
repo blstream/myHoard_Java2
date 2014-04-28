@@ -77,7 +77,7 @@ public class CollectionController {
         }
         params.put("owner", user.toUserDS());
         result.setCollections(collectionService.getList(params));
-        result.setTotalCount(collectionService.getTotalCount(user.getUsername()));
+        result.setTotalCount(collectionService.getTotalCount(user.getId()));
         return result;
     }
 

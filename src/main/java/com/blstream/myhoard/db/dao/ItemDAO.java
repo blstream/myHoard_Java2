@@ -104,6 +104,10 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
                     throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Próba przypisania obcego Media do elementu");
                 obj.setMedia(media);
             }
+            if (obj.getCreated_date_client() == null)
+                obj.setCreated_date_client(obj.getCreated_date());
+            if (obj.getModified_date_client() == null)
+                obj.setModified_date_client(obj.getModified_date());
             session.save(obj);
         } catch (HibernateException ex) {
             throw new MyHoardException(ex);
@@ -133,7 +137,7 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
                             .add(Restrictions.eq("owner", obj.getOwner().getId()))
                             .add(Restrictions.in("id", media_ids)).list()))
                         .size() != media_ids.size())
-                        throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Próba przypisania obcego Media do elementu");
+                    throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Próba przypisania obcego Media do elementu");
             }
             object.setModified_date(Calendar.getInstance().getTime());
             session.update(object);

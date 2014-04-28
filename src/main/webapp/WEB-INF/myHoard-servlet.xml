@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xsi:schemaLocation="
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xsi:schemaLocation="
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
@@ -18,6 +18,8 @@
 	<context:component-scan base-package="com.blstream.myhoard.controller" />
 
 	<context:property-placeholder location="file:${catalina.home}/myhoard-conf/application.properties" />
+
+	<aop:aspectj-autoproxy/>
  
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
@@ -59,10 +61,10 @@
 	<bean id="mediaDAO" class="com.blstream.myhoard.db.dao.MediaDAO">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-        <bean id="userDAO" class="com.blstream.myhoard.db.dao.UserDAO">
+	<bean id="userDAO" class="com.blstream.myhoard.db.dao.UserDAO">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-        <bean id="sessionDAO" class="com.blstream.myhoard.db.dao.SessionDAO">
+	<bean id="sessionDAO" class="com.blstream.myhoard.db.dao.SessionDAO">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
@@ -79,7 +81,7 @@
 		<property name="userDAO" ref="userDAO" />               
 	</bean>     
         
-        <bean id="sessionService" class="com.blstream.myhoard.biz.service.SessionService">
+	<bean id="sessionService" class="com.blstream.myhoard.biz.service.SessionService">
 		<property name="sessionDAO" ref="sessionDAO" />
 	</bean>
 
@@ -92,17 +94,17 @@
 	<bean id="userController" class="com.blstream.myhoard.controller.UserController">
 		<property name="userService" ref="userService" />
 	</bean>
-        <bean id="tokenController" class="com.blstream.myhoard.controller.TokenController">
+	<bean id="tokenController" class="com.blstream.myhoard.controller.TokenController">
 		<property name="userService" ref="userService" />
-                <property name="sessionService" ref="sessionService" />
+		<property name="sessionService" ref="sessionService" />
 	</bean>
 
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
 
 	<bean id="securityFilter" class="com.blstream.myhoard.controller.SecurityFilter" >        
 		<property name="sessionService" ref="sessionService" />
-                <property name="userService" ref="userService" />
-        </bean>
+		<property name="userService" ref="userService" />
+	</bean>
         
 	<bean id="mediaController" class="com.blstream.myhoard.controller.MediaController">
 		<property name="mediaValidator" ref="mediaValidator" />
@@ -110,7 +112,10 @@
   
 	<bean id="mediaValidator" class="com.blstream.myhoard.validator.MediaValidator">
 		<property name="mediaService" ref="mediaService" />
-	</bean>                              
+	</bean>
+
+	<bean id="countingAspect" class="com.blstream.myhoard.aspect.CountingAspect" />
+
 	<mvc:annotation-driven />
 
 	<tx:annotation-driven transaction-manager="txManager"/>

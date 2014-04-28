@@ -8,6 +8,7 @@ import com.blstream.myhoard.db.model.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -31,7 +32,7 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
 
     @Override
     public int getTotalCount(String owner) {
-        return ((Number)sessionFactory.getCurrentSession().createQuery("select count(*) from CollectionDS where owner = '" + owner + "'").uniqueResult()).intValue();
+        return ((Number)sessionFactory.getCurrentSession().createQuery("select count(*) from CollectionDS where owner = " + owner).uniqueResult()).intValue();
     }
 
     @Override
@@ -85,6 +86,10 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
     @Override
     public void create(CollectionDS obj) {
         try {
+            if (obj.getCreated_date_client() == null)
+                obj.setCreated_date_client(obj.getCreated_date());
+            if (obj.getModified_date_client() == null)
+                obj.setModified_date_client(obj.getModified_date());
             Session session = sessionFactory.getCurrentSession();
             if (obj.isTagsAltered()) {
                 List<String> tags = new ArrayList<>();
@@ -137,6 +142,7 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
                 object.setTags(result);
             }
             object.setModified_date(Calendar.getInstance().getTime());
+            object.setModified_date_client((Date)object.getModified_date().clone());
             session.update(object);
         } catch (HibernateException ex) {
             throw new MyHoardException(ex);
@@ -147,6 +153,8 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
         obj.setTags(object.getTags());
         obj.setCreated_date(object.getCreated_date());
         obj.setModified_date(object.getModified_date());
+        obj.setCreated_date_client(object.getCreated_date_client());
+        obj.setModified_date_client(object.getModified_date_client());
     }
 
     @Override

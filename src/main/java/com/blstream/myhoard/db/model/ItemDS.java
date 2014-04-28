@@ -19,6 +19,8 @@ public class ItemDS {
     private Set<MediaDS> media = new HashSet<>(0);
     private Date created_date;
     private Date modified_date;
+    private Date created_date_client;
+    private Date modified_date_client;
     private int collection;
     private UserDS owner;
     private boolean mediaAltered = false;
@@ -29,14 +31,15 @@ public class ItemDS {
     }
 
     public ItemDS(int id, String name, String description, Float latitude, Float longitude, Set<MediaDS> media, Date createdDate, Date modifiedDate, int collection, UserDS owner) {
+        this();
         this.id = id;
         this.name = name;
         this.description = description;
         this.latitude = latitude;
         this.longitude = longitude;
         this.media = media;
-        this.created_date = createdDate;
-        this.modified_date = modifiedDate;
+        this.created_date_client = createdDate;
+        this.modified_date_client = modifiedDate;
         this.collection = collection;
         this.owner = owner;
     }
@@ -106,6 +109,22 @@ public class ItemDS {
         this.modified_date = modified_date;
     }
 
+    public Date getCreated_date_client() {
+        return created_date_client;
+    }
+
+    public void setCreated_date_client(Date created_date_client) {
+        this.created_date_client = created_date_client;
+    }
+
+    public Date getModified_date_client() {
+        return modified_date_client;
+    }
+
+    public void setModified_date_client(Date modified_date_client) {
+        this.modified_date_client = modified_date_client;
+    }
+
     public int getCollection() {
         return collection;
     }
@@ -143,6 +162,10 @@ public class ItemDS {
         }
         if (object.collection != -1)
             collection = object.collection;
+        if (object.created_date_client != null)
+            created_date_client = object.created_date_client;
+        if (object.modified_date_client != null)
+            modified_date_client = object.modified_date_client;
     }
 
     public ItemDTO toDTO() {
@@ -155,8 +178,8 @@ public class ItemDS {
                 description,
                 latitude == null || longitude == null ? null : new Location(latitude, longitude),
                 set,
-                created_date,
-                modified_date,
+                created_date_client == null ? created_date : created_date_client,
+                modified_date_client == null ? modified_date : modified_date_client,
                 Integer.toString(collection),
                 owner.toUserDTO());
     }
@@ -173,8 +196,8 @@ public class ItemDS {
         obj.setDescription(description);
         obj.setLocation(latitude == null || longitude == null ? null : new Location(latitude, longitude));
         obj.setMedia(set);
-        obj.setCreatedDate(created_date);
-        obj.setModifiedDate(modified_date);
+        obj.setCreatedDate(created_date_client == null ? created_date : created_date_client);
+        obj.setModifiedDate(modified_date_client == null ? modified_date : modified_date_client);
         obj.setCollection(Integer.toString(collection));
         obj.setOwner(owner.toUserDTO());
     }
@@ -196,8 +219,8 @@ public class ItemDS {
             latitude = obj.getLocation().getLat();
             longitude = obj.getLocation().getLng();
         }
-        created_date = obj.getCreatedDate();
-        modified_date = obj.getModifiedDate();
+        created_date_client = obj.getCreatedDate();
+        modified_date_client = obj.getModifiedDate();
         try {
             collection = Integer.parseInt(obj.getCollection());
         } catch (NumberFormatException ex) {

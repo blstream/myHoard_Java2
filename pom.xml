@@ -5,7 +5,7 @@
     <groupId>com.blstream.myhoard</groupId>
     <artifactId>MyHoardJava2</artifactId>
     <packaging>war</packaging>
-    <version>5.0.0</version>
+    <version>6.0.0</version>
     <name>MyHoardJava2 Maven Webapp</name>
     <url>http://maven.apache.org</url>
 
@@ -13,6 +13,7 @@
         <commitNumber></commitNumber>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>4.0.1.RELEASE</spring.version>
+		<aspectj.version>1.6.11</aspectj.version>
         <jackson.version>1.9.10</jackson.version>
         <jdk.version>1.7</jdk.version>
         <maven.compiler.source>1.7</maven.compiler.source>
@@ -57,6 +58,25 @@
             <artifactId>spring-orm</artifactId>
             <version>${spring.version}</version>
         </dependency>
+
+        <dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aop</artifactId>
+				<version>${spring.version}</version>
+		</dependency>
+
+		<!-- ASPECTJ -->
+		<dependency>
+				<groupId>org.aspectj</groupId>
+				<artifactId>aspectjrt</artifactId>
+				<version>${aspectj.version}</version>
+		</dependency>
+
+		<dependency>
+				<groupId>org.aspectj</groupId>
+				<artifactId>aspectjweaver</artifactId>
+				<version>${aspectj.version}</version>
+		</dependency>
  
         <!-- Jackson JSON Mapper -->
         <dependency>

@@ -186,25 +186,6 @@ public class CollectionDTO {
         tagsAltered = obj.isTagsAltered();
     }
 
-//    public void updateObject(CollectionDTO object) {
-//        if (this == object || object == null)
-//            return;
-//        if (owner == null || object.owner != null && !owner.equals(object.owner))
-//            owner = object.owner;
-//        if (name == null || !name.equals(object.name))
-//            name = object.name;
-//        if (description == null || !description.equals(object.description))
-//            description = object.description;
-//        if (tags == null || !object.tagsAltered) {
-//            tags = object.tags;
-//            tagsAltered = object.tagsAltered;
-//        }
-//        if (object.isPublic != isPublic)
-//            isPublic = object.isPublic;
-//        if (itemsNumber == 0)
-//            itemsNumber = object.itemsNumber;
-//    }
-
     @Override
     public String toString() {
         return String.format("id: %d, owner: %s, name: %s, description: %s, tags: %s, itemsNumber: %d, createdDate: %s, modifiedDate: %s\n",

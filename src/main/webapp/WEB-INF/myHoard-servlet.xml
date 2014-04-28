@@ -120,16 +120,15 @@
 
 	<bean id="businessProfiler" class="com.blstream.myhoard.aop.BusinessProfiler" />
 	<bean id="countingAspect" class="com.blstream.myhoard.aspect.CountingAspect" />
-        
+
 	<bean id="commentController" class="com.blstream.myhoard.controller.CommentController">
 		<property name="commentService" ref="commentService" />
 	</bean>
-        
+
 	<bean id="commentService" class="com.blstream.myhoard.biz.service.CommentService">
 		<property name="commentDAO" ref="commentDAO" />
 	</bean>
-        
-        
+
 	<mvc:annotation-driven />
 
 	<tx:annotation-driven transaction-manager="txManager"/>

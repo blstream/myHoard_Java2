@@ -140,6 +140,8 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
                     throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Próba przypisania obcego Media do elementu");
             }
             object.setModified_date(Calendar.getInstance().getTime());
+            if (obj.getModified_date_client() == null)
+                object.setModified_date_client(obj.getModified_date());
             session.update(object);
             // TODO usuwanie ewentualnych odpiętych mediów
 

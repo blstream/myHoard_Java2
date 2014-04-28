@@ -14,7 +14,7 @@
 			<key column="collection" />
 			<many-to-many column="tag" class="TagDS" fetch="join" />
 		</set>
-                <property name="isPublic" type="numeric_boolean" />
+        <property name="visible" type="boolean" />
 		<property name="created_date" type="timestamp" update="false" />
 		<property name="modified_date" type="timestamp" />
 		<property name="created_date_client" type="timestamp" />

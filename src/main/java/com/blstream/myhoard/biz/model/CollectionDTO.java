@@ -36,7 +36,7 @@ public class CollectionDTO {
 //    @JsonIgnore
     private Date modifiedDate;
     private UserDTO owner;
-    private boolean isPublic;
+    private boolean visible;
 
     @JsonIgnore
     private boolean tagsAltered = false;
@@ -46,7 +46,7 @@ public class CollectionDTO {
 //        modifiedDate = (Date) createdDate.clone();
     }
 
-    public CollectionDTO(String id, UserDTO owner, String name, String description, Set<TagDTO> tags, int itemsNumber, boolean isPublic, Date createdDate, Date modifiedDate) {
+    public CollectionDTO(String id, UserDTO owner, String name, String description, Set<TagDTO> tags, int itemsNumber, boolean visible, Date createdDate, Date modifiedDate) {
         this.id = id;
         this.owner = owner;
         this.name = name;
@@ -55,7 +55,7 @@ public class CollectionDTO {
         this.itemsNumber = itemsNumber;
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
-        this.isPublic = isPublic;
+        this.visible = visible;
     }
 
     @JsonProperty(value = "id")
@@ -69,13 +69,13 @@ public class CollectionDTO {
     }
 
     @JsonProperty(value = "public")
-    public boolean getIsPublic() {
-        return isPublic;
+    public boolean getVisible() {
+        return visible;
     }
     
     @JsonProperty(value = "public")
-    public void setIsPublic(boolean isPublic) {
-        this.isPublic = isPublic;
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
     
     @JsonProperty(value = "owner")
@@ -165,6 +165,7 @@ public class CollectionDTO {
         obj.setDescription(description);
         obj.setTags(set);
         obj.setItemsNumber(itemsNumber);
+        obj.setVisible(visible);
         obj.setCreated_date_client(createdDate);
         obj.setModified_date_client(modifiedDate);
     }
@@ -179,8 +180,9 @@ public class CollectionDTO {
         name = obj.getName();
         description = obj.getDescription();
         itemsNumber = obj.getItemsNumber();
-        isPublic = obj.getIsPublic();
-        modifiedDate = (Date)obj.getModified_date_client().clone();
+        visible = obj.getVisible();
+        createdDate = obj.getCreated_date_client();
+        modifiedDate = obj.getModified_date_client();
         tagsAltered = obj.isTagsAltered();
     }
 
@@ -199,7 +201,6 @@ public class CollectionDTO {
 //        }
 //        if (object.isPublic != isPublic)
 //            isPublic = object.isPublic;
-//    }
 //        if (itemsNumber == 0)
 //            itemsNumber = object.itemsNumber;
 //    }

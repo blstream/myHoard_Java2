@@ -63,7 +63,7 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
             criteria.add(Restrictions.or(
                     Restrictions.eq("owner", params.get("owner")),
                     Restrictions.conjunction(
-                       Restrictions.eq("isPublic",Boolean.TRUE),
+                       Restrictions.eq("visible", Boolean.TRUE),
                        Restrictions.ne("owner", params.get("owner"))
                      )
             ));
@@ -154,7 +154,8 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
                 object.setTags(result);
             }
             object.setModified_date(Calendar.getInstance().getTime());
-            object.setModified_date_client((Date)object.getModified_date().clone());
+            if (obj.getModified_date_client() == null)
+                object.setModified_date_client(obj.getModified_date());
             session.update(object);
         } catch (HibernateException ex) {
             throw new MyHoardException(ex);

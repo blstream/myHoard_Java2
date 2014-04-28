@@ -60,6 +60,8 @@ public class CollectionService implements ResourceService<CollectionDTO> {
         collection.fromDTO(obj);
         collectionDAO.create(collection);
         obj.setId(Integer.toString(collection.getId()));
+        obj.setCreatedDate(collection.getCreated_date_client());
+        obj.setModifiedDate(collection.getModified_date_client());
     }
 
     @Override

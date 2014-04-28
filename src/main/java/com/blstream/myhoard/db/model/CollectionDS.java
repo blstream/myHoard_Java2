@@ -18,7 +18,7 @@ public class CollectionDS {
     private Date created_date_client;
     private Date modified_date_client;
     private UserDS owner;
-    private boolean isPublic;
+    private boolean visible;
     private boolean tagsAltered = false;
 
     public CollectionDS() {
@@ -34,12 +34,12 @@ public class CollectionDS {
         this.id = id;
     }
 
-    public boolean getIsPublic() {
-        return isPublic;
+    public boolean getVisible() {
+        return visible;
     }
     
-    public void setIsPublic(boolean isPublic) {
-        this.isPublic = isPublic;
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
     
     public UserDS getOwner() {
@@ -131,7 +131,7 @@ public class CollectionDS {
                 description,
                 set,
                 itemsNumber,
-                isPublic,
+                visible,
                 created_date_client,
                 modified_date_client);
     }
@@ -146,7 +146,7 @@ public class CollectionDS {
         obj.setName(name);
         obj.setDescription(description);
         obj.setTags(set);
-        obj.setIsPublic(isPublic);
+        obj.setVisible(visible);
         obj.setItemsNumber(itemsNumber);
         obj.setCreatedDate(created_date_client);
         obj.setModifiedDate(modified_date_client);
@@ -162,10 +162,9 @@ public class CollectionDS {
         name = obj.getName();
         description = obj.getDescription();
         itemsNumber = obj.getItemsNumber();
-        isPublic = obj.getIsPublic();
-        modified_date_client = (Date)obj.getModifiedDate().clone();
-        created_date = (Date)obj.getCreatedDate().clone();
-        modified_date = (Date)obj.getModifiedDate().clone();
+        visible = obj.getVisible();
+        created_date_client = obj.getCreatedDate();
+        modified_date_client = obj.getModifiedDate();
         tagsAltered = obj.isTagsAltered();
     }
 
@@ -182,8 +181,8 @@ public class CollectionDS {
             tags = object.tags;
             tagsAltered = object.tagsAltered;
         }
-        if (isPublic != object.isPublic)
-            isPublic = object.isPublic;
+        if (visible != object.visible)
+            visible = object.visible;
         if (itemsNumber == 0)
             itemsNumber = object.itemsNumber;
         if (object.created_date_client != null)

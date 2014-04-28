@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS User (
+	id INT AUTO_INCREMENT,
+	email VARCHAR(254) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL,
+	username VARCHAR(254) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL,
+	password CHAR(64) CHARACTER SET ascii COLLATE ascii_bin,
+
+	PRIMARY KEY(id),
+	UNIQUE(email),
+	UNIQUE(username)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE = utf8_polish_ci;
+

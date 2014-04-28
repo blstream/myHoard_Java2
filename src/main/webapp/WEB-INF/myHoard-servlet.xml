@@ -129,6 +129,7 @@
 		<property name="commentDAO" ref="commentDAO" />
 	</bean>
         
+        
 	<mvc:annotation-driven />
 
 	<tx:annotation-driven transaction-manager="txManager"/>

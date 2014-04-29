@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
-@RequestMapping(value = "/collections")
+//@RequestMapping(value = "/collections")
 public class CollectionController {
 
     private ResourceService<CollectionDTO> collectionService;
@@ -42,7 +42,7 @@ public class CollectionController {
      * @param sortDir   - w jakim kierunku ("asc" lub "desc"; domyślnie "asc")
      * @return Lista kolekcji.
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "/collections", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<CollectionDTO> getCollections(@RequestParam(value = "sort_by", defaultValue = "name") String[] fieldName,
@@ -55,11 +55,37 @@ public class CollectionController {
             if (name.length() < 2 || name.length() > 20 )
                 throw new MyHoardException(ErrorCode.BAD_REQUEST).add("name", "Zbyt krótka/długa nazwa do wyszukiwania");
         }
+        params.put("options","all");
         params.put("sort_by", fieldName);
         params.put("sort_dir", sortDir);
         params.put("owner", user.toUserDS());
         return collectionService.getList(params);
     }
+    
+    @RequestMapping(value = "/users/{id}/collections", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<CollectionDTO> getUsersCollections(@PathVariable String Id, @RequestParam(value = "sort_by", defaultValue = "name") String[] fieldName,
+            @RequestParam(value = "sort_direction", defaultValue = "asc") String sortDir,
+            @RequestParam(value = "name", required = false) String name, HttpServletRequest request) {
+        UserDTO user =(UserDTO) request.getAttribute("user");
+        Map<String, Object> params = new HashMap<>();
+        if(name!=null) {
+            params.put("name",name);
+            if (name.length() < 2 || name.length() > 20 )
+                throw new MyHoardException(ErrorCode.BAD_REQUEST).add("name", "Zbyt krótka/długa nazwa do wyszukiwania");
+        }
+        if(Id.equals(user.getId())) {
+            params.put("options","current");
+        } else {
+            params.put("options", "user");
+        }
+        params.put("sort_by", fieldName);
+        params.put("sort_dir", sortDir);
+        params.put("owner", user.toUserDS());
+        return collectionService.getList(params);
+    }
+    
 
     /**
      * Obsługa stronicowania.
@@ -67,7 +93,7 @@ public class CollectionController {
      * @param startNum - od którego elementu zacząć
      * @return Wynik stronicowania.
      */
-    @RequestMapping(method = RequestMethod.GET, params = {"max_count"})
+    @RequestMapping(value = "/collections", method = RequestMethod.GET, params = {"max_count"})
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public SortResult listCollections(@RequestParam(value = "max_count", defaultValue = "2147483647") String maxCount,
@@ -103,7 +129,7 @@ public class CollectionController {
         
     }*/
     
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "/collections", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public CollectionDTO addCollection(@RequestBody @Valid CollectionDTO collection, BindingResult result,HttpServletRequest request) {
@@ -115,7 +141,7 @@ public class CollectionController {
         return collection;
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/collections/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public CollectionDTO getCollection(@PathVariable String id, HttpServletRequest request) {
@@ -131,7 +157,7 @@ public class CollectionController {
         }
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/collections/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public CollectionDTO updateCollection(@PathVariable String id, @Valid @RequestBody CollectionDTO collection, BindingResult result, HttpServletRequest request) {
@@ -154,7 +180,7 @@ public class CollectionController {
         }
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/collections/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeCollection(@PathVariable String id, HttpServletRequest request) {
         try {

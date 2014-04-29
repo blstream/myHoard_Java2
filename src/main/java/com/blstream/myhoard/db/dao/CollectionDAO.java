@@ -58,14 +58,24 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
                 Restrictions.ilike("name", (String)params.get("name"),MatchMode.ANYWHERE),
                 Restrictions.ilike("description", (String)params.get("name"),MatchMode.ANYWHERE)
             ));
-        if(params.containsKey("owner"))
+        if(params.get("options").equals("all")) {
             criteria.add(Restrictions.or(
-                    Restrictions.eq("owner", params.get("owner")),
-                    Restrictions.conjunction(
-                       Restrictions.eq("visible", Boolean.TRUE),
-                       Restrictions.ne("owner", params.get("owner"))
-                     )
+                Restrictions.eq("owner", params.get("owner")),
+                Restrictions.conjunction(
+                    Restrictions.eq("visible", Boolean.TRUE),
+                    Restrictions.ne("owner", params.get("owner"))
+                )
             ));
+        }else if(params.get("options").equals("current")) {
+            criteria.add(Restrictions.eq("owner",params.get("owner")));
+        }else if(params.get("options").equals("user")) {
+            criteria.add(Restrictions.conjunction(
+                Restrictions.eq("owner",params.get("owner")),
+                Restrictions.eq("visible", Boolean.TRUE)
+            ));               
+                
+        }
+        
         List<CollectionDS> result = criteria.list();
         if(!result.isEmpty()) {
             Map<Integer, CollectionDS> map = new HashMap<>();

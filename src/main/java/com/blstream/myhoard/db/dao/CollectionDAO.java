@@ -69,8 +69,10 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
         }else if(params.get("options").equals("current")) {
             criteria.add(Restrictions.eq("owner",params.get("owner")));
         }else if(params.get("options").equals("user")) {
+            UserDS tmp = new UserDS();
+            tmp.setId(Integer.parseInt(params.get("userId")));
             criteria.add(Restrictions.conjunction(
-                Restrictions.eq("owner",params.get("owner")),
+                Restrictions.eq("owner",tmp),
                 Restrictions.eq("visible", Boolean.TRUE)
             ));               
                 

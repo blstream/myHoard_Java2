@@ -65,7 +65,7 @@ public class CollectionController {
     @RequestMapping(value = "/users/{id}/collections", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<CollectionDTO> getUsersCollections(@PathVariable String Id, @RequestParam(value = "sort_by", defaultValue = "name") String[] fieldName,
+    public List<CollectionDTO> getUsersCollections(@PathVariable String id, @RequestParam(value = "sort_by", defaultValue = "name") String[] fieldName,
             @RequestParam(value = "sort_direction", defaultValue = "asc") String sortDir,
             @RequestParam(value = "name", required = false) String name, HttpServletRequest request) {
         UserDTO user =(UserDTO) request.getAttribute("user");
@@ -75,10 +75,11 @@ public class CollectionController {
             if (name.length() < 2 || name.length() > 20 )
                 throw new MyHoardException(ErrorCode.BAD_REQUEST).add("name", "Zbyt krótka/długa nazwa do wyszukiwania");
         }
-        if(Id.equals(user.getId())) {
+        if(id.equals(user.getId())) {
             params.put("options","current");
         } else {
             params.put("options", "user");
+            params.put("userId", id);
         }
         params.put("sort_by", fieldName);
         params.put("sort_dir", sortDir);

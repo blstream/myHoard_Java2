@@ -2,6 +2,7 @@ package com.blstream.myhoard.db.model;
 
 import com.blstream.myhoard.biz.model.UserDTO;
 import com.blstream.myhoard.controller.TokenController;
+import java.util.Set;
 
 public class UserDS {
 
@@ -9,6 +10,7 @@ public class UserDS {
     private String email;
     private String username;
     private String password;
+    private Set<CollectionDS> favourites;
 
     public UserDS() {}
 
@@ -51,6 +53,14 @@ public class UserDS {
         this.password = password;
     }
 
+    public Set<CollectionDS> getFavourites() {
+        return favourites;
+    }
+
+    public void setFavourites(Set<CollectionDS> favourites) {
+        this.favourites = favourites;
+    }
+
     public void updateObject(UserDS object) {
         if (this == object || object == null) {
             return;
@@ -64,6 +74,8 @@ public class UserDS {
         if (password == null || object.password != null && !password.equals(object.password)) {
             password = object.password;
         }
+        if (favourites == null || object.favourites != null && !favourites.equals(object.favourites))
+            favourites = object.favourites;
     }
     
     public UserDTO toUserDTO() {

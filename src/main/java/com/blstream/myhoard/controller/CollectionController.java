@@ -75,7 +75,7 @@ public class CollectionController {
             if (name.length() < 2 || name.length() > 20 )
                 throw new MyHoardException(ErrorCode.BAD_REQUEST).add("name", "Zbyt krótka/długa nazwa do wyszukiwania");
         }
-        if(Id.equals(user.getId())) {
+        if(id.equals(user.getId())) {
             params.put("options","current");
         } else {
             params.put("options", "user");

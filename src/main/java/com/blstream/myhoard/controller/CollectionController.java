@@ -79,6 +79,7 @@ public class CollectionController {
             params.put("options","current");
         } else {
             params.put("options", "user");
+            params.put("userId", id);
         }
         params.put("sort_by", fieldName);
         params.put("sort_dir", sortDir);

@@ -54,10 +54,9 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
         if (params.containsKey("start_num"))
             criteria.setFirstResult((Integer)params.get("start_num"));
         if (params.containsKey("name"))
-            criteria.add(Restrictions.disjunction(
-                Restrictions.ilike("name", (String)params.get("name"), MatchMode.ANYWHERE),
-                Restrictions.ilike("description", (String)params.get("name"), MatchMode.ANYWHERE)
-            ));
+            criteria.add(
+                Restrictions.ilike("name", (String)params.get("name"), MatchMode.ANYWHERE)
+            );
         if (params.get("options").equals("all")) {
             criteria.add(Restrictions.or(
                 Restrictions.eq("owner", params.get("owner")),

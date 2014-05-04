@@ -24,7 +24,7 @@ public class SessionDTO {
     @JsonProperty("refresh_token")
     private String refreshToken;
 
-    @JsonIgnore
+    @JsonProperty("user_id")
     private String userId;
     
     public SessionDTO() {

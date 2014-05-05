@@ -1,7 +1,10 @@
 package com.blstream.myhoard.db.model;
 
+import com.blstream.myhoard.biz.model.CollectionDTO;
 import com.blstream.myhoard.biz.model.UserDTO;
 import com.blstream.myhoard.controller.TokenController;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class UserDS {
@@ -74,12 +77,22 @@ public class UserDS {
         if (password == null || object.password != null && !password.equals(object.password)) {
             password = object.password;
         }
-        if (favourites == null || object.favourites != null && !favourites.equals(object.favourites))
-            favourites = object.favourites;
     }
     
     public UserDTO toUserDTO() {
         return new UserDTO(Integer.toString(id), email, username, password);
+    }
+
+    public UserDTO toUserDTO(boolean fetchFavourites, boolean ownFavourites) {
+        UserDTO user = toUserDTO();
+        if (fetchFavourites) {
+            List<CollectionDTO> favs = new ArrayList<>();
+            for (CollectionDS c : favourites)
+                if (ownFavourites || c.isVisible())
+                    favs.add(c.toDTO());
+            user.setFavourites(favs);
+        }
+        return user;
     }
 
     @Override
@@ -89,5 +102,4 @@ public class UserDS {
                 "\nmail: " + this.email +
                 "\npassword: " + this.password);
     }
-    
 }

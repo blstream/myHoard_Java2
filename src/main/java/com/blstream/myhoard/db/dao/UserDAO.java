@@ -5,9 +5,10 @@ import com.blstream.myhoard.biz.exception.MyHoardException;
 import java.util.List;
 import org.hibernate.Session;
 import com.blstream.myhoard.db.model.*;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
-import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
+import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
@@ -27,15 +28,47 @@ public class UserDAO implements ResourceDAO<UserDS> {
                 criteria.add(Restrictions.eq("email", params.get("email")));
             else if (params.containsKey("username"))
                 criteria.add(Restrictions.eq("username", params.get("username")));
+            else if (params.containsKey("id"))
+                criteria.add(Restrictions.eq("id", params.get("id")));
             else 
                 throw new UnsupportedOperationException("Not supported yet.");
         }
-        Logger.getRootLogger().log(Priority.INFO, criteria.toString());
         List<UserDS> result = criteria.list();
-        Logger.getRootLogger().log(Priority.INFO, result.toString());
-        if (result.isEmpty()) {
-            Logger.getRootLogger().log(Priority.INFO, "Pełna baza:\n" + sessionFactory.getCurrentSession().createCriteria(UserDS.class).list());
-            throw new MyHoardException(ErrorCode.NOT_FOUND).add(params.containsKey("email") ? "email" : "username", "Odwołanie do nieistniejącego użytkownika");
+        if (result.isEmpty())
+            throw new MyHoardException(ErrorCode.NOT_FOUND).add(params.containsKey("email") ? "email" : params.containsKey("username") ? "username" : "id", "Odwołanie do nieistniejącego użytkownika");
+        if (params.containsKey("fetch_favourites")) {
+            UserDS user = result.get(0);
+            Set<CollectionDS> favourites = new HashSet<>();
+            for (CollectionDS c : user.getFavourites())
+                favourites.add(c);
+            user.setFavourites(favourites);
+        }
+        if (params.containsKey("add_collection")) {
+            UserDS user = result.get(0);
+            CollectionDS collection = new CollectionDS();
+            collection.setId((Integer)params.get("add_collection"));
+            if (!user.getFavourites().contains(collection)) {
+                collection = (CollectionDS)sessionFactory.getCurrentSession().createCriteria(CollectionDS.class).add(Restrictions.eq("id", collection.getId())).uniqueResult();
+                if (collection == null)
+                    throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Brak kolekcji o podanym id");
+                else if (collection.isVisible() == false && user.getId() != collection.getOwner().getId())
+                    throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak dostępu do kolekcji o podanym id");
+                else {
+                    user.getFavourites().add(collection);
+                    sessionFactory.getCurrentSession().update(user);
+                }
+            }
+            return Collections.EMPTY_LIST;
+        } else if (params.containsKey("remove_collection")) {
+            UserDS user = result.get(0);
+            CollectionDS collection = new CollectionDS();
+            collection.setId((Integer)params.get("remove_collection"));
+            if (user.getFavourites().contains(collection)) {
+                user.getFavourites().remove(collection);
+                sessionFactory.getCurrentSession().update(user);
+            } else
+                throw new MyHoardException(ErrorCode.NOT_FOUND).add("id", "Brak kolekcji o podanym id");
+            return Collections.EMPTY_LIST;
         }
         return result;
     }

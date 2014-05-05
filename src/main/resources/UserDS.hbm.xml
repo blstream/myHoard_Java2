@@ -11,9 +11,9 @@
 		<property name="email" type="string" unique="true" />
 		<property name="username" type="string" unique="true" />
 		<property name="password" type="string" />
-		<set name="favourites" table="Favourite" lazy="true">
+		<set name="favourites" table="Favourite">
 			<key column="user" />
-			<many-to-many column="collection" class="CollectionDS" fetch="join" />
+			<many-to-many column="collection" class="CollectionDS" />
 		</set>
 	</class>        
 </hibernate-mapping>

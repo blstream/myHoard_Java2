@@ -26,7 +26,7 @@ public class UserService implements ResourceService<UserDTO> {
     public List<UserDTO> getList(Map<String, Object> params) {
         List<UserDTO> result = new ArrayList<>();
         for (UserDS i : userDAO.getList(params))
-            result.add(i.toUserDTO());
+            result.add(i.toUserDTO(params.containsKey("fetch_favourites"), params.containsKey("own_favourites") ? (Boolean)params.get("own_favourites") : false));
         return result;
     }
 

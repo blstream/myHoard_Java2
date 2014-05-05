@@ -53,12 +53,11 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
             criteria.setMaxResults((Integer)params.get("max_count"));
         if (params.containsKey("start_num"))
             criteria.setFirstResult((Integer)params.get("start_num"));
-        if(params.containsKey("name"))
-            criteria.add(Restrictions.disjunction(
-                Restrictions.ilike("name", (String)params.get("name"),MatchMode.ANYWHERE),
-                Restrictions.ilike("description", (String)params.get("name"),MatchMode.ANYWHERE)
-            ));
-        if(params.get("options").equals("all")) {
+        if (params.containsKey("name"))
+            criteria.add(
+                Restrictions.ilike("name", (String)params.get("name"), MatchMode.ANYWHERE)
+            );
+        if (params.get("options").equals("all")) {
             criteria.add(Restrictions.or(
                 Restrictions.eq("owner", params.get("owner")),
                 Restrictions.conjunction(
@@ -66,16 +65,15 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
                     Restrictions.ne("owner", params.get("owner"))
                 )
             ));
-        }else if(params.get("options").equals("current")) {
+        } else if (params.get("options").equals("current")) {
             criteria.add(Restrictions.eq("owner",params.get("owner")));
-        }else if(params.get("options").equals("user")) {
+        } else if (params.get("options").equals("user")) {
             UserDS tmp = new UserDS();
-            tmp.setId(Integer.parseInt(params.get("userId")));
+            tmp.setId(Integer.parseInt((String)params.get("userId")));
             criteria.add(Restrictions.conjunction(
-                Restrictions.eq("owner",tmp),
+                Restrictions.eq("owner", tmp),
                 Restrictions.eq("visible", Boolean.TRUE)
-            ));               
-                
+            ));
         }
         
         List<CollectionDS> result = criteria.list();
@@ -124,7 +122,7 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
                     .list());
                 Set<TagDS> remaining = obj.getTags();
                 remaining.removeAll(result);
-                for (TagDS i : remaining)   // pozostałe tagi trzeba utworzyć
+                for (TagDS i : remaining) // pozostałe tagi trzeba utworzyć
                     session.save(i);
                 result.addAll(remaining);
                 obj.setTags(Collections.EMPTY_SET);
@@ -159,7 +157,7 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
                     .list());
                 Set<TagDS> remaining = object.getTags();
                 remaining.removeAll(result);
-                for (TagDS i : remaining)   // pozostałe tagi trzeba utworzyć
+                for (TagDS i : remaining) // pozostałe tagi trzeba utworzyć
                     session.save(i);
                 result.addAll(remaining);
                 object.setTags(result);

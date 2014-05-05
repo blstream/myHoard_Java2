@@ -34,7 +34,7 @@ public class CollectionDS {
         this.id = id;
     }
 
-    public boolean getVisible() {
+    public boolean isVisible() {
         return visible;
     }
     
@@ -162,7 +162,7 @@ public class CollectionDS {
         name = obj.getName();
         description = obj.getDescription();
         itemsNumber = obj.getItemsNumber();
-        visible = obj.getVisible();
+        visible = obj.isVisible();
         created_date_client = obj.getCreatedDate();
         modified_date_client = obj.getModifiedDate();
         tagsAltered = obj.isTagsAltered();
@@ -194,6 +194,16 @@ public class CollectionDS {
     @Override
     public String toString() {
         return "CollectionDS{" + "id=" + id + ", owner=" + owner.getUsername() + ", name=" + name + ", description=" + description + ", tags=" + tags + ", itemsNumber=" + itemsNumber + ", created_date=" + created_date + ", modified_date=" + modified_date + ", tagsAltered=" + tagsAltered + '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof CollectionDS && id == ((CollectionDS)o).id;
     }
 
 }

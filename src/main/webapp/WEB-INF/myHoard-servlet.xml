@@ -70,7 +70,7 @@
 	</bean>
 	<bean id="commentDAO" class="com.blstream.myhoard.db.dao.CommentDAO">
 		<property name="sessionFactory" ref="sessionFactory" />
-	</bean> 
+	</bean>
 
 	<bean id="collectionService" class="com.blstream.myhoard.biz.service.CollectionService">
 		<property name="collectionDAO" ref="collectionDAO" />
@@ -82,8 +82,8 @@
 		<property name="itemDAO" ref="itemDAO" />
 	</bean>
 	<bean id="userService" class="com.blstream.myhoard.biz.service.UserService">
-		<property name="userDAO" ref="userDAO" />               
-	</bean>     
+		<property name="userDAO" ref="userDAO" />
+	</bean>
         
 	<bean id="sessionService" class="com.blstream.myhoard.biz.service.SessionService">
 		<property name="sessionDAO" ref="sessionDAO" />
@@ -101,6 +101,9 @@
 	<bean id="tokenController" class="com.blstream.myhoard.controller.TokenController">
 		<property name="userService" ref="userService" />
 		<property name="sessionService" ref="sessionService" />
+	</bean>
+	<bean id="favouriteController" class="com.blstream.myhoard.controller.FavouriteController">
+		<property name="userService" ref="userService" />
 	</bean>
 
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />

@@ -1,6 +1,8 @@
 package com.blstream.myhoard.biz.model;
 
 import com.blstream.myhoard.db.model.UserDS;
+import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -31,6 +33,9 @@ public class UserDTO {
     private String grantType;
 
     private String refreshToken;
+
+    @JsonIgnore
+    private List<CollectionDTO> favourites;
 
     public UserDTO() {
         id = "0";
@@ -96,6 +101,14 @@ public class UserDTO {
     @JsonProperty("refresh_token")
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public List<CollectionDTO> getFavourites() {
+        return favourites;
+    }
+
+    public void setFavourites(List<CollectionDTO> favourites) {
+        this.favourites = favourites;
     }
 
     public void updateObject(UserDTO object) {

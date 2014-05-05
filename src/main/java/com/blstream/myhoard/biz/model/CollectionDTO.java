@@ -69,7 +69,7 @@ public class CollectionDTO {
     }
 
     @JsonProperty(value = "public")
-    public boolean getVisible() {
+    public boolean isVisible() {
         return visible;
     }
     
@@ -180,7 +180,7 @@ public class CollectionDTO {
         name = obj.getName();
         description = obj.getDescription();
         itemsNumber = obj.getItemsNumber();
-        visible = obj.getVisible();
+        visible = obj.isVisible();
         createdDate = obj.getCreated_date_client();
         modifiedDate = obj.getModified_date_client();
         tagsAltered = obj.isTagsAltered();

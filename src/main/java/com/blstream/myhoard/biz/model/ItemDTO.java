@@ -24,11 +24,11 @@ public class ItemDTO {
 
     @NotNull(message = "Nazwa elementu jest wymagana")
     @NotEmpty(message = "Nazwa elementu jest wymagana")
-    @Size(max = 150, message = "Nazwa może zawierać co najwyżej 150 znaków")
+    @Size(max = 50, message = "Nazwa może zawierać co najwyżej 50 znaków")
     @CheckString(message = "Niepoprawna nazwa (zła długość lub zawiera białe znaki)", value = ValidationOpt.ITEM_NAME)
     private String name;
 
-    @Size(max = 1024, message = "Opis może się składać z co najwyżej 1024 znaków")
+    @Size(max = 250, message = "Opis może się składać z co najwyżej 250 znaków")
     private String description;
 
     @GeographicLocation

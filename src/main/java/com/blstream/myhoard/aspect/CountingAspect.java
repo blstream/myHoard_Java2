@@ -42,7 +42,7 @@ public class CountingAspect {
     private final Map<String, Int> stats = new HashMap<>();
     private Date latest = new Date();
 
-    @Value("${aspect.methodInvocationCounter:true}")
+    @Value("${aspect.methodInvocationCounter:false}")
     private boolean enabled;
 
     @Pointcut("within(com.blstream.myhoard..*)")

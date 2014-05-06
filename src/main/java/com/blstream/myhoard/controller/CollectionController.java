@@ -13,6 +13,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -54,6 +56,7 @@ public class CollectionController {
             params.put("name",name);
             if (name.length() < 2 || name.length() > 20 )
                 throw new MyHoardException(ErrorCode.BAD_REQUEST).add("name", "Zbyt krótka/długa nazwa do wyszukiwania");
+            Logger.getRootLogger().info("Name to search in collections: " + name);
         }
         params.put("options","all");
         params.put("sort_by", fieldName);

@@ -5,6 +5,7 @@ import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.MediaDTO;
 import com.blstream.myhoard.biz.model.UserDTO;
 import com.blstream.myhoard.biz.service.MediaService;
+import com.blstream.myhoard.biz.service.MediaServiceImpl;
 import com.blstream.myhoard.validator.MediaValidator;
 import java.io.IOException;
 import java.util.HashMap;
@@ -33,7 +34,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 public class MediaController {
     
 //    @Autowired
-    private MediaService mediaService;
+    private MediaService<MediaDTO> mediaService;
     
     private MediaValidator mediaValidator;
     
@@ -41,7 +42,7 @@ public class MediaController {
         this.mediaValidator = mediaValidator;
     }
 
-    public void setMediaService(MediaService mediaService) {
+    public void setMediaService(MediaService<MediaDTO> mediaService) {
         this.mediaService = mediaService;
     }
     

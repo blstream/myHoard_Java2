@@ -75,7 +75,7 @@
 	<bean id="collectionService" class="com.blstream.myhoard.biz.service.CollectionService">
 		<property name="collectionDAO" ref="collectionDAO" />
 	</bean>
-	<bean id="mediaService" class="com.blstream.myhoard.biz.service.MediaService">
+	<bean id="mediaService" class="com.blstream.myhoard.biz.service.MediaServiceImpl">
 		<property name="mediaDAO" ref="mediaDAO" />
 	</bean>
 	<bean id="itemService" class="com.blstream.myhoard.biz.service.ItemService">
@@ -115,6 +115,7 @@
 
 	<bean id="mediaController" class="com.blstream.myhoard.controller.MediaController">
 		<property name="mediaValidator" ref="mediaValidator" />
+		<property name="mediaService" ref="mediaService" />
 	</bean>
 
 	<bean id="mediaValidator" class="com.blstream.myhoard.validator.MediaValidator">

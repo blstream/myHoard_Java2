@@ -38,11 +38,16 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class CommentController {
 
     private ResourceService<CommentDTO> commentService;
+    private ResourceService<CollectionDTO> collectionService;
 
     public void setCommentService(ResourceService<CommentDTO> commentService) {
         this.commentService = commentService;
     }
 
+    public void setCollectionService(ResourceService<CollectionDTO> collectionService) {
+        this.collectionService = collectionService;
+    }    
+    
     @RequestMapping(value = "/comments", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -73,7 +78,7 @@ public class CommentController {
         UserDTO user = (UserDTO)request.getAttribute("user");
         Map<String, Object> params = new HashMap<>();
         params.put("collection", Integer.parseInt(id));
-        params.put("owner", user.toUserDS());
+        //params.put("owner", user.toUserDS());
         return commentService.getList(params);
     }    
     
@@ -117,8 +122,9 @@ public class CommentController {
     public void removeCollection(@PathVariable String id, HttpServletRequest request) {
         try {
             UserDTO user = (UserDTO) request.getAttribute("user");
-            CommentDTO tmp = commentService.get(Integer.parseInt(id));
-            if (tmp.getOwner().equals(user)) {
+            CommentDTO commentDTO = commentService.get(Integer.parseInt(id));
+            CollectionDTO collectionDTO = collectionService.get(Integer.parseInt(commentDTO.getCollection()));
+            if (commentDTO.getOwner().equals(user) || collectionDTO.getOwner().equals(user)) {
                 commentService.remove(Integer.parseInt(id));
             } else {
                 throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Brak uprawnień do zasobu.");

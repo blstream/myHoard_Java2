@@ -12,7 +12,7 @@ import org.aspectj.lang.annotation.Pointcut;
 @Aspect
 public class BusinessProfiler {
     
-        @Pointcut("execution(* com.blstream.myhoard.*.*(..))")
+        @Pointcut("within(com.blstream.myhoard..*)")
         public void businessMethods() { }
 
         @Around("businessMethods()")

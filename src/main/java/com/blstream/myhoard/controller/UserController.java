@@ -5,6 +5,7 @@ import com.blstream.myhoard.biz.exception.MyHoardError;
 import com.blstream.myhoard.biz.exception.MyHoardException;
 import com.blstream.myhoard.biz.model.UserDTO;
 import com.blstream.myhoard.biz.service.ResourceService;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -133,10 +134,10 @@ public class UserController {
     }
 
     @ExceptionHandler(MyHoardException.class)
-    @ResponseBody
-    public MyHoardError returnCode(MyHoardException exception, HttpServletResponse response) {
+    public void returnCode(MyHoardException exception, HttpServletResponse response) throws IOException {
+        // @ResponseBody odmawiało posłuszeństwa z niewyjaśnionych powodów
         response.setStatus(exception.getResponseStatus());
         response.setContentType("application/json;charset=UTF-8");
-        return exception.toError();
+        response.getOutputStream().write(exception.toError().toString().getBytes("UTF-8"));
     }
 }

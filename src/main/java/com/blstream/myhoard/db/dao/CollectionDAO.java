@@ -128,11 +128,8 @@ public class CollectionDAO implements ResourceDAO<CollectionDS> {
                 obj.setTags(Collections.EMPTY_SET);
                 session.save(obj);
 
-                CollectionDS object = new CollectionDS();
-                object.setId(obj.getId());
-                object.setOwner(obj.getOwner());
-                object.setTags(result);
-                update(object);
+                obj.setTags(result);
+                update(obj);
             }
             else
                 session.save(obj);

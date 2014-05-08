@@ -143,6 +143,7 @@
 
 	<bean id="commentController" class="com.blstream.myhoard.controller.CommentController">
 		<property name="commentService" ref="commentService" />
+		<property name="collectionService" ref="collectionService" />                
 	</bean>
 
 	<bean id="commentService" class="com.blstream.myhoard.biz.service.CommentService">

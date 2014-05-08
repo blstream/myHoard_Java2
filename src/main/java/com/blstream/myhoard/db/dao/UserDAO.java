@@ -5,6 +5,7 @@ import com.blstream.myhoard.biz.exception.MyHoardException;
 import java.util.List;
 import org.hibernate.Session;
 import com.blstream.myhoard.db.model.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -30,6 +31,15 @@ public class UserDAO implements ResourceDAO<UserDS> {
                 criteria.add(Restrictions.eq("username", params.get("username")));
             else if (params.containsKey("id"))
                 criteria.add(Restrictions.eq("id", params.get("id")));
+            else if (params.containsKey("get_observers")) {
+                if (!((CollectionDS)sessionFactory.getCurrentSession().createCriteria(CollectionDS.class).add(Restrictions.eq("id", (Integer)params.get("collection"))).uniqueResult()).isVisible())
+                    return Collections.EMPTY_LIST;
+                List<String> emails = sessionFactory.getCurrentSession().createSQLQuery("select email from Favourite left join User on Favourite.user = User.id where Favourite.collection = " + (Integer)params.get("collection") + " and User.id <> " + (Integer)params.get("owner")).list();
+                List<UserDS> users = new ArrayList<>();
+                for (String email : emails)
+                    users.add(new UserDS(-1, email, "", ""));
+                return users;
+            }
             else 
                 throw new UnsupportedOperationException("Not supported yet.");
         }

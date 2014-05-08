@@ -19,19 +19,12 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class ItemDAO implements ResourceDAO<ItemDS> {
 
     private SessionFactory sessionFactory;
-    private MailSender mailSender;
-
-    public void setMailSender(MailSender mailSender) {
-        this.mailSender = mailSender;
-    }
 
     @Override
     public int getTotalCount(String owner) {
@@ -116,23 +109,6 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
             if (obj.getModified_date_client() == null)
                 obj.setModified_date_client(obj.getModified_date());
             session.save(obj);
-
-            if (((CollectionDS)session.createCriteria(CollectionDS.class).add(Restrictions.eq("id", obj.getCollection())).uniqueResult()).isVisible()) {
-                final SimpleMailMessage message = new SimpleMailMessage();
-                message.setSubject("Powiadomienie o nowym elemencie w obserwowanej kolekcji");
-                message.setText("W obserwowanej przez Ciebie kolekcji (" + obj.getCollection() + ") pojawił się nowy element (" + obj.getId() + ").");
-                final List<String> emails = session.createSQLQuery("select email from Favourite left join User on Favourite.user = User.id where Favourite.collection = " + obj.getCollection()+ " and User.id <> " + obj.getOwner().getId()).list();
-                new Thread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        for (String email : emails) {
-                            message.setTo(email);
-                            mailSender.send(message);
-                        }
-                    }
-                }).start();
-            }
         } catch (HibernateException ex) {
             throw new MyHoardException(ex);
         }

@@ -73,7 +73,6 @@
 	</bean>
 	<bean id="itemDAO" class="com.blstream.myhoard.db.dao.ItemDAO">
 		<property name="sessionFactory" ref="sessionFactory" />
-		<property name="mailSender" ref="mailSender" />
 	</bean>
 	<bean id="mediaDAO" class="com.blstream.myhoard.db.dao.MediaDAO">
 		<property name="sessionFactory" ref="sessionFactory" />
@@ -96,6 +95,8 @@
 	</bean>
 	<bean id="itemService" class="com.blstream.myhoard.biz.service.ItemService">
 		<property name="itemDAO" ref="itemDAO" />
+		<property name="userDAO" ref="userDAO" />
+		<property name="mailSender" ref="mailSender" />
 	</bean>
 	<bean id="userService" class="com.blstream.myhoard.biz.service.UserService">
 		<property name="userDAO" ref="userDAO" />

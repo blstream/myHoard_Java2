@@ -33,6 +33,8 @@ public class UserDTO {
     private String grantType;
 
     private String refreshToken;
+    
+    private boolean visible;
 
     @JsonIgnore
     private List<CollectionDTO> favourites;
@@ -41,11 +43,12 @@ public class UserDTO {
         id = "0";
     }
 
-    public UserDTO(String id, String email, String username, String password) {
+    public UserDTO(String id, String email, String username, String password, boolean visible) {
         this.id = id;
         this.email = email;
         this.username = username;
         this.password = password;
+        this.visible = visible;
     }
     
     @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
@@ -127,7 +130,7 @@ public class UserDTO {
     }
 
     public UserDS toUserDS() {
-        return new UserDS(Integer.parseInt(id), email, username, password);
+        return new UserDS(Integer.parseInt(id), email, username, password, visible);
     }
 
     public boolean equals(Object obj) {
@@ -135,5 +138,21 @@ public class UserDTO {
             return false;
         UserDTO user = (UserDTO)obj;
         return id.equals(user.id);
+    }
+
+    /**
+     * @return the visible
+     */
+    @JsonIgnore
+    public boolean getVisible() {
+        return visible;
+    }
+
+    /**
+     * @param visible the visible to set
+     */
+    @JsonProperty(value = "private")
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 }

@@ -11,6 +11,7 @@
 		<property name="email" type="string" unique="true" />
 		<property name="username" type="string" unique="true" />
 		<property name="password" type="string" />
+		<property name="visible" type="boolean" />
 		<set name="favourites" table="Favourite">
 			<key column="user" />
 			<many-to-many column="collection" class="CollectionDS" />

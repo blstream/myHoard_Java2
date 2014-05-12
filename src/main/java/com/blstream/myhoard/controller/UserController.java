@@ -7,7 +7,9 @@ import com.blstream.myhoard.biz.model.UserDTO;
 import com.blstream.myhoard.biz.service.ResourceService;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -36,8 +38,11 @@ public class UserController {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<UserDTO> getUsers() {
-        return userService.getList(Collections.EMPTY_MAP);
+    public List<UserDTO> getUsers(HttpServletRequest request) {
+        UserDTO user =(UserDTO) request.getAttribute("user");
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentUsername", user.getUsername());
+        return userService.getList(params);
     }
 
     @RequestMapping(method = RequestMethod.POST)

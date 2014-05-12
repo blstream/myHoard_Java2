@@ -37,8 +37,16 @@ public class UserDAO implements ResourceDAO<UserDS> {
                 List<String> emails = sessionFactory.getCurrentSession().createSQLQuery("select email from Favourite left join User on Favourite.user = User.id where Favourite.collection = " + (Integer)params.get("collection") + " and User.id <> " + (Integer)params.get("owner")).list();
                 List<UserDS> users = new ArrayList<>();
                 for (String email : emails)
-                    users.add(new UserDS(-1, email, "", ""));
+                    users.add(new UserDS(-1, email, "", "",true));
                 return users;
+            } else if(params.containsKey("currentUsername")) {
+                criteria.add(Restrictions.or(
+                Restrictions.eq("username", params.get("currentUsername")),
+                Restrictions.conjunction(
+                    Restrictions.eq("visible", Boolean.TRUE),
+                    Restrictions.ne("username", params.get("currentUsername"))
+                )
+            ));
             }
             else 
                 throw new UnsupportedOperationException("Not supported yet.");

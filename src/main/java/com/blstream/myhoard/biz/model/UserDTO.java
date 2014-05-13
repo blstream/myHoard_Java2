@@ -151,7 +151,7 @@ public class UserDTO {
     /**
      * @param visible the visible to set
      */
-    @JsonProperty(value = "private")
+    @JsonProperty(value = "public")
     public void setVisible(boolean visible) {
         this.visible = visible;
     }

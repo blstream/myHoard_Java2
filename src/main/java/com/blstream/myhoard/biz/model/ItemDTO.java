@@ -157,21 +157,24 @@ public class ItemDTO {
     }
 
     public ItemDS toItemDS() {
+        ItemDS result = new ItemDS();
         Set<MediaDS> set = new HashSet<>(media.size());
         for (MediaDTO i : media)
             set.add(i.toMediaDS());
  
         try {
-            return new ItemDS(Integer.parseInt(id),
-                    name,
-                    description,
-                    location == null ? null : location.getLat(),
-                    location == null ? null : location.getLng(),
-                    set,
-                    createdDate,
-                    modifiedDate,
-                    collection == null || collection.isEmpty() ? -1 : Integer.parseInt(collection),
-                    owner.toUserDS());
+            result.setId(Integer.parseInt(id));
+            result.setName(name);
+            result.setDescription(description);
+            result.setLatitude(location == null ? null : location.getLat());
+            result.setLongitude(location == null ? null : location.getLng());
+            if (mediaAltered)
+                result.setMedia(set);
+            result.setCreated_date_client(createdDate);
+            result.setModified_date_client(modifiedDate);
+            result.setCollection(collection == null || collection.isEmpty() ? -1 : Integer.parseInt(collection));
+            result.setOwner(owner.toUserDS());
+            return result;
         } catch (NumberFormatException ex) {
             throw new MyHoardException(ErrorCode.BAD_REQUEST).add("collection", "Niepoprawny identyfikator");
         }

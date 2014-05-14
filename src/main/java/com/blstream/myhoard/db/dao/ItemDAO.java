@@ -128,7 +128,7 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
                     .uniqueResult() == null)
                 throw new MyHoardException(ErrorCode.FORBIDDEN).add("owner", "Próba zapisania elementu do obcej kolekcji");
 
-            List<Integer> media_ids = new ArrayList<>();
+            List<Number> media_ids = new ArrayList<>();
             Set<MediaDS> result;
             if (obj.isMediaAltered()) {
                 for (MediaDS i : obj.getMedia())
@@ -138,12 +138,17 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
                             .add(Restrictions.in("id", media_ids)).list()))
                         .size() != media_ids.size())
                     throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Próba przypisania obcego Media do elementu");
+                if (obj.getMedia().isEmpty())
+                    media_ids = session.createSQLQuery("SELECT id FROM Media LEFT JOIN ItemMedia ON Media.id = ItemMedia.media WHERE owner = " + obj.getOwner().getId() + " AND item = " + obj.getId() + " GROUP BY id HAVING COUNT(media) <= 1").list();
             }
             object.setModified_date(Calendar.getInstance().getTime());
             if (obj.getModified_date_client() == null)
                 object.setModified_date_client(obj.getModified_date());
             session.update(object);
-            // TODO usuwanie ewentualnych odpiętych mediów
+
+            if (obj.isMediaAltered() && obj.getMedia().isEmpty() && !media_ids.isEmpty())
+                for (MediaDS i : (List<MediaDS>)session.createCriteria(MediaDS.class).add(Restrictions.in("id", media_ids)).list())
+                    session.delete(i);
 
         } catch (HibernateException ex) {
             throw new MyHoardException(ex);

@@ -21,6 +21,7 @@ public class ItemDS {
     private Date modified_date;
     private Date created_date_client;
     private Date modified_date_client;
+    private Boolean for_sale;
     private int collection;
     private UserDS owner;
     private boolean mediaAltered = false;
@@ -30,7 +31,7 @@ public class ItemDS {
         modified_date = (Date)created_date.clone();
     }
 
-    public ItemDS(int id, String name, String description, Float latitude, Float longitude, Set<MediaDS> media, Date createdDate, Date modifiedDate, int collection, UserDS owner) {
+    public ItemDS(int id, String name, String description, Float latitude, Float longitude, Set<MediaDS> media, Date createdDate, Date modifiedDate, Boolean forSale, int collection, UserDS owner) {
         this();
         this.id = id;
         this.name = name;
@@ -40,6 +41,7 @@ public class ItemDS {
         this.media = media;
         this.created_date_client = createdDate;
         this.modified_date_client = modifiedDate;
+        this.for_sale = forSale;
         this.collection = collection;
         this.owner = owner;
     }
@@ -125,6 +127,14 @@ public class ItemDS {
         this.modified_date_client = modified_date_client;
     }
 
+    public Boolean isFor_sale() {
+        return for_sale;
+    }
+
+    public void setFor_sale(Boolean for_sale) {
+        this.for_sale = for_sale;
+    }
+    
     public int getCollection() {
         return collection;
     }
@@ -166,6 +176,8 @@ public class ItemDS {
             created_date_client = object.created_date_client;
         if (object.modified_date_client != null)
             modified_date_client = object.modified_date_client;
+        if (object.for_sale != null)
+            for_sale = object.for_sale;
     }
 
     public ItemDTO toDTO() {
@@ -180,6 +192,7 @@ public class ItemDS {
                 set,
                 created_date_client == null ? created_date : created_date_client,
                 modified_date_client == null ? modified_date : modified_date_client,
+                for_sale == null ? false : for_sale,
                 Integer.toString(collection),
                 owner.toUserDTO());
     }
@@ -198,6 +211,7 @@ public class ItemDS {
         obj.setMedia(set);
         obj.setCreatedDate(created_date_client == null ? created_date : created_date_client);
         obj.setModifiedDate(modified_date_client == null ? modified_date : modified_date_client);
+        obj.setForSale(for_sale == null ? false : for_sale);
         obj.setCollection(Integer.toString(collection));
         obj.setOwner(owner.toUserDTO());
     }
@@ -221,6 +235,7 @@ public class ItemDS {
         }
         created_date_client = obj.getCreatedDate();
         modified_date_client = obj.getModifiedDate();
+        for_sale = obj.isForSale();
         try {
             collection = Integer.parseInt(obj.getCollection());
         } catch (NumberFormatException ex) {

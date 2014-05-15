@@ -40,6 +40,9 @@ public class ItemDTO {
 //    @JsonIgnore
     private Date modifiedDate;
 
+    @JsonProperty(value = "for_sale")
+    private Boolean forSale;
+    
     @NotNull(message = "Element musi być przypisany do kolekcji")
     @NotEmpty(message = "Element musi być przypisany do kolekcji")
     private String collection;
@@ -54,7 +57,7 @@ public class ItemDTO {
 //        modifiedDate = (Date)createdDate.clone();
     }
 
-    public ItemDTO(String id, String name, String description, Location location, Set<MediaDTO> media, Date createdDate, Date modifiedDate, String collection, UserDTO owner) {
+    public ItemDTO(String id, String name, String description, Location location, Set<MediaDTO> media, Date createdDate, Date modifiedDate, Boolean forSale, String collection, UserDTO owner) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -62,6 +65,7 @@ public class ItemDTO {
         this.media = media;
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
+        this.forSale = forSale;
         this.collection = collection;
         this.owner = owner;
     }
@@ -133,6 +137,14 @@ public class ItemDTO {
         this.modifiedDate = modifiedDate;
     }
 
+    public Boolean isForSale() {
+        return forSale;
+    }
+
+    public void setForSale(Boolean forSale) {
+        this.forSale = forSale;
+    }
+
     public String getCollection() {
         return collection;
     }
@@ -172,6 +184,7 @@ public class ItemDTO {
                 result.setMedia(set);
             result.setCreated_date_client(createdDate);
             result.setModified_date_client(modifiedDate);
+            result.setFor_sale(forSale == null ? false: forSale);
             result.setCollection(collection == null || collection.isEmpty() ? -1 : Integer.parseInt(collection));
             result.setOwner(owner.toUserDS());
             return result;

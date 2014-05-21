@@ -118,6 +118,8 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
     @Override
     public void update(ItemDS obj) {
         ItemDS object = get(obj.getId());
+        Set<MediaDS> hanging = object.getMedia();
+        hanging.removeAll(obj.getMedia());
         object.updateObject(obj);
 
         try {
@@ -129,24 +131,29 @@ public class ItemDAO implements ResourceDAO<ItemDS> {
                 throw new MyHoardException(ErrorCode.FORBIDDEN).add("owner", "Próba zapisania elementu do obcej kolekcji");
 
             List<Number> media_ids = new ArrayList<>();
-            Set<MediaDS> result;
             if (obj.isMediaAltered()) {
                 for (MediaDS i : obj.getMedia())
                     media_ids.add(i.getId());
-                if (!media_ids.isEmpty() && (result = new HashSet<>(session.createCriteria(MediaDS.class)
+                if (!media_ids.isEmpty() && session.createCriteria(MediaDS.class)
                             .add(Restrictions.eq("owner", obj.getOwner().getId()))
-                            .add(Restrictions.in("id", media_ids)).list()))
-                        .size() != media_ids.size())
+                            .add(Restrictions.in("id", media_ids))
+                        .list().size() != media_ids.size())
                     throw new MyHoardException(ErrorCode.FORBIDDEN).add("id", "Próba przypisania obcego Media do elementu");
-                if (obj.getMedia().isEmpty())
-                    media_ids = session.createSQLQuery("SELECT id FROM Media LEFT JOIN ItemMedia ON Media.id = ItemMedia.media WHERE owner = " + obj.getOwner().getId() + " AND item = " + obj.getId() + " GROUP BY id HAVING COUNT(media) <= 1").list();
+                media_ids.clear();
+                if (obj.isMediaAltered() && !hanging.isEmpty()) {
+                    for (MediaDS i : hanging)
+                        media_ids.add(i.getId());
+                    List<Number> to_delete = session.createSQLQuery("SELECT id FROM Media LEFT JOIN ItemMedia ON Media.id = ItemMedia.media WHERE owner = " + obj.getOwner().getId() + " AND item = " + obj.getId() + " GROUP BY id HAVING COUNT(media) = 1").list();
+                    to_delete.retainAll(media_ids);
+                    media_ids = to_delete;
+                }
             }
             object.setModified_date(Calendar.getInstance().getTime());
             if (obj.getModified_date_client() == null)
                 object.setModified_date_client(obj.getModified_date());
             session.update(object);
 
-            if (obj.isMediaAltered() && obj.getMedia().isEmpty() && !media_ids.isEmpty())
+            if (!media_ids.isEmpty())
                 for (MediaDS i : (List<MediaDS>)session.createCriteria(MediaDS.class).add(Restrictions.in("id", media_ids)).list())
                     session.delete(i);
 
